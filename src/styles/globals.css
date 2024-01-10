@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+:root {
+  height: 100%;
+}
+
+* {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+/** Apex Chart */
+#bar-chart > div {
+  width: 100% !important;
+}
+#area-chart > div > div > .apexcharts-xaxistooltip {
+  border-radius: 8px;
+}
+
+html.light #area-chart > div > div > .apexcharts-xaxistooltip:before,
+html.light #area-chart > div > div > .apexcharts-xaxistooltip:after {
+  border-bottom-color: hsl(0 0% 100%);
+}
+
+html.dark #area-chart > div > div > .apexcharts-xaxistooltip:before,
+html.dark #area-chart > div > div > .apexcharts-xaxistooltip:after {
+  border-bottom-color: hsl(215 27.9% 16.9%);
+}
+
+/* Legends and Texts */
+html.light .apexcharts-legend-text,
+html.light .apexcharts-text {
+  color: hsl(0, 0%, 0%) !important;
+}
+html.dark .apexcharts-legend-text,
+html.dark .apexcharts-text {
+  color: hsl(0, 0%, 100%) !important;
+}
+/* Grid Lines */
+html.light .apexcharts-gridline {
+  stroke: hsl(210, 12%, 91%); /* --card */
+}
+html.dark .apexcharts-gridline {
+  stroke: rgb(54, 65, 75); /* --muted */
+}
+.apexcharts-yaxis-label,
+.apexcharts-xaxis-label {
+  fill: rgb(99, 115, 129);
+}
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 214 24% 11%;
+    --foreground: 210 20% 98%;
+    --card: 211 24% 17%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 82.82% 59.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 263.4 70% 50.4%;
+  }
+}
+@layer utilities {
+  .wrapper {
+    @apply w-full max-w-7xl py-5 lg:mx-auto;
+  }
+
+  .dashboard-container {
+    @apply flex flex-1 px-10 pb-16 pt-24;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+  .bg-body {
+    @apply bg-slate-100 !important;
+  }
+  /* Dropdown */
+  .bg-drop-downmenu {
+    @apply border-transparent bg-card/75 backdrop-blur dark:dark:bg-muted/75;
+  }
+  .bg-drop-downmenu div[role="menuitem"],
+  div[role="menuitemcheckbox"] {
+    @apply hover:bg-muted-foreground/5 data-[state=open]:bg-muted-foreground/5;
+  }
+  div[role="separator"] {
+    @apply bg-slate-200 dark:bg-slate-700;
+  }
+  /* Scroll */
+  .splash-scroll-x {
+    @apply overflow-x-auto;
+  }
+  .splash-scroll-x::-webkit-scrollbar {
+    @apply h-1;
+  }
+
+  .splash-scroll-x::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .splash-scroll-x::-webkit-scrollbar-thumb {
+    @apply rounded-lg bg-muted-foreground/20;
+  }
+
+  .splash-scroll {
+    @apply overflow-y-scroll;
+  }
+  .splash-scroll::-webkit-scrollbar {
+    @apply w-1;
+  }
+
+  .splash-scroll::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .splash-scroll.scroll-focus::-webkit-scrollbar-thumb {
+    @apply rounded-lg bg-muted-foreground/20;
+  }
+  .splash-scroll.scroll-blur::-webkit-scrollbar-thumb {
+    @apply rounded-lg bg-transparent;
+  }
+  /* Apex Chart */
+
+  .area-chart-tooltip,
+  .bar-chart-tooltip {
+    @apply border-border bg-transparent shadow-md shadow-muted-foreground/10 dark:shadow-none !important;
+  }
+
+  .pie-chart-tooltip {
+    @apply border-border bg-background/75 text-muted-foreground shadow-md shadow-muted-foreground/10 backdrop-blur dark:bg-background/75 dark:shadow-none !important;
+  }
+
+  .area-chart-tooltip > div.apexcharts-tooltip-title,
+  .bar-chart-tooltip > div.apexcharts-tooltip-title {
+    @apply mb-0 flex items-center justify-center bg-background/75 backdrop-blur dark:bg-background/75 !important;
+  }
+
+  .area-chart-tooltip > div.apexcharts-tooltip-series-group,
+  .bar-chart-tooltip > div.apexcharts-tooltip-series-group,
+  .apexcharts-xaxistooltip,
+  .apexcharts-yaxistooltip {
+    @apply border-border bg-card text-muted-foreground dark:bg-muted !important;
+  }
+  /* INPUTS */
+  .splash-base-input {
+    @apply border-[1px] border-slate-200 bg-background/20 font-normal text-foreground;
+  }
+  .splash-inputs {
+    @apply focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-slate-700;
+  }
+  .splash-inputs-within {
+    @apply focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 dark:border-slate-700;
+  }
+  .placeholders-input {
+    @apply placeholder:text-gray-400 dark:placeholder:text-gray-600;
+  }
+  .placeholders-select {
+    @apply data-[placeholder]:text-gray-400 dark:data-[placeholder]:text-gray-600;
+  }
+}
