@@ -11,12 +11,12 @@ type UpdateUserProps = {
 
 const UpdateUser: React.FC<UpdateUserProps> = ({ params }) => {
   return (
-    <div className="flex w-full flex-col">
+    <section className="flex w-full flex-col">
       <Heading title="Update" subTitle="Update user infomration" />
       <Card>
         <UpdateForm uid={params.uid} />
       </Card>
-    </div>
+    </section>
   );
 };
 

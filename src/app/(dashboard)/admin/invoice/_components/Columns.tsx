@@ -72,13 +72,14 @@ export const columns: ColumnDef<Invoice>[] = [
   },
   {
     id: "name",
-    header: "Name",
+    header: "Supplier Name",
+    size: 100,
     cell: ({ row }) => {
       const data = row.original;
       // const customerId = data.customerId; //! Use mock data since we dont have customer data yet
       const customerName = "John Doe";
       return (
-        <div className="flex flex-col">
+        <div className="flex shrink-0 flex-col">
           <Link
             href={`/admin/employees/list/update/${data.id}`}
             className="text-left font-medium hover:cursor-pointer hover:underline"
@@ -142,24 +143,24 @@ export const columns: ColumnDef<Invoice>[] = [
     },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-left">Amount</div>,
+    accessorKey: "total",
+    header: () => <div className="text-left">Total</div>,
     cell: ({ row }) => {
-      const amount = formatPrice(row.getValue("amount"));
+      const amount = formatPrice(row.getValue("total"));
       return <div className="text-left font-medium">{amount}</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const invoice = row.original;
 
       return (
         <div className="flex flex-row space-x-1 text-muted-foreground">
           <Button
             variant="ghost"
             className="h-8 w-8 p-0"
-            onClick={() => console.log(payment.id)}
+            onClick={() => console.log(invoice.id)}
           >
             <Pencil className="h-5 w-5" />
           </Button>
@@ -173,15 +174,18 @@ export const columns: ColumnDef<Invoice>[] = [
             <DropdownMenuContent align="end" className="bg-drop-downmenu">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(payment.id)}
+              <Link
+                href={`/admin/invoice/${invoice.id}`}
+                className="text-left font-medium hover:cursor-pointer"
               >
-                Copy payment ID
+                <DropdownMenuItem>View</DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem
+                onClick={() => console.log(invoice.id)}
+                className="hove:text-destructive text-destructive"
+              >
+                Delete
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => console.log(payment.id)}>
-                View customer
-              </DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

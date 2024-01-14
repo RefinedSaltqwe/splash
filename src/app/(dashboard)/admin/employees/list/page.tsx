@@ -60,7 +60,7 @@ const generateRandomUsers = (count: number): User[] => {
 const EmployeeList: React.FC<EmployeeListProps> = async () => {
   const data = await getData();
   return (
-    <div className="flex w-full flex-col">
+    <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
         <Heading title="List" />
         <ClientButtonLink
@@ -73,7 +73,7 @@ const EmployeeList: React.FC<EmployeeListProps> = async () => {
       <Card padding={false}>
         <DataTable columns={columns} data={data} users={data} />
       </Card>
-    </div>
+    </section>
   );
 };
 

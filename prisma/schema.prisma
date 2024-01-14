@@ -67,8 +67,60 @@ model User {
 
 model VerificationToken {
     identifier String
-    token      String   @unique
+    token      String @unique
     expires    DateTime
 
     @@unique([identifier, token])
 }
+
+model Customer {
+    id          String @id @default(cuid())
+    name        String
+    companyName String
+    address     String
+    email       String @unique
+    phoneNumber String
+
+    invoice     Invoice[]
+
+    createdAt   DateTime @default(now())
+}
+
+model ServiceType {
+    id          Int @id @default(autoincrement())
+    name        String
+
+    service Service[]
+}
+
+model Service {
+    id          String @id @default(cuid()) 
+    price       Int
+    status      String
+
+    invoiceId   Int 
+    invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+    serviceTypeId Int
+    serviceType ServiceType @relation(fields: [serviceTypeId], references: [id])
+}
+
+model Invoice {
+    id          Int @id @default(autoincrement())
+    status      String
+    payment     Int @default(0)
+    total       Int
+    shipping    Int
+    tax         Int
+    subTotal    Int
+
+    customerId  String
+    customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+    
+    service     Service[]
+
+    createdAt   DateTime  @default(now())
+    dueDate     DateTime
+}
+
+

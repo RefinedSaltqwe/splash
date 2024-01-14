@@ -74,13 +74,19 @@ export const sideMenuLinks: SideMenuLinks[] = [
   },
   {
     name: "Inventory",
-    href: "/admin/employees/inventory",
+    href: "/admin/inventory",
     icon: Archive,
     children: [],
   },
   {
+    name: "Customers",
+    href: "/admin/customers",
+    icon: Users,
+    children: [],
+  },
+  {
     name: "Suppliers",
-    href: "/admin/employees/suppliers",
+    href: "/admin/suppliers",
     icon: Truck,
     children: [],
   },
@@ -97,48 +103,6 @@ export const sideMenuLinks: SideMenuLinks[] = [
     children: [],
   },
 ];
-// export const sideMenuLinks: SideMenuLinks[] = [
-//   {
-//     name: "Dashboard",
-//     href: "/admin/dashboard",
-//     icon: HomeIcon,
-//     children: [],
-//   },
-//   {
-//     name: "Teams",
-//     icon: CalendarIcon,
-//     href: "/admin/teams",
-//     children: [
-//       { name: "Engineering", href: "/admin/teams/engineering" },
-//       { name: "Human Resources", href: "#" },
-//       { name: "Customer Success", href: "#" },
-//     ],
-//   },
-//   {
-//     name: "Projects",
-//     icon: FolderIcon,
-//     href: "/admin/projects",
-//     children: [
-//       { name: "GraphQL API", href: "#" },
-//       { name: "iOS App", href: "#" },
-//       { name: "Android App", href: "#" },
-//       { name: "New Customer Portal", href: "#" },
-//     ],
-//   },
-//   {
-//     name: "Calendar",
-//     href: "#",
-//     icon: UsersIcon,
-//     children: [],
-//   },
-//   {
-//     name: "Documents",
-//     href: "#",
-//     icon: HomeIcon,
-//     children: [],
-//   },
-//   { name: "Reports", href: "#", icon: HomeIcon, children: [] },
-// ];
 
 export const authFormDefaultValues = {
   email: "",

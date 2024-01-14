@@ -1,6 +1,9 @@
+import DeleteCustomerModal from "@/components/modal/DeleteCustomerModal";
+import DeleteCustomersModal from "@/components/modal/DeleteCustomersModal";
+import QueryProvider from "@/components/providers/QueryProvider";
 import ClientWrapper from "@/components/shared/ClientWrapper";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { authOptions } from "@/server/auth";
 import "@/styles/globals.css";
@@ -58,9 +61,15 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ClientWrapper session={session}>{children}</ClientWrapper>
+          <QueryProvider>
+            <ClientWrapper session={session}>
+              {children}
+              <Toaster expand={false} richColors={false} />
+              <DeleteCustomerModal />
+              <DeleteCustomersModal />
+            </ClientWrapper>
+          </QueryProvider>
         </ThemeProvider>
-        <Toaster />
       </body>
     </html>
   );

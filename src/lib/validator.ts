@@ -28,3 +28,16 @@ export const sampleFormValidator = z.object({
   offers: z.boolean(),
   pushNotifications: z.string(),
 });
+
+export const invoiceFormValidator = z.object({
+  customerId: z.string(),
+  serviceId: z.string().array(),
+  createdAt: z.date(),
+  dueDate: z.date(),
+  payment: z.number(),
+  total: z.number(),
+  shipping: z.number() || z.literal("Free"),
+  tax: z.number(),
+  subTotal: z.number(),
+  status: z.literal("1") || z.literal("2") || z.literal("3") || z.literal("4"),
+});

@@ -11,6 +11,7 @@ const config = {
   prefix: "",
   theme: {
     screens: {
+      base: "20px",
       xs: "500px",
       // => @media (min-width: 400px) { ... }
 

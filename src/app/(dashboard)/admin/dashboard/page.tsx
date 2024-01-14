@@ -32,7 +32,7 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = async () => {
   }
 
   return (
-    <div className="w-full">
+    <section className="w-full">
       <Heading
         title={`Hi ${session.user.name}, welcome back!`}
         subTitle="Dashboard"
@@ -120,7 +120,7 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = async () => {
           />
         </GridColumn>
       </GridWrapper>
-    </div>
+    </section>
   );
 };
 export default AdminDashboardPage;

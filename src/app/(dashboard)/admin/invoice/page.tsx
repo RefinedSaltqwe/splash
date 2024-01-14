@@ -42,11 +42,10 @@ function generateDate(): Date {
 const generateRandomUser = (): Invoice => ({
   id: `INV-${generateRandomNumber(100000)}`,
   customerId: generateRandomId(),
-  serviceId: generateRandomId(),
   createdAt: generateDate(),
   dueDate: generateDate(),
   payment: generateRandomNumber(100),
-  amount: 100,
+  total: 100,
   status:
     generateRandomNumber(4) === 1
       ? "1"
@@ -55,6 +54,9 @@ const generateRandomUser = (): Invoice => ({
         : generateRandomNumber(4) === 3
           ? "3"
           : "4",
+  tax: 0,
+  shipping: "Free",
+  subTotal: 100,
 });
 
 const generateRandomUsers = (count: number): Invoice[] => {
@@ -72,12 +74,12 @@ const InvoicePage: React.FC<InvoicePageProps> = async () => {
     return data.filter((item) => item.status === status).length;
   };
   return (
-    <div className="flex w-full flex-col">
+    <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
         <Heading title="Invoice" />
         <ClientButtonLink
           buttonName="Create Invoice"
-          href="/admin/employees/list/create"
+          href="/admin/invoice/create"
           variant={"secondary"}
         />
       </div>
@@ -87,8 +89,8 @@ const InvoicePage: React.FC<InvoicePageProps> = async () => {
             <div className="flex min-w-[1000px] shrink-0 grow">
               <div
                 className={cn(
-                  "grid w-full divide-dashed divide-slate-200 px-5 py-3 dark:divide-slate-700",
-                  "grid-flow-col grid-cols-5 divide-x",
+                  "divider-color grid w-full px-5 py-3",
+                  "grid-flow-col grid-cols-5 divide-x divide-dashed ",
                 )}
               >
                 <Stats
@@ -139,7 +141,7 @@ const InvoicePage: React.FC<InvoicePageProps> = async () => {
       <Card padding={false}>
         <DataTable columns={columns} data={data} invoice={data} />
       </Card>
-    </div>
+    </section>
   );
 };
 

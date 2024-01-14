@@ -118,9 +118,16 @@ html.dark .apexcharts-gridline {
   .bg-body {
     @apply bg-slate-100 !important;
   }
+
+  .divider-color {
+    @apply divide-slate-200 dark:divide-slate-700;
+  }
   /* Dropdown */
   .bg-drop-downmenu {
     @apply border-transparent bg-card/75 backdrop-blur dark:dark:bg-muted/75;
+  }
+  div[role="dialog"] {
+    @apply border-transparent bg-card backdrop-blur dark:dark:bg-muted/75;
   }
   .bg-drop-downmenu div[role="menuitem"],
   div[role="menuitemcheckbox"] {

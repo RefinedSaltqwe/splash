@@ -6,10 +6,10 @@ type UpdateUserProps = object;
 
 const UpdateUser: React.FC<UpdateUserProps> = () => {
   return (
-    <div className="flex w-full flex-col">
+    <section className="flex w-full flex-col">
       <Heading title="Create" subTitle="Create a new user" />
       <Card>Update</Card>
-    </div>
+    </section>
   );
 };
 
