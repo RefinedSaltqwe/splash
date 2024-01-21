@@ -27,7 +27,7 @@ import {
 import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
 import { deleteCustomers } from "@/server/actions/delete-customers";
-import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
+import { useDeleteCustomersModal } from "@/stores/useDeleteCustomersModal";
 import { type Customer } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
@@ -94,11 +94,11 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const modalIds = useDeleteManyModal((state) => state.modalIds);
-  const isProceed = useDeleteManyModal((state) => state.proceed);
-  const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
-  const onClose = useDeleteManyModal((state) => state.onClose);
-  const customersModal = useDeleteManyModal();
+  const modalIds = useDeleteCustomersModal((state) => state.modalIds);
+  const isProceed = useDeleteCustomersModal((state) => state.proceed);
+  const onIsProceed = useDeleteCustomersModal((state) => state.onIsProceed);
+  const onClose = useDeleteCustomersModal((state) => state.onClose);
+  const customersModal = useDeleteCustomersModal();
 
   const queryClient = useQueryClient();
   const { execute, isLoading } = useAction(deleteCustomers, {

@@ -21,7 +21,7 @@ import {
   formatPrice,
 } from "@/lib/utils";
 import { useCustomerList } from "@/stores/useCustomersList";
-import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
+import { useDeleteInvoicesModal } from "@/stores/useDeleteInvoicesModal";
 import { type Invoice } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
@@ -159,7 +159,7 @@ export const columns: ColumnDef<Invoice>[] = [
     id: "actions",
     cell: ({ row }) => {
       const invoice = row.original;
-      const onDeleteModalOpen = useDeleteManyModal((state) => state.onOpen);
+      const onDeleteModalOpen = useDeleteInvoicesModal((state) => state.onOpen);
 
       return (
         <div className="flex flex-row space-x-1 text-muted-foreground">

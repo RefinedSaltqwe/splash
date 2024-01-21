@@ -28,7 +28,7 @@ import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
 import { deleteInvoice } from "@/server/actions/delete-invoice";
 import { useCustomerList } from "@/stores/useCustomersList";
-import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
+import { useDeleteInvoicesModal } from "@/stores/useDeleteInvoicesModal";
 import { type Customer, type Invoice } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -72,11 +72,11 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilterString, setGlobalFilterString] = useState("");
-  const onDeleteModalOpen = useDeleteManyModal((state) => state.onOpen);
-  const proceed = useDeleteManyModal((state) => state.proceed);
-  const onClose = useDeleteManyModal((state) => state.onClose);
-  const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
-  const ids = useDeleteManyModal((state) => state.modalIds);
+  const onDeleteModalOpen = useDeleteInvoicesModal((state) => state.onOpen);
+  const proceed = useDeleteInvoicesModal((state) => state.proceed);
+  const onClose = useDeleteInvoicesModal((state) => state.onClose);
+  const onIsProceed = useDeleteInvoicesModal((state) => state.onIsProceed);
+  const ids = useDeleteInvoicesModal((state) => state.modalIds);
   const table = useReactTable({
     data,
     columns,

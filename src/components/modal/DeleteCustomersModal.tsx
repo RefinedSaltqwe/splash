@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { getCustomers } from "@/server/actions/fetch";
-import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
+import { useDeleteCustomersModal } from "@/stores/useDeleteCustomersModal";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { Badge } from "../ui/badge";
@@ -23,11 +23,11 @@ const DeleteCustomerModal: React.FC = () => {
     queryKey: ["customers"],
     queryFn: () => getCustomers(),
   });
-  const modalIds = useDeleteManyModal((state) => state.modalIds);
-  const isOpen = useDeleteManyModal((state) => state.isOpen);
-  const proceed = useDeleteManyModal((state) => state.proceed);
-  const onClose = useDeleteManyModal((state) => state.onClose);
-  const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
+  const modalIds = useDeleteCustomersModal((state) => state.modalIds);
+  const isOpen = useDeleteCustomersModal((state) => state.isOpen);
+  const proceed = useDeleteCustomersModal((state) => state.proceed);
+  const onClose = useDeleteCustomersModal((state) => state.onClose);
+  const onIsProceed = useDeleteCustomersModal((state) => state.onIsProceed);
   const [notConfirm, setNotConfirm] = useState<boolean>(true);
 
   return (
