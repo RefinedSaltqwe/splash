@@ -1,6 +1,10 @@
 "use client";
-import { useDeleteCustomersModal } from "@/stores/useDeleteCustomersModal";
+import { cn } from "@/lib/utils";
+import { getCustomers } from "@/server/actions/fetch";
+import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
+import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -11,23 +15,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Badge } from "../ui/badge";
-import { useQuery } from "@tanstack/react-query";
-import { getCustomers } from "@/server/actions/fetch";
-import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { cn } from "@/lib/utils";
+import { Label } from "../ui/label";
 
 const DeleteCustomerModal: React.FC = () => {
   const { data } = useQuery({
     queryKey: ["customers"],
     queryFn: () => getCustomers(),
   });
-  const modalIds = useDeleteCustomersModal((state) => state.modalIds);
-  const isOpen = useDeleteCustomersModal((state) => state.isOpen);
-  const proceed = useDeleteCustomersModal((state) => state.proceed);
-  const onClose = useDeleteCustomersModal((state) => state.onClose);
-  const onIsProceed = useDeleteCustomersModal((state) => state.onIsProceed);
+  const modalIds = useDeleteManyModal((state) => state.modalIds);
+  const isOpen = useDeleteManyModal((state) => state.isOpen);
+  const proceed = useDeleteManyModal((state) => state.proceed);
+  const onClose = useDeleteManyModal((state) => state.onClose);
+  const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const [notConfirm, setNotConfirm] = useState<boolean>(true);
 
   return (

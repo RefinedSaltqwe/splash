@@ -9,7 +9,7 @@ type CustomerModalStore = {
   onClose: () => void;
 };
 
-export const useDeleteCustomersModal = create<CustomerModalStore>((set) => ({
+export const useDeleteManyModal = create<CustomerModalStore>((set) => ({
   modalId: [],
   proceed: false,
   isOpen: false,

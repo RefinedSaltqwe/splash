@@ -13,15 +13,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useDeleteInvoiceModal } from "@/stores/useDeleteInvoiceModal";
+import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import React, { useState } from "react";
 
 const DeleteInvoicePrompt: React.FC = () => {
-  const modalIds = useDeleteInvoiceModal((state) => state.modalIds);
-  const isOpen = useDeleteInvoiceModal((state) => state.isOpen);
-  const proceed = useDeleteInvoiceModal((state) => state.proceed);
-  const onClose = useDeleteInvoiceModal((state) => state.onClose);
-  const onIsProceed = useDeleteInvoiceModal((state) => state.onIsProceed);
+  const modalIds = useDeleteManyModal((state) => state.modalIds);
+  const isOpen = useDeleteManyModal((state) => state.isOpen);
+  const proceed = useDeleteManyModal((state) => state.proceed);
+  const onClose = useDeleteManyModal((state) => state.onClose);
+  const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const [notConfirm, setNotConfirm] = useState<boolean>(true);
 
   return (
