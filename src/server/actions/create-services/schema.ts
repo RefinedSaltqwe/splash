@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const Service = z.object({
+export const CreateService = z.object({
   price: z.coerce.number().multipleOf(0.01),
-  invoiceId: z.string().optional().default(""),
-  serviceTypeId: z.string().optional().default(""),
-  description: z.string().optional().default(""),
+  invoiceId: z.string(),
+  serviceTypeId: z.string(),
+  description: z.string(),
 });
