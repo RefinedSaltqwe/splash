@@ -3,9 +3,9 @@ import React from "react";
 import Heading from "@/components/shared/Heading";
 import CreateForm from "./_components/CreateForm";
 
-type CreateUserProps = object;
+type CreateUserPageProps = object;
 
-const CreateUser: React.FC<CreateUserProps> = () => {
+const CreateUserPage: React.FC<CreateUserPageProps> = () => {
   return (
     <section className="flex w-full flex-col">
       <Heading title="Create" subTitle="Create a new customer" />
@@ -16,4 +16,4 @@ const CreateUser: React.FC<CreateUserProps> = () => {
   );
 };
 
-export default CreateUser;
+export default CreateUserPage;

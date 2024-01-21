@@ -1,5 +1,4 @@
-import DeleteCustomerModal from "@/components/modal/DeleteCustomerModal";
-import DeleteCustomersModal from "@/components/modal/DeleteCustomersModal";
+import ModalProvider from "@/components/providers/ModalProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
 import ClientWrapper from "@/components/shared/ClientWrapper";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -64,10 +63,9 @@ export default async function RootLayout({
           <QueryProvider>
             <ClientWrapper session={session}>
               {children}
-              <Toaster expand={false} richColors={false} />
-              <DeleteCustomerModal />
-              <DeleteCustomersModal />
+              <Toaster expand={false} richColors={true} />
             </ClientWrapper>
+            <ModalProvider />
           </QueryProvider>
         </ThemeProvider>
       </body>

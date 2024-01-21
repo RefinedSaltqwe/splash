@@ -15,5 +15,5 @@ export const useDeleteCustomersModal = create<CustomerModalStore>((set) => ({
   isOpen: false,
   onOpen: (ids: string[]) => set({ isOpen: true, modalIds: ids }),
   onIsProceed: (is: boolean) => set({ proceed: is }),
-  onClose: () => set({ isOpen: false, modalIds: [] }),
+  onClose: () => set({ isOpen: false, modalIds: [], proceed: false }),
 }));

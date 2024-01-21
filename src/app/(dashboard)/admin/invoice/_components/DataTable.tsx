@@ -24,16 +24,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
-import { type Invoice } from "@/types";
+import { deleteInvoice } from "@/server/actions/delete-invoice";
+import { useCustomerList } from "@/stores/useCustomersList";
+import { useDeleteInvoiceModal } from "@/stores/useDeleteInvoiceModal";
+import { type Customer, type Invoice } from "@prisma/client";
 import { Trash2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
 
 interface DataTableInvoiceProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   invoice: Invoice[];
+  customersData: Customer[] | undefined;
 }
 
 const extractTableIndex = (data: object) => {
@@ -59,13 +65,18 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   invoice,
+  customersData,
 }: DataTableInvoiceProps<TData, TValue>) {
-  //! var
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilterString, setGlobalFilterString] = useState("");
+  const onDeleteModalOpen = useDeleteInvoiceModal((state) => state.onOpen);
+  const proceed = useDeleteInvoiceModal((state) => state.proceed);
+  const onClose = useDeleteInvoiceModal((state) => state.onClose);
+  const onIsProceed = useDeleteInvoiceModal((state) => state.onIsProceed);
+  const ids = useDeleteInvoiceModal((state) => state.modalIds);
   const table = useReactTable({
     data,
     columns,
@@ -90,6 +101,7 @@ export function DataTable<TData, TValue>({
       globalFilter: globalFilterString,
     },
   });
+  const customerList = useCustomerList();
 
   const searchFilter = useCallback(
     (val: string) => {
@@ -97,10 +109,41 @@ export function DataTable<TData, TValue>({
     },
     [globalFilterString],
   );
+  const { execute: executeDeleteInvoice } = useAction(deleteInvoice, {
+    onSuccess: (data) => {
+      toast.success("Deleted successfully", {
+        description: `${
+          data.count > 1 ? "Records have" : "Record has"
+        } been deleted successfully from the server.`,
+      });
+      onIsProceed(false);
+      onClose();
+      setRowSelection({});
+    },
+    onError: () => {
+      toast.error("Error deleting records.");
+    },
+  });
   const deleteSelecetedUsers = () => {
     const getUsers = extractRowIds(extractTableIndex(rowSelection), invoice);
-    console.log("Delete Users: ", getUsers);
+    onDeleteModalOpen(getUsers);
   };
+
+  useEffect(() => {
+    if (proceed) {
+      const timer = setTimeout(() => {
+        void executeDeleteInvoice({
+          id: ids!,
+        });
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [proceed]);
+
+  useEffect(() => {
+    if (customersData) customerList.setCustomers(customersData);
+  }, [customersData]);
 
   return (
     <div className="flex w-full flex-col pb-6 pt-4">
@@ -175,7 +218,6 @@ export function DataTable<TData, TValue>({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-        {/* <Separator className="m-0 w-full bg-slate-200 p-0 dark:bg-slate-700" /> */}
       </div>
 
       {/* Header */}

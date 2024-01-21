@@ -1,14 +1,12 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
-
 import { createSafeAction } from "@/lib/create-safe-actions";
-
-import { CreateInvoice } from "./schema";
-import { type InputType, type ReturnType } from "./types";
+import { authOptions } from "@/server/auth";
 import { db } from "@/server/db";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/server/auth";
+import { CreateInvoice } from "./schema";
+import { type InputType, type ReturnType } from "./types";
+import { idGenerator } from "@/lib/utils";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const session = await getServerSession(authOptions);
@@ -19,57 +17,87 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  let card;
+  const {
+    customerId,
+    status,
+    dueDate,
+    shipping,
+    tax,
+    payment,
+    discount,
+    subTotal,
+    total,
+    services,
+  } = data;
 
-  // try {
-  //   const list = await db.list.findUnique({
-  //     where: {
-  //       id: listId,
-  //       board: {
-  //         orgId,
-  //       },
-  //     },
-  //   });
+  let promiseAll;
 
-  //   if (!list) {
-  //     return {
-  //       error: "List not found",
-  //     };
-  //   }
+  try {
+    const getLastInvoiceId = await db.invoice.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    });
 
-  //   // ? Get the last card in this list to determine the order number
-  //   const lastCard = await db.card.findFirst({
-  //     where: { listId },
-  //     orderBy: { order: "desc" },
-  //     select: { order: true },
-  //   });
+    const extractIdNumber = getLastInvoiceId
+      ? getLastInvoiceId.id.split("-")[1]
+      : "0";
+    //Get the last invoice id
+    const convertIntoNumber = parseInt(extractIdNumber ? extractIdNumber : "0");
+    const generateInvoiceId = idGenerator(convertIntoNumber);
+    console.log(generateInvoiceId);
+    //Insert invoiceId
+    const servicesWithInvoiceId = services.map((service) => {
+      const newService = {
+        price: service.price,
+        invoiceId: generateInvoiceId,
+        serviceTypeId: service.serviceTypeId,
+        description: service.description,
+      };
+      return newService;
+    });
 
-  //   // ? Last card order number plus + 1
-  //   const newOrder = lastCard ? lastCard.order + 1 : 1;
+    const invoice = db.invoice.create({
+      data: {
+        id: generateInvoiceId,
+        customerId,
+        status,
+        dueDate,
+        shipping,
+        tax: tax ? tax : 0,
+        payment,
+        discount,
+        subTotal,
+        total,
+      },
+    });
 
-  //   // ? Create new Card with the new order number
-  //   card = await db.card.create({
-  //     data: {
-  //       title,
-  //       listId,
-  //       order: newOrder,
-  //     },
-  //   });
+    const servicesDB = db.service.createMany({
+      data: [...servicesWithInvoiceId],
+    });
 
-  //   // await createAuditLog({
-  //   //   entityId: card.id,
-  //   //   entityTitle: card.title,
-  //   //   entityType: ENTITY_TYPE.CARD,
-  //   //   action: ACTION.CREATE,
-  //   // });
-  // } catch (error) {
-  //   return {
-  //     error: "Failed to create.",
-  //   };
-  // }
+    const [invoiceData, servicesData] = await Promise.all([
+      invoice,
+      servicesDB,
+    ]);
 
-  // revalidatePath(`/board/${boardId}`);
-  return { data: card };
+    if (!invoiceData) {
+      throw new ReferenceError("Error creating invoice");
+    }
+    if (!servicesData) {
+      throw new ReferenceError("Error creating services.");
+    }
+    promiseAll = {
+      ...invoiceData,
+      services: [],
+    };
+  } catch (err) {
+    return {
+      error: `Failed to create: ${!err}`,
+    };
+  }
+
+  revalidatePath(`/admin/invoice`);
+  return { data: promiseAll };
 };
 
 export const createInvoice = createSafeAction(CreateInvoice, handler);

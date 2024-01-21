@@ -16,8 +16,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import AuthHeader from "../../_components/AuthHeader";
-import { toast } from "@/components/ui/use-toast";
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 type SignInFormProps = object;
 
@@ -37,15 +37,13 @@ const SignInForm: React.FC<SignInFormProps> = ({}) => {
 
     if (!signInResult?.ok) {
       console.log("Failed");
-      return toast({
-        title: "Well this did not work...",
+
+      toast.error("Well this did not work...", {
         description: "Something went wrong, please try again",
-        variant: "destructive",
       });
     } else {
       form.reset();
-      return toast({
-        title: "Check your email",
+      toast.success("Check your email", {
         description: "A magic link has been sent to you",
       });
     }

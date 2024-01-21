@@ -87,37 +87,38 @@ model Customer {
 }
 
 model ServiceType {
-    id          Int @id @default(autoincrement())
+    id          String @id @default(cuid())
     name        String
 
-    service Service[]
+    service     Service[]
 }
 
 model Service {
     id          String @id @default(cuid()) 
     price       Int
-    status      String
+    description String
 
-    invoiceId   Int 
+    invoiceId   String 
     invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
-    serviceTypeId Int
+    serviceTypeId String
     serviceType ServiceType @relation(fields: [serviceTypeId], references: [id])
 }
 
 model Invoice {
-    id          Int @id @default(autoincrement())
+    id          String @id 
     status      String
     payment     Int @default(0)
     total       Int
     shipping    Int
     tax         Int
     subTotal    Int
+    discount    Int
 
     customerId  String
     customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
     
-    service     Service[]
+    services     Service[]
 
     createdAt   DateTime  @default(now())
     dueDate     DateTime

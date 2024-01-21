@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import React, { memo } from "react";
+import React, { memo, useRef } from "react";
 
 type SearchProps = {
   globalFilterString?: string;

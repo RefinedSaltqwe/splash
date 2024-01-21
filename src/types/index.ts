@@ -21,12 +21,11 @@ export type ServiceType = {
 };
 
 export type Service = {
-  id: string;
+  id?: string;
   serviceTypeId: string;
-  teamId?: string;
   price: number;
   invoiceId: string;
-  status: "Completed" | "In Progress" | "Finished";
+  description: string;
 };
 
 export type Invoice = {

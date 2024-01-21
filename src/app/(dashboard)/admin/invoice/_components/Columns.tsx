@@ -12,19 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   cn,
   convertInvoiceStatus,
+  convertStatusToColor,
   formatDateTime,
   formatPrice,
 } from "@/lib/utils";
-import { type Invoice } from "@/types";
+import { useCustomerList } from "@/stores/useCustomersList";
+import { useDeleteInvoiceModal } from "@/stores/useDeleteInvoiceModal";
+import { type Invoice } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 
 export const columns: ColumnDef<Invoice>[] = [
   {
@@ -76,15 +77,27 @@ export const columns: ColumnDef<Invoice>[] = [
     size: 100,
     cell: ({ row }) => {
       const data = row.original;
-      // const customerId = data.customerId; //! Use mock data since we dont have customer data yet
-      const customerName = "John Doe";
+      const customerList = useCustomerList((state) => state.customers);
+      const person = customerList.filter(
+        (person) => person.id === data.customerId,
+      );
+      const customerName =
+        person[0]?.companyName !== "N/A"
+          ? person[0]?.companyName
+          : person[0]?.name;
       return (
         <div className="flex shrink-0 flex-col">
           <Link
-            href={`/admin/employees/list/update/${data.id}`}
+            href={`/admin/invoice/view/${data.id}`}
             className="text-left font-medium hover:cursor-pointer hover:underline"
           >
-            <span>{customerName}</span>
+            <span className="w-[200px]">
+              {customerName ? (
+                customerName
+              ) : (
+                <Skeleton className="h-4 w-[150px] bg-muted-foreground/20" />
+              )}
+            </span>
           </Link>
           <span className="text-sm font-normal text-muted-foreground">
             {data.id}
@@ -120,31 +133,23 @@ export const columns: ColumnDef<Invoice>[] = [
     ),
     cell: ({ row }) => {
       const rowData = row.original;
-      let color = "";
-
-      if (rowData.status === "1") {
-        color = "green";
-      } else if (rowData.status === "2") {
-        color = "yellow";
-      } else if (rowData.status === "3") {
-        color = "orange";
-      } else if (rowData.status === "4") {
-        color = "red";
-      }
+      const color = convertStatusToColor(rowData.status);
       return (
         <Badge
           className={cn(
-            `bg-${color}-500/20 text-${color}-500 hover:bg-${color}-500/20`,
+            `bg-${color}-500/20 text-${color}-500 hover:bg-${color}-500/20 min-w-[100px] justify-center`,
           )}
         >
-          {convertInvoiceStatus(rowData.status)}
+          {rowData.dueDate < new Date()
+            ? convertInvoiceStatus("4")
+            : convertInvoiceStatus(rowData.status)}
         </Badge>
       );
     },
   },
   {
     accessorKey: "total",
-    header: () => <div className="text-left">Total</div>,
+    header: () => <div className="text-left">Balance</div>,
     cell: ({ row }) => {
       const amount = formatPrice(row.getValue("total"));
       return <div className="text-left font-medium">{amount}</div>;
@@ -154,16 +159,10 @@ export const columns: ColumnDef<Invoice>[] = [
     id: "actions",
     cell: ({ row }) => {
       const invoice = row.original;
+      const onDeleteModalOpen = useDeleteInvoiceModal((state) => state.onOpen);
 
       return (
         <div className="flex flex-row space-x-1 text-muted-foreground">
-          <Button
-            variant="ghost"
-            className="h-8 w-8 p-0"
-            onClick={() => console.log(invoice.id)}
-          >
-            <Pencil className="h-5 w-5" />
-          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -175,13 +174,13 @@ export const columns: ColumnDef<Invoice>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <Link
-                href={`/admin/invoice/${invoice.id}`}
-                className="text-left font-medium hover:cursor-pointer"
+                href={`/admin/invoice/update/${invoice.id}`}
+                className="text-left hover:cursor-pointer"
               >
-                <DropdownMenuItem>View</DropdownMenuItem>
+                <DropdownMenuItem>Update</DropdownMenuItem>
               </Link>
               <DropdownMenuItem
-                onClick={() => console.log(invoice.id)}
+                onClick={() => onDeleteModalOpen([invoice.id])}
                 className="hove:text-destructive text-destructive"
               >
                 Delete

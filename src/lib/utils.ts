@@ -1,3 +1,4 @@
+import { type Invoice } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 
 import { twMerge } from "tailwind-merge";
@@ -80,4 +81,129 @@ export const convertInvoiceStatus = (num: string) => {
       break;
   }
   return x;
+};
+
+export function convertStatusToColor(status: string) {
+  if (status === "1") {
+    return "green";
+  } else if (status === "2") {
+    return "yellow";
+  } else if (status === "3") {
+    return "orange";
+  } else if (status === "4") {
+    return "red";
+  }
+}
+
+function getlength(number: number) {
+  return number.toString().length;
+}
+
+export function idGenerator(invoiceCount: number) {
+  let id = "INV-";
+  const digitLength = getlength(invoiceCount);
+  const initialId = invoiceCount + 1;
+  switch (digitLength) {
+    case 1:
+      id += "000" + initialId;
+      break;
+    case 2:
+      id += "00" + initialId;
+      break;
+    case 3:
+      id += "0" + initialId;
+      break;
+    default:
+      id += initialId;
+      break;
+  }
+  return id;
+}
+
+export function statusGenerator(payment: number, total: number, dueDate: Date) {
+  if (dueDate < new Date() && payment < total) {
+    return "4";
+  } else if (total == 0) {
+    return "1";
+  } else if (payment === 0) {
+    return "3";
+  } else if (payment < total) {
+    return "2";
+  } else if (payment >= total) {
+    return "1";
+  }
+}
+
+export const subTotalPlusShippingMinusDiscount = (
+  subTotal: number,
+  shipping: number,
+  discount: number,
+) => {
+  const withShipping = subTotal + shipping;
+  const minusDiscount = withShipping - discount;
+
+  return Math.round((minusDiscount + Number.EPSILON) * 100) / 100;
+};
+
+export const taxValue = (minusDiscount: number, tax: number) => {
+  return Math.round((minusDiscount * (tax / 100) + Number.EPSILON) * 100) / 100;
+};
+
+export const totalValueWithTax = (
+  subTotal: number,
+  shipping: number,
+  discount: number,
+  tax: number,
+) => {
+  const subTotalVal = subTotalPlusShippingMinusDiscount(
+    subTotal,
+    shipping,
+    discount,
+  );
+  const taxVal = taxValue(subTotalVal, tax);
+  return subTotalVal + taxVal;
+};
+
+function generateRandomId(): string {
+  // You can implement your own logic to generate unique IDs
+  return Math.random().toString(36).substring(2, 10);
+}
+
+function generateRandomNumber(num: number): number {
+  // You can implement your own logic to generate random phone numbers
+  return Math.floor(Math.random() * num);
+}
+
+function generateDate(): Date {
+  const currentDate = new Date();
+  return currentDate;
+}
+
+const generateRandomUser = (): Invoice => ({
+  id: `INV-${generateRandomNumber(100000)}`,
+  customerId: generateRandomId(),
+  createdAt: generateDate(),
+  dueDate: generateDate(),
+  payment: generateRandomNumber(100),
+  total: 100,
+  status:
+    generateRandomNumber(4) === 1
+      ? "1"
+      : generateRandomNumber(4) === 2
+        ? "2"
+        : generateRandomNumber(4) === 3
+          ? "3"
+          : "4",
+  tax: 0,
+  shipping: 0,
+  subTotal: 0,
+  discount: 0,
+});
+
+export const generateRandomInvoice = (count: number): Invoice[] => {
+  const users: Invoice[] = [];
+  for (let i = 0; i < count; i++) {
+    users.push(generateRandomUser());
+  }
+  return users;
 };

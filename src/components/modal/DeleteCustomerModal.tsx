@@ -3,7 +3,7 @@ import { useAction } from "@/hooks/useAction";
 import { deleteCustomer } from "@/server/actions/delete-customer";
 import { useDeleteCustomerModal } from "@/stores/useDeleteCustomerModal";
 import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
@@ -15,15 +15,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { cn } from "@/lib/utils";
 
 const DeleteCustomerModal: React.FC = () => {
   const modalId = useDeleteCustomerModal((state) => state.modalId);
   const custName = useDeleteCustomerModal((state) => state.name);
   const isOpen = useDeleteCustomerModal((state) => state.isOpen);
   const onClose = useDeleteCustomerModal((state) => state.onClose);
+  const [notConfirm, setNotConfirm] = useState<boolean>(true);
 
   const queryClient = useQueryClient();
-  const { execute, isLoading } = useAction(deleteCustomer, {
+  const { execute } = useAction(deleteCustomer, {
     onSuccess: (data) => {
       const companyName = data.companyName;
       const custName = companyName !== "N/A" ? companyName : data.name;
@@ -43,7 +47,13 @@ const DeleteCustomerModal: React.FC = () => {
   });
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        setNotConfirm(true);
+        onClose();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{`Are sure you want to delete "${custName}"?`}</DialogTitle>
@@ -52,7 +62,30 @@ const DeleteCustomerModal: React.FC = () => {
             from our servers.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-start">
+        <Label
+          htmlFor="confirm"
+          className="block text-sm font-medium leading-6 text-foreground"
+        >
+          Type "DELETE" to proceed
+        </Label>
+        <Input
+          type="text"
+          id="confirm"
+          onChange={(e) => {
+            if (e.target.value === "DELETE") {
+              setNotConfirm(false);
+            } else {
+              setNotConfirm(true);
+            }
+          }}
+          autoComplete="postal-code"
+          className={cn(
+            "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+            "splash-base-input splash-inputs",
+          )}
+          placeholder="DELETE"
+        />
+        <DialogFooter className="space-y-4 space-y-reverse sm:justify-end sm:space-x-4 sm:space-y-0">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
               Cancel
@@ -66,8 +99,9 @@ const DeleteCustomerModal: React.FC = () => {
                 id: modalId!,
               });
             }}
+            disabled={notConfirm}
           >
-            {isLoading ? "Deleting..." : "Delete"}
+            {"Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

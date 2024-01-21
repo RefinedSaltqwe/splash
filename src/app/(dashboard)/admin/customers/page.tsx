@@ -19,7 +19,7 @@ const CustomersPage: React.FC = async () => {
   return (
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
-        <Heading title="Customers" />
+        <Heading title="Customers" subTitle="Customer list" />
         <ClientButtonLink
           buttonName="Create Customer"
           href="/admin/customers/create"

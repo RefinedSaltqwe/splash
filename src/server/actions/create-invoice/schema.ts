@@ -1,14 +1,22 @@
 import { z } from "zod";
 
 export const CreateInvoice = z.object({
-  title: z
-    .string({
-      required_error: "Title is required",
-      invalid_type_error: "Title is required",
-    })
-    .min(3, {
-      message: "Title is too short",
+  id: z.string(),
+  customerId: z.string(),
+  status: z.string(),
+  shipping: z.coerce.number().multipleOf(0.01),
+  tax: z.coerce.number(),
+  payment: z.coerce.number().multipleOf(0.01),
+  discount: z.coerce.number().multipleOf(0.01),
+  subTotal: z.coerce.number().multipleOf(0.01),
+  total: z.coerce.number().multipleOf(0.01),
+  dueDate: z.date(),
+  services: z.array(
+    z.object({
+      price: z.coerce.number().multipleOf(0.01),
+      invoiceId: z.string(),
+      serviceTypeId: z.string(),
+      description: z.string(),
     }),
-  boardId: z.string(),
-  listId: z.string(),
+  ),
 });

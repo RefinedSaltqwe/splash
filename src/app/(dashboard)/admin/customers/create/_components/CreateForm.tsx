@@ -30,14 +30,14 @@ const CreateForm: React.FC = () => {
   const { execute, isLoading } = useAction(createCustomer, {
     onSuccess: (data) => {
       const companyName = data.companyName;
-      const custName = companyName ? companyName : data.name;
+      const custName = companyName !== "N/A" ? companyName : data.name;
       toast.success(`New customer "${custName}" has been created.`, {
         description: formatDateTime(data.createdAt).dateOnly,
         duration: 2000,
       });
       //? Refetch the updated customer data
       void queryClient.invalidateQueries({
-        queryKey: ["customer"],
+        queryKey: ["customers"],
       });
     },
     onError: (error) => {
@@ -46,7 +46,6 @@ const CreateForm: React.FC = () => {
       });
     },
     onComplete: () => {
-      form.reset();
       router.push(`/admin/customers`);
     },
   });
@@ -253,10 +252,10 @@ const CreateForm: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="mt-6 flex items-center justify-end gap-4">
           <Button
             type="button"
-            variant={"ghost"}
+            variant={"card_outline"}
             onClick={() => router.push("/admin/customers")}
           >
             Cancel

@@ -141,7 +141,7 @@ html.dark .apexcharts-gridline {
     @apply overflow-x-auto;
   }
   .splash-scroll-x::-webkit-scrollbar {
-    @apply h-1;
+    @apply h-[6px];
   }
 
   .splash-scroll-x::-webkit-scrollbar-track {
@@ -155,7 +155,7 @@ html.dark .apexcharts-gridline {
     @apply overflow-y-scroll;
   }
   .splash-scroll::-webkit-scrollbar {
-    @apply w-1;
+    @apply w-[6px];
   }
 
   .splash-scroll::-webkit-scrollbar-track {

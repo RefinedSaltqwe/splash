@@ -15,7 +15,8 @@ import { cn } from "@/lib/utils";
 import { useDeleteCustomerModal } from "@/stores/useDeleteCustomerModal";
 import { type Customer } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -136,13 +137,6 @@ export const columns: ColumnDef<Customer>[] = [
       const customerModal = useDeleteCustomerModal();
       return (
         <div className="flex flex-row space-x-1 text-muted-foreground">
-          <Button
-            variant="ghost"
-            className="h-8 w-8 p-0"
-            onClick={() => console.log(item.id)}
-          >
-            <Pencil className="h-5 w-5" />
-          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -153,17 +147,23 @@ export const columns: ColumnDef<Customer>[] = [
             <DropdownMenuContent align="end" className="bg-drop-downmenu">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(item.id)}
+              <Link
+                href={`/admin/customers/update/${item.id}`}
+                className="text-left hover:cursor-pointer"
               >
-                Edit
-              </DropdownMenuItem>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+              </Link>
               <DropdownMenuItem onClick={() => console.log(item.id)}>
                 View customer
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500 hover:!bg-red-500/20 hover:!text-red-500"
-                onClick={() => customerModal.onOpen(item.id, item.companyName)}
+                onClick={() =>
+                  customerModal.onOpen(
+                    item.id,
+                    item.companyName !== "N/A" ? item.companyName : item.name,
+                  )
+                }
               >
                 Delete
               </DropdownMenuItem>

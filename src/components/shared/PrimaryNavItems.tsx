@@ -94,8 +94,8 @@ const PrimaryNavItems: React.FC<PrimaryNavItemsProps> = ({ title, data }) => {
                                     width={24}
                                     className={cn(
                                       pathname.includes(subItem.href)
-                                        ? "text-primary"
-                                        : "text-muted-foreground/50",
+                                        ? "scale-[2] text-primary transition-transform delay-0 duration-200 ease-in-out"
+                                        : "scale-[1] text-muted-foreground/50 transition-transform delay-0 duration-200 ease-in-out",
                                     )}
                                   />
                                   <span
