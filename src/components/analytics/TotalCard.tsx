@@ -7,6 +7,7 @@ type TotalCardProps = {
 };
 
 const TotalCard: React.FC<TotalCardProps> = ({ title, data }) => {
+  console.log(data);
   return (
     <div className="flex w-full flex-col space-y-3 text-foreground">
       <div className="flex w-full">
