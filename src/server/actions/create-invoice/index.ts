@@ -55,7 +55,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       return newService;
     });
 
-    const invoice = db.invoice.create({
+    const invoice = await db.invoice.create({
       data: {
         id: generateInvoiceId,
         customerId,
@@ -70,23 +70,18 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       },
     });
 
-    const servicesDB = db.service.createMany({
+    const servicesDB = await db.service.createMany({
       data: [...servicesWithInvoiceId],
     });
 
-    const [invoiceData, servicesData] = await Promise.all([
-      invoice,
-      servicesDB,
-    ]);
-
-    if (!invoiceData) {
+    if (!invoice) {
       throw new ReferenceError("Error creating invoice");
     }
-    if (!servicesData) {
+    if (!servicesDB) {
       throw new ReferenceError("Error creating services.");
     }
     promiseAll = {
-      ...invoiceData,
+      ...invoice,
       services: [],
     };
   } catch (err) {

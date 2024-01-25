@@ -34,9 +34,11 @@ const InvoicePage: React.FC<InvoicePageProps> = async () => {
     queryKey: ["serviceTypes"],
     queryFn: () => getServiceTypes(),
   });
+
   const randomInvoice: Invoice[] = generateRandomInvoice(1);
   const getInvoicesFrDb = getInvoices();
   const getCustomersFrDb = getCustomers();
+
   const [invoicesData, tempData, customersData] = await Promise.all([
     getInvoicesFrDb,
     randomInvoice,
