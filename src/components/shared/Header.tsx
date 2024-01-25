@@ -2,11 +2,12 @@ import { headerLinks } from "@/constants";
 import { useMobileSidebar } from "@/stores/useMobileSidebar";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { lazy } from "react";
 import { ModeToggle } from "../themeModeToggle";
 import { Button } from "../ui/button";
-import UserMenu from "./UserMenu";
 import { cn } from "@/lib/utils";
+
+const UserMenu = lazy(() => import("./UserMenu"));
 
 type HeaderProps = object;
 
@@ -33,6 +34,7 @@ const Header: React.FC<HeaderProps> = () => {
             <Image
               src="/assets/icons/menu.svg"
               alt="menu"
+              loading="lazy"
               width={24}
               height={24}
               className="h-[1.2rem] w-[1.2rem] scale-100 dark:invert"

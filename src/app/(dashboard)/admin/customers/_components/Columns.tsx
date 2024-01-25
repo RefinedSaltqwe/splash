@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { useDeleteCustomerModal } from "@/stores/useDeleteCustomerModal";
+import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { type Customer } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
@@ -107,6 +107,7 @@ export const columns: ColumnDef<Customer>[] = [
           className="hover:bg-transparent"
         >
           Email
+          <span className="sr-only">Email</span>
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -121,6 +122,7 @@ export const columns: ColumnDef<Customer>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="hover:bg-transparent"
         >
+          <span className="sr-only">Phone number</span>
           Phone Number
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -134,14 +136,18 @@ export const columns: ColumnDef<Customer>[] = [
     id: "actions",
     cell: ({ row }) => {
       const item = row.original;
-      const customerModal = useDeleteCustomerModal();
+      const customerModal = useDeleteManyModal();
       return (
         <div className="flex flex-row space-x-1 text-muted-foreground">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size={"icon"}
+                className="rounded-full hover:!bg-muted-foreground/20"
+              >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-6 w-6" />
+                <MoreHorizontal size={20} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-drop-downmenu">
@@ -158,12 +164,7 @@ export const columns: ColumnDef<Customer>[] = [
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500 hover:!bg-red-500/20 hover:!text-red-500"
-                onClick={() =>
-                  customerModal.onOpen(
-                    item.id,
-                    item.companyName !== "N/A" ? item.companyName : item.name,
-                  )
-                }
+                onClick={() => customerModal.onOpen([item.id], "customer")}
               >
                 Delete
               </DropdownMenuItem>

@@ -27,19 +27,21 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
 import { deleteInvoice } from "@/server/actions/delete-invoice";
-import { useCustomerList } from "@/stores/useCustomersList";
-import { useDeleteInvoicesModal } from "@/stores/useDeleteInvoicesModal";
+import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { type Customer, type Invoice } from "@prisma/client";
 import { Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
+import { useCustomerList } from "@/stores/useCustomersList";
+
+const Loader = lazy(() => import("@/components/shared/Loader"));
 
 interface DataTableInvoiceProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   invoice: Invoice[];
-  customersData: Customer[] | undefined;
+  customersData: Customer[];
 }
 
 const extractTableIndex = (data: object) => {
@@ -72,11 +74,12 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilterString, setGlobalFilterString] = useState("");
-  const onDeleteModalOpen = useDeleteInvoicesModal((state) => state.onOpen);
-  const proceed = useDeleteInvoicesModal((state) => state.proceed);
-  const onClose = useDeleteInvoicesModal((state) => state.onClose);
-  const onIsProceed = useDeleteInvoicesModal((state) => state.onIsProceed);
-  const ids = useDeleteInvoicesModal((state) => state.modalIds);
+  const onDeleteModalOpen = useDeleteManyModal((state) => state.onOpen);
+  const proceed = useDeleteManyModal((state) => state.proceed);
+  const onClose = useDeleteManyModal((state) => state.onClose);
+  const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
+  const setCustomers = useCustomerList((state) => state.setCustomers);
+  const ids = useDeleteManyModal((state) => state.modalIds);
   const table = useReactTable({
     data,
     columns,
@@ -101,7 +104,6 @@ export function DataTable<TData, TValue>({
       globalFilter: globalFilterString,
     },
   });
-  const customerList = useCustomerList();
 
   const searchFilter = useCallback(
     (val: string) => {
@@ -109,24 +111,27 @@ export function DataTable<TData, TValue>({
     },
     [globalFilterString],
   );
-  const { execute: executeDeleteInvoice } = useAction(deleteInvoice, {
-    onSuccess: (data) => {
-      toast.success("Deleted successfully", {
-        description: `${
-          data.count > 1 ? "Records have" : "Record has"
-        } been deleted successfully from the server.`,
-      });
-      onIsProceed(false);
-      onClose();
-      setRowSelection({});
+  const { execute: executeDeleteInvoice, isLoading } = useAction(
+    deleteInvoice,
+    {
+      onSuccess: (data) => {
+        toast.success("Deleted successfully", {
+          description: `${
+            data.count > 1 ? "Records have" : "Record has"
+          } been deleted successfully from the server.`,
+        });
+        onIsProceed(false);
+        onClose();
+        setRowSelection({});
+      },
+      onError: () => {
+        toast.error("Error deleting records.");
+      },
     },
-    onError: () => {
-      toast.error("Error deleting records.");
-    },
-  });
+  );
   const deleteSelecetedUsers = () => {
     const getUsers = extractRowIds(extractTableIndex(rowSelection), invoice);
-    onDeleteModalOpen(getUsers);
+    onDeleteModalOpen(getUsers, "invoice");
   };
 
   useEffect(() => {
@@ -142,7 +147,7 @@ export function DataTable<TData, TValue>({
   }, [proceed]);
 
   useEffect(() => {
-    if (customersData) customerList.setCustomers(customersData);
+    setCustomers(customersData);
   }, [customersData]);
 
   return (
@@ -271,10 +276,14 @@ export function DataTable<TData, TValue>({
                           size={"sm"}
                           className="rounded-full  hover:bg-primary/20"
                         >
-                          <Trash2
-                            size={16}
-                            className="text-primary brightness-100 saturate-200"
-                          />
+                          {isLoading ? (
+                            <Loader classNames="h-4 w-4 border-2 border-primary brightness-100 saturate-200 border-r-transparent" />
+                          ) : (
+                            <Trash2
+                              size={16}
+                              className="text-primary brightness-100 saturate-200"
+                            />
+                          )}
                         </Button>
                       </TableHead>
                     );

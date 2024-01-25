@@ -30,22 +30,24 @@ const SelectRecieverModal: React.FC<SelectRecieverModalProps> = ({
     queryKey: ["customers"],
   });
 
+  const customers = customersData ? customersData : [];
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader className="flex w-full flex-col items-start justify-start">
           <DialogTitle>Customers</DialogTitle>
-          <DialogDescription>Select the receiver.</DialogDescription>
+          <DialogDescription>Select receiver.</DialogDescription>
         </DialogHeader>
         <ScrollArea
           color="muted-foreground/20"
           className={cn(
             "my-auto flex h-auto max-h-96 flex-col",
-            "splash-scroll",
+            "splash-scroll shadcn-scrollarea",
           )}
         >
           <ul role="list" className="space-y-1 overflow-hidden rounded-lg">
-            {customersData!.map((person) => (
+            {customers.map((person) => (
               <li
                 key={person.email}
                 className={cn(

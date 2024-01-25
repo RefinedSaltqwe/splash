@@ -1,6 +1,10 @@
 import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
-import { getCustomers, getInvoiceWithServices } from "@/server/actions/fetch";
+import {
+  getCustomers,
+  getInvoiceWithServices,
+  getServiceTypes,
+} from "@/server/actions/fetch";
 import {
   HydrationBoundary,
   QueryClient,
@@ -25,7 +29,10 @@ const UpdateInvoicePage: React.FC<UpdateInvoiceProps> = async ({ params }) => {
     queryKey: ["invoice", params.invId],
     queryFn: () => getInvoiceWithServices(params.invId),
   });
-
+  await queryClient.prefetchQuery({
+    queryKey: ["serviceTypes"],
+    queryFn: () => getServiceTypes(),
+  });
   return (
     <section className="flex w-full flex-col">
       <Heading title={params.invId} subTitle="Update invoice." />

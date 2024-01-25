@@ -18,8 +18,6 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
   const { id } = data;
 
-  console.log("dasdasdasasdad: ", id);
-
   let deleteUsers;
   try {
     deleteUsers = await db.invoice.deleteMany({

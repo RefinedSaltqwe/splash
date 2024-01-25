@@ -2,8 +2,17 @@ import ClientButtonLink from "@/app/(dashboard)/_components/ButtonLinks/ClientBu
 import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
 import { cn, generateRandomInvoice, totalValueWithTax } from "@/lib/utils";
-import { getCustomers, getInvoices } from "@/server/actions/fetch";
+import {
+  getCustomers,
+  getInvoices,
+  getServiceTypes,
+} from "@/server/actions/fetch";
 import { type Invoice } from "@prisma/client";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
 import {
   CalendarCheck,
   CalendarClock,
@@ -20,6 +29,11 @@ type InvoicePageProps = object;
 
 export const revalidate = 3600;
 const InvoicePage: React.FC<InvoicePageProps> = async () => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["serviceTypes"],
+    queryFn: () => getServiceTypes(),
+  });
   const randomInvoice: Invoice[] = generateRandomInvoice(1);
   const getInvoicesFrDb = getInvoices();
   const getCustomersFrDb = getCustomers();
@@ -128,12 +142,14 @@ const InvoicePage: React.FC<InvoicePageProps> = async () => {
         </Card>
       </div>
       <Card padding={false}>
-        <DataTable
-          columns={columns}
-          data={invoicesData ? invoicesData : tempData}
-          invoice={invoicesData ? invoicesData : tempData}
-          customersData={customersData}
-        />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <DataTable
+            columns={columns}
+            data={invoicesData ? invoicesData : tempData}
+            invoice={invoicesData ? invoicesData : tempData}
+            customersData={customersData!}
+          />
+        </HydrationBoundary>
       </Card>
     </section>
   );

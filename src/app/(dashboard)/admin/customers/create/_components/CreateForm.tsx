@@ -258,9 +258,11 @@ const CreateForm: React.FC = () => {
             variant={"card_outline"}
             onClick={() => router.push("/admin/customers")}
           >
+            <span className="sr-only">Cancel</span>
             Cancel
           </Button>
           <Button type="submit" variant={"default"} disabled={isLoading}>
+            <span className="sr-only">Create</span>
             {isLoading ? "Creating..." : "Create"}
           </Button>
         </div>

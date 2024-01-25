@@ -1,6 +1,6 @@
 import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
-import { getCustomers } from "@/server/actions/fetch";
+import { getCustomers, getServiceTypes } from "@/server/actions/fetch";
 import {
   HydrationBoundary,
   QueryClient,
@@ -14,6 +14,10 @@ const CreateInvoicePage: React.FC = async () => {
   await queryClient.prefetchQuery({
     queryKey: ["customers"],
     queryFn: () => getCustomers(),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["serviceTypes"],
+    queryFn: () => getServiceTypes(),
   });
   return (
     <section className="flex w-full flex-col">

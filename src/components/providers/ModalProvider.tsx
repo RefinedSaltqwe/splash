@@ -1,14 +1,10 @@
-import React from "react";
-import DeleteCustomerModal from "../modal/DeleteCustomerModal";
-import DeleteCustomersModal from "../modal/DeleteCustomersModal";
-import DeleteInvoicePrompt from "@/app/(dashboard)/admin/invoice/_components/modal/DeleteInvoicePrompt";
+import React, { lazy } from "react";
+const DeleteManyModal = lazy(() => import("../modal/DeleteManyModal"));
 
 const ModalProvider: React.FC = () => {
   return (
     <>
-      <DeleteInvoicePrompt />
-      <DeleteCustomerModal />
-      <DeleteCustomersModal />
+      <DeleteManyModal />
     </>
   );
 };

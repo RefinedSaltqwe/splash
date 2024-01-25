@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -8,14 +9,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { subTotalPlusShippingMinusDiscount, taxValue } from "@/lib/utils";
+import {
+  formatPrice,
+  subTotalPlusShippingMinusDiscount,
+  taxValue,
+  totalValueWithTax,
+} from "@/lib/utils";
+import { getServiceTypes } from "@/server/actions/fetch";
 import { type InvoiceWithService } from "@/types/prisma";
+import { useQuery } from "@tanstack/react-query";
 
 type TableInvoiceProps = {
   data: InvoiceWithService;
 };
 
 export function TableInvoice({ data }: TableInvoiceProps) {
+  const { data: serviceTypesData } = useQuery({
+    queryFn: () => getServiceTypes(),
+    queryKey: ["serviceTypes"],
+  });
   return (
     <Table>
       <TableCaption className="font-normal">
@@ -31,28 +43,33 @@ export function TableInvoice({ data }: TableInvoiceProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.services.map((service) => (
-          <TableRow
-            key={service.id}
-            className="border-slate-200 dark:border-slate-700"
-          >
-            <TableCell>
-              <div className="flex flex-col">
-                <span className="w-[200px] font-semibold">
-                  {service.serviceTypeId}
-                </span>
-                <span className="font-normal text-muted-foreground">
-                  {service.description}
-                </span>
-              </div>
-            </TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-            <TableCell className="pr-0 text-right font-normal">
-              {`$${service.price}`}
-            </TableCell>
-          </TableRow>
-        ))}
+        {data.services.map((service) => {
+          const extract = serviceTypesData?.filter(
+            (serviceItem) => serviceItem.id === service.serviceTypeId,
+          );
+          const item = extract ? extract[0]?.name : "No name";
+
+          return (
+            <TableRow
+              key={service.id}
+              className="border-slate-200 dark:border-slate-700"
+            >
+              <TableCell>
+                <div className="flex flex-col">
+                  <span className="w-[200px] font-semibold">{item}</span>
+                  <span className="font-normal text-muted-foreground">
+                    {service.description}
+                  </span>
+                </div>
+              </TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell className="pr-0 text-right font-normal">
+                {`${formatPrice(String(service.price))}`}
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
       <TableFooter className="border-slate-200 bg-transparent dark:border-slate-700">
         <TableRow>
@@ -70,7 +87,7 @@ export function TableInvoice({ data }: TableInvoiceProps) {
             Subtotal
           </TableHead>
           <TableCell className="pb-0 pl-8 pr-0 pt-4 text-right font-normal tabular-nums text-foreground">
-            {`$${data.subTotal}`}
+            {`${formatPrice(String(data.subTotal))}`}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -88,7 +105,7 @@ export function TableInvoice({ data }: TableInvoiceProps) {
             Shipping
           </TableHead>
           <TableCell className="pb-0 pl-8 pr-0 pt-4 text-right font-normal tabular-nums text-foreground">
-            {`$${data.shipping}`}
+            {`${formatPrice(String(data.shipping))}`}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -106,7 +123,7 @@ export function TableInvoice({ data }: TableInvoiceProps) {
             Discount
           </TableHead>
           <TableCell className="pb-0 pl-8 pr-0 pt-4 text-right font-normal tabular-nums text-destructive">
-            {`-$${data.discount}`}
+            {`-${formatPrice(String(data.discount))}`}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -124,13 +141,44 @@ export function TableInvoice({ data }: TableInvoiceProps) {
             {`Tax (${data.tax}%)`}
           </TableHead>
           <td className="pb-0 pl-8 pr-0 pt-4 text-right font-normal tabular-nums text-foreground">
-            {taxValue(
-              subTotalPlusShippingMinusDiscount(
-                data.subTotal,
-                data.shipping,
-                data.discount,
+            {formatPrice(
+              String(
+                taxValue(
+                  subTotalPlusShippingMinusDiscount(
+                    data.subTotal,
+                    data.shipping,
+                    data.discount,
+                  ),
+                  data.tax,
+                ),
               ),
-              data.tax,
+            )}
+          </td>
+        </TableRow>
+        <TableRow>
+          <TableHead
+            scope="row"
+            className="pt-4 font-normal text-muted-foreground sm:hidden"
+          >
+            {`Total`}
+          </TableHead>
+          <TableHead
+            scope="row"
+            colSpan={3}
+            className="hidden pt-4 text-right font-normal text-muted-foreground sm:table-cell"
+          >
+            {`Total`}
+          </TableHead>
+          <td className="pb-0 pl-8 pr-0 pt-4 text-right font-normal tabular-nums text-foreground">
+            {formatPrice(
+              String(
+                totalValueWithTax(
+                  data.subTotal,
+                  data.shipping,
+                  data.discount,
+                  data.tax,
+                ),
+              ),
             )}
           </td>
         </TableRow>
@@ -149,7 +197,7 @@ export function TableInvoice({ data }: TableInvoiceProps) {
             Payment
           </TableHead>
           <td className="pb-0 pl-8 pr-0 pt-4 text-right font-normal tabular-nums text-destructive">
-            {`-$${data.payment}`}
+            {`-${formatPrice(String(data.payment))}`}
           </td>
         </TableRow>
         <TableRow>
@@ -157,17 +205,17 @@ export function TableInvoice({ data }: TableInvoiceProps) {
             scope="row"
             className="pt-4 font-bold text-foreground sm:hidden"
           >
-            Total
+            Balance
           </TableHead>
           <TableHead
             scope="row"
             colSpan={3}
             className="hidden pt-4 text-right font-bold text-foreground sm:table-cell"
           >
-            Total
+            Balance
           </TableHead>
           <TableCell className="pb-0 pl-8 pr-0 pt-4 text-right font-bold tabular-nums text-foreground">
-            {`$${data.total}`}
+            {`${formatPrice(String(data.total))}`}
           </TableCell>
         </TableRow>
       </TableFooter>

@@ -46,7 +46,7 @@ export const sideMenuLinks: SideMenuLinks[] = [
   },
   {
     name: "Services",
-    href: "/admin/expense/services",
+    href: "/admin/services",
     icon: HardHat,
     children: [],
   },

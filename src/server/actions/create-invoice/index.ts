@@ -44,8 +44,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     //Get the last invoice id
     const convertIntoNumber = parseInt(extractIdNumber ? extractIdNumber : "0");
     const generateInvoiceId = idGenerator(convertIntoNumber);
-    console.log(generateInvoiceId);
-    //Insert invoiceId
+    //Insert invoiceId into service.invoiceId
     const servicesWithInvoiceId = services.map((service) => {
       const newService = {
         price: service.price,

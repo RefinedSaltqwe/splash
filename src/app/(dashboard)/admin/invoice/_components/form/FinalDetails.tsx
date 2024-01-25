@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import React from "react";
 
 type FinalDetailsProps = {
@@ -14,7 +14,7 @@ const FinalDetails: React.FC<FinalDetailsProps> = ({
   childClassNames,
   title,
   isMinus = false,
-  value = 0,
+  value = 0.0,
 }) => {
   return (
     <div className="col-span-full grid grid-cols-2">
@@ -29,11 +29,11 @@ const FinalDetails: React.FC<FinalDetailsProps> = ({
       <span
         className={cn(
           "text-end font-normal text-muted-foreground",
-          value > 0 && childClassNames,
+          childClassNames,
         )}
       >
         {isMinus && value != undefined && value != 0 ? "-" : ""}
-        {value && value != undefined ? `$${value}` : "-"}
+        {value && value != undefined ? `${formatPrice(String(value))}` : "-"}
       </span>
     </div>
   );

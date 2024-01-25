@@ -14,6 +14,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({ role, logoUrl }) => {
       {logoUrl ? (
         <Image
           className="h-10 w-auto"
+          loading="lazy"
           src={logoUrl}
           alt="Splash"
           width={10}

@@ -108,17 +108,17 @@ model Service {
 model Invoice {
     id          String @id 
     status      String
-    payment     Int @default(0)
-    total       Int
-    shipping    Int
+    payment     Float @default(0)
+    total       Float
+    shipping    Float
     tax         Int
-    subTotal    Int
-    discount    Int
+    subTotal    Float
+    discount    Float
 
     customerId  String
     customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
     
-    services     Service[]
+    services    Service[]
 
     createdAt   DateTime  @default(now())
     dueDate     DateTime

@@ -28,6 +28,7 @@ const ClientButtonLink: React.FC<ClientButtonLinkProps> = ({
   return (
     <div className="mb-5">
       <Button onClick={() => router.push(href)} variant={variant}>
+        <span className="sr-only">Link Button </span>
         <Plus size={16} className="mr-2" />
         {buttonName}
       </Button>

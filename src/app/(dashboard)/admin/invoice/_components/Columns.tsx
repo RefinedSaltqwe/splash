@@ -19,9 +19,10 @@ import {
   convertStatusToColor,
   formatDateTime,
   formatPrice,
+  totalValueWithTax,
 } from "@/lib/utils";
 import { useCustomerList } from "@/stores/useCustomersList";
-import { useDeleteInvoicesModal } from "@/stores/useDeleteInvoicesModal";
+import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { type Invoice } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
@@ -133,18 +134,41 @@ export const columns: ColumnDef<Invoice>[] = [
     ),
     cell: ({ row }) => {
       const rowData = row.original;
-      const color = convertStatusToColor(rowData.status);
+      const color = convertStatusToColor(
+        rowData.status !== "1"
+          ? rowData.dueDate < new Date()
+            ? "4"
+            : rowData.status
+          : rowData.status,
+      );
       return (
         <Badge
           className={cn(
             `bg-${color}-500/20 text-${color}-500 hover:bg-${color}-500/20 min-w-[100px] justify-center`,
           )}
         >
-          {rowData.dueDate < new Date()
-            ? convertInvoiceStatus("4")
+          {rowData.status !== "1"
+            ? rowData.dueDate < new Date()
+              ? convertInvoiceStatus("4")
+              : convertInvoiceStatus(rowData.status)
             : convertInvoiceStatus(rowData.status)}
         </Badge>
       );
+    },
+  },
+  {
+    id: "total-total",
+    header: () => <div className="text-left">Total</div>,
+    cell: ({ row }) => {
+      const item = row.original;
+      const total = totalValueWithTax(
+        item.subTotal,
+        item.shipping,
+        item.discount,
+        item.tax,
+      );
+      const amount = formatPrice(String(total));
+      return <div className="text-left font-medium">{amount}</div>;
     },
   },
   {
@@ -159,15 +183,19 @@ export const columns: ColumnDef<Invoice>[] = [
     id: "actions",
     cell: ({ row }) => {
       const invoice = row.original;
-      const onDeleteModalOpen = useDeleteInvoicesModal((state) => state.onOpen);
+      const onDeleteModalOpen = useDeleteManyModal((state) => state.onOpen);
 
       return (
         <div className="flex flex-row space-x-1 text-muted-foreground">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size={"icon"}
+                className="rounded-full hover:!bg-muted-foreground/20"
+              >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-6 w-6" />
+                <MoreHorizontal size={20} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-drop-downmenu">
@@ -180,7 +208,7 @@ export const columns: ColumnDef<Invoice>[] = [
                 <DropdownMenuItem>Update</DropdownMenuItem>
               </Link>
               <DropdownMenuItem
-                onClick={() => onDeleteModalOpen([invoice.id])}
+                onClick={() => onDeleteModalOpen([invoice.id], "invoice")}
                 className="hove:text-destructive text-destructive"
               >
                 Delete

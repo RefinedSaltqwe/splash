@@ -149,6 +149,7 @@ export const columns: ColumnDef<User>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="hover:bg-transparent"
         >
+          <span className="sr-only">Email</span>
           Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -164,6 +165,7 @@ export const columns: ColumnDef<User>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="hover:bg-transparent"
         >
+          <span className="sr-only">Role</span>
           Role
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -186,16 +188,22 @@ export const columns: ColumnDef<User>[] = [
         <div className="flex flex-row space-x-1 text-muted-foreground">
           <Button
             variant="ghost"
-            className="h-8 w-8 p-0"
+            size={"icon"}
+            className="rounded-full hover:!bg-muted-foreground/20"
             onClick={() => console.log(payment.id)}
           >
-            <Pencil className="h-5 w-5" />
+            <span className="sr-only">Edit</span>
+            <Pencil size={20} />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size={"icon"}
+                className="rounded-full hover:!bg-muted-foreground/20"
+              >
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-6 w-6" />
+                <MoreHorizontal size={20} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-drop-downmenu">

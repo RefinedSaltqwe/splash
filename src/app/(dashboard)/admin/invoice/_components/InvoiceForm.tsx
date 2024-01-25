@@ -34,14 +34,18 @@ import {
 } from "@/lib/utils";
 import { createInvoice } from "@/server/actions/create-invoice";
 import { CreateInvoice } from "@/server/actions/create-invoice/schema";
-import { getCustomer, getInvoiceWithServices } from "@/server/actions/fetch";
+import {
+  getCustomer,
+  getInvoiceWithServices,
+  getServiceTypes,
+} from "@/server/actions/fetch";
 import { useAddInvoiceReceiverModal } from "@/stores/useAddInvoiceReceiverModal";
 import { type Service } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Customer } from "@prisma/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format } from "date-fns";
-import { CalendarIcon, Pencil } from "lucide-react";
+import { CalendarIcon, Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -64,19 +68,26 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
     queryFn: () => getInvoiceWithServices(invId!),
     enabled: type === "update" && !!invId,
   });
+
   const { data: customerData } = useQuery({
     queryKey: ["customer", invId],
     queryFn: () => getCustomer(invoiceData!.customerId),
     enabled: !!invoiceData, //? Dependent to invoiceData
   });
 
-  const defaultServiceValue = {
+  const { data: serviceTypesData } = useQuery({
+    queryKey: ["serviceTypes"],
+    queryFn: () => getServiceTypes(),
+  });
+
+  const initialServiceValues = {
     price: 0,
     invoiceId: "",
     serviceTypeId: "",
     description: "",
   };
-  const initialValues =
+
+  const initialInvoiceValues =
     invoiceData && type === "update"
       ? {
           ...invoiceData,
@@ -91,23 +102,25 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
           discount: 0,
           subTotal: 0,
           total: 0,
-          services: [defaultServiceValue],
+          services: [initialServiceValues],
         };
+
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [services, setServices] = useState<Service[]>([defaultServiceValue]);
+  const onOpen = useAddInvoiceReceiverModal();
+  const [services, setServices] = useState<Service[]>([initialServiceValues]);
   const [dueDate, setDueDate] = useState<Date>();
+  const [receiver, setReceiver] = useState<Customer>();
   const [calculatedPrice, setCalculatedPrice] = useState({
     payment: invoiceData?.payment ? invoiceData.payment : 0,
     shipping: invoiceData?.shipping ? invoiceData.shipping : 0,
     discount: invoiceData?.discount ? invoiceData.discount : 0,
     tax: invoiceData?.tax ? invoiceData.tax : 0,
   });
-  const [receiver, setReceiver] = useState<Customer>();
-  const onOpen = useAddInvoiceReceiverModal();
+
   const form = useForm<z.infer<typeof CreateInvoice>>({
     resolver: zodResolver(CreateInvoice),
-    defaultValues: initialValues,
+    defaultValues: initialInvoiceValues,
   });
 
   const addReceiver = useCallback(
@@ -178,12 +191,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
               : receiver?.name
           } has been created.`,
         );
-        router.push("/admin/invoice");
       },
       onError: (error) => {
         toast.error(error, {
           duration: 5000,
         });
+      },
+      onComplete: () => {
+        router.push("/admin/invoice");
       },
     });
 
@@ -201,12 +216,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
         void queryClient.invalidateQueries({
           queryKey: ["invoice", invId],
         });
-        router.push("/admin/invoice");
       },
       onError: (error) => {
         toast.error(error, {
           duration: 5000,
         });
+      },
+      onComplete: () => {
+        router.push("/admin/invoice");
       },
     });
 
@@ -230,55 +247,41 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
       }
     });
 
+    const mainValues = {
+      customerId: receiver.id,
+      status: statusGenerator(
+        calculatedPrice.payment,
+        totalValueWithTax(
+          subTotal(),
+          calculatedPrice.shipping,
+          calculatedPrice.discount,
+          calculatedPrice.tax,
+        ),
+        dueDate ? dueDate : new Date(),
+      )!,
+      dueDate: values.dueDate,
+      shipping: calculatedPrice.shipping,
+      tax: calculatedPrice.tax,
+      payment: calculatedPrice.payment,
+      discount: calculatedPrice.discount,
+      subTotal: subTotal(),
+      total: total(),
+    };
+
     if (type === "create" && proceed == 0) {
       void executeCreateInvoice({
         id: "",
-        customerId: receiver.id,
-        status: statusGenerator(
-          calculatedPrice.payment,
-          totalValueWithTax(
-            subTotal(),
-            calculatedPrice.shipping,
-            calculatedPrice.discount,
-            calculatedPrice.tax,
-          ),
-          dueDate ? dueDate : new Date(),
-        )!,
-        dueDate: values.dueDate,
-        shipping: calculatedPrice.shipping,
-        tax: calculatedPrice.tax,
-        payment: calculatedPrice.payment,
-        discount: calculatedPrice.discount,
-        subTotal: subTotal(),
-        total: total(),
+        ...mainValues,
         services: [...services],
       });
     } else if (type === "update" && proceed == 0) {
       void executeUpdateInvoice({
         id: invoiceData!.id,
-        customerId: receiver.id,
-        status: statusGenerator(
-          calculatedPrice.payment,
-          totalValueWithTax(
-            subTotal(),
-            calculatedPrice.shipping,
-            calculatedPrice.discount,
-            calculatedPrice.tax,
-          ),
-          dueDate ? dueDate : new Date(),
-        )!,
-        createdAt: invoiceData!.createdAt,
-        dueDate: values.dueDate,
-        shipping: calculatedPrice.shipping,
-        tax: calculatedPrice.tax,
-        payment: calculatedPrice.payment,
-        discount: calculatedPrice.discount,
-        subTotal: subTotal(),
-        total: total(),
+        ...mainValues,
         services: [...services],
+        createdAt: invoiceData!.createdAt,
       });
     }
-    // console.log({ values, calculatedPrice, services, receiver });
   }
 
   return (
@@ -469,6 +472,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
                 return (
                   <div key={index}>
                     <ServiceInputs
+                      serviceTypesData={serviceTypesData!}
                       setServices={setServices}
                       index={index}
                       item={item}
@@ -480,26 +484,31 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
               })}
             </div>
           </div>
+          <div className="flex w-full flex-row">
+            <Button
+              type="button"
+              variant={"card_outline"}
+              className="!border-primary !text-primary hover:no-underline"
+              onClick={() =>
+                setServices((prev) => [...prev, initialServiceValues])
+              }
+            >
+              <span className="sr-only">Add Item</span>
+              <Plus size={18} className="ml-[-4px] mr-1" />
+              Add Item
+            </Button>
+          </div>
           <div className="grid grid-cols-12 space-y-3">
-            <div className="col-span-2 grid grid-cols-1 items-start justify-center gap-4">
-              <Button
-                type="button"
-                variant={"link"}
-                className="hover:no-underline"
-                onClick={() =>
-                  setServices((prev) => [...prev, defaultServiceValue])
-                }
-              >
-                <span className="text-primary"> {`+ `}Add Item</span>
-              </Button>
-            </div>
             <PriceInputs
               addCalculatedPrice={addCalculatedPrice}
               calculatedPrice={calculatedPrice}
             />
             <div className="col-span-full grid grid-cols-2 items-center justify-center gap-4 px-3 py-2 sm:col-span-4 sm:col-start-9">
               <FinalDetails title="Subtotal" value={subTotal()} />
-              <FinalDetails title="Shipping" value={calculatedPrice.shipping} />
+              <FinalDetails
+                title="Travel Expense"
+                value={calculatedPrice.shipping}
+              />
               <FinalDetails
                 title="Discount"
                 value={calculatedPrice.discount}
@@ -518,13 +527,22 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
                 )}
               />
               <FinalDetails
+                title="Total"
+                value={totalValueWithTax(
+                  subTotal(),
+                  calculatedPrice.shipping,
+                  calculatedPrice.discount,
+                  calculatedPrice.tax,
+                )}
+              />
+              <FinalDetails
                 title="Payment"
                 value={calculatedPrice.payment}
                 childClassNames="text-destructive"
                 isMinus={true}
               />
               <FinalDetails
-                title="Total"
+                title="Balance"
                 parentClassNames="text-foreground font-semibold"
                 childClassNames="text-foreground font-semibold"
                 value={total()}

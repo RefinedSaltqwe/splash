@@ -1,3 +1,4 @@
+import DrawerProvider from "@/components/providers/DrawerProvider";
 import ModalProvider from "@/components/providers/ModalProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
 import ClientWrapper from "@/components/shared/ClientWrapper";
@@ -65,6 +66,7 @@ export default async function RootLayout({
               {children}
               <Toaster expand={false} richColors={true} />
             </ClientWrapper>
+            <DrawerProvider />
             <ModalProvider />
           </QueryProvider>
         </ThemeProvider>

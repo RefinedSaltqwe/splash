@@ -1,6 +1,8 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { PlusSquare } from "lucide-react";
 import React from "react";
 
 type PriceInputsProps = {
@@ -183,6 +185,14 @@ const PriceInputs: React.FC<PriceInputsProps> = ({
             className="block flex-1 border-0 bg-transparent py-1.5 pl-1 font-normal text-foreground placeholder:text-gray-400 focus:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 sm:text-sm sm:leading-6 dark:placeholder:text-gray-600"
             placeholder="Shipping"
           />
+          <Button
+            variant={"ghost"}
+            type="button"
+            onClick={() => console.log("add Payment")}
+          >
+            <span className="sr-only">Add Partial Payment</span>
+            <PlusSquare size={18} className="text-muted-foreground" />
+          </Button>
         </div>
       </div>
     </div>

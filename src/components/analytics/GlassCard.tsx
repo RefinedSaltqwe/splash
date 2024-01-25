@@ -26,7 +26,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
     >
       <div className="flex w-full flex-col items-center justify-center space-y-3">
         <div className="flex flex-1 ">
-          <Image src={icon} height={65} width={65} alt="icon" />
+          <Image src={icon} height={65} width={65} alt="icon" loading="lazy" />
         </div>
         <div className="flex flex-col items-center space-x-2">
           <span className={cn("text-3xl ", color)}>{title}</span>

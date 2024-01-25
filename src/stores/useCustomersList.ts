@@ -28,7 +28,7 @@ export const useCustomerList = create<CustomerListStore>((set) => ({
   },
   setCustomers: (data: Customer[]) => {
     set(() => ({
-      customers: [...data],
+      customers: data,
     }));
   },
   addCustomers: (data: Customer[]) => {
