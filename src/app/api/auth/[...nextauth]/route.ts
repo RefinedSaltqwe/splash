@@ -1,5 +1,4 @@
-// import NextAuth from "next-auth";
-
+"use server";
 import { authOptions } from "@/server/auth";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import NextAuth from "next-auth";
