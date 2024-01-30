@@ -18,11 +18,13 @@ import { CreateCustomer } from "@/server/actions/create-customer/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { lazy } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { type z } from "zod";
+
+const Loader = lazy(() => import("@/components/shared/Loader"));
 
 const CreateForm: React.FC = () => {
   const router = useRouter();
@@ -42,7 +44,7 @@ const CreateForm: React.FC = () => {
     },
     onError: (error) => {
       toast.error(error, {
-        duration: 2000,
+        duration: 5000,
       });
     },
     onComplete: () => {
@@ -263,7 +265,11 @@ const CreateForm: React.FC = () => {
           </Button>
           <Button type="submit" variant={"default"} disabled={isLoading}>
             <span className="sr-only">Create</span>
-            {isLoading ? "Creating..." : "Create"}
+            {isLoading ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Create"
+            )}
           </Button>
         </div>
       </form>

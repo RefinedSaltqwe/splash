@@ -47,7 +47,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { lazy, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -56,6 +56,8 @@ import PriceInputs from "./form/PriceInputs";
 import Receiver from "./form/Receiver";
 import ServiceInputs from "./form/ServiceInputs";
 import { updateInvoice } from "@/server/actions/update-invoice";
+
+const Loader = lazy(() => import("@/components/shared/Loader"));
 
 type InvoiceFormProps = {
   type: "create" | "update";
@@ -563,13 +565,17 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
                 className="w-full"
                 disabled={type === "create" ? isLoadingCreate : isLoadingUpdate}
               >
-                {type == "create"
-                  ? isLoadingCreate
-                    ? "Creating..."
-                    : "Create"
-                  : isLoadingUpdate
-                    ? "Updating..."
-                    : "Update"}
+                {type == "create" ? (
+                  isLoadingCreate ? (
+                    <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                  ) : (
+                    "Create"
+                  )
+                ) : isLoadingUpdate ? (
+                  <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                ) : (
+                  "Update"
+                )}
               </Button>
             </div>
           </div>

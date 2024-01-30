@@ -106,6 +106,8 @@ export const sideMenuLinks: SideMenuLinks[] = [
 
 export const authFormDefaultValues = {
   email: "",
+  password: "",
+  code: "",
 };
 
 export const teamsLinks = [

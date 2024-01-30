@@ -31,6 +31,15 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({ role, logoUrl }) => {
           ? "Sign in to your account"
           : "Sign in to your employee account"}
       </h2>
+      <p className="mt-2 text-sm leading-6 text-gray-500">
+        Don't have an account?{" "}
+        <a
+          href="auth/registration"
+          className="font-semibold text-primary hover:underline"
+        >
+          Register
+        </a>
+      </p>
     </div>
   );
 };

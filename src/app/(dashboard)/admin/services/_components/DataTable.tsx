@@ -115,7 +115,7 @@ export function DataTable<TData, TValue>({
     },
     onError: (error) => {
       toast.error(error, {
-        duration: 2000,
+        duration: 5000,
       });
     },
     onComplete: () => {

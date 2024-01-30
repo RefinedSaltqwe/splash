@@ -9,14 +9,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { eventDefaultValues } from "@/constants";
 import { cn } from "@/lib/utils";
 import { sampleFormValidator } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { lazy } from "react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
+
+const Loader = lazy(() => import("@/components/shared/Loader"));
 
 type CreateFormProps = object;
 
@@ -287,9 +296,87 @@ const CreateForm: React.FC<CreateFormProps> = () => {
                           "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
                           "splash-base-input splash-inputs",
                         )}
-                        placeholder="XXXXXX"
+                        placeholder="--- ---"
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel
+                      htmlFor="jobRole"
+                      className="block text-sm font-medium leading-6 text-foreground"
+                    >
+                      Role
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          id="jobRole"
+                          {...field}
+                          className={cn(
+                            "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                            "splash-base-input splash-inputs",
+                          )}
+                          aria-placeholder="Role"
+                        >
+                          <SelectValue placeholder="Select Service" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent
+                        className={cn(
+                          "border-[1px] border-slate-200 bg-card font-normal placeholder:text-gray-400 dark:border-slate-700 dark:placeholder:text-gray-600",
+                        )}
+                      >
+                        <SelectItem
+                          value="All"
+                          className="hover:!bg-muted-foreground/5"
+                        >
+                          All
+                        </SelectItem>
+                        <SelectItem
+                          value="Mason"
+                          className="hover:!bg-muted-foreground/5"
+                        >
+                          Mason
+                        </SelectItem>
+                        <SelectItem
+                          value="hr"
+                          className="hover:!bg-muted-foreground/5"
+                        >
+                          HR Manger
+                        </SelectItem>
+                        <SelectItem
+                          value="pst"
+                          className="hover:!bg-muted-foreground/5"
+                        >
+                          Pacific Standard Time (PST)
+                        </SelectItem>
+                        <SelectItem
+                          value="akst"
+                          className="hover:!bg-muted-foreground/5"
+                        >
+                          Alaska Standard Time (AKST)
+                        </SelectItem>
+                        <SelectItem
+                          value="hst"
+                          className="hover:!bg-muted-foreground/5"
+                        >
+                          Hawaii Standard Time (HST)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -306,7 +393,11 @@ const CreateForm: React.FC<CreateFormProps> = () => {
             Cancel
           </Button>
           <Button type="submit" variant={"default"}>
-            Create
+            {false ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Update"
+            )}
           </Button>
         </div>
       </form>

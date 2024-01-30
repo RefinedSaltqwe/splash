@@ -1,4 +1,5 @@
 import ApexChart from "@/components/analytics/ApexChart";
+import GlassCard from "@/components/analytics/GlassCard";
 import TotalCard from "@/components/analytics/TotalCard";
 import GridColumn from "@/components/shared/GridColumn";
 import GridWrapper from "@/components/shared/GridWrapper";
@@ -11,10 +12,8 @@ import {
 } from "@/constants";
 import { authOptions } from "@/server/auth";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import React from "react";
 import BoysVGirls from "../../_components/BoysVGirls";
-import GlassCard from "@/components/analytics/GlassCard";
 
 type AdminDashboardPageProps = object;
 
@@ -25,16 +24,10 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = async () => {
   const dataBarAreaChart = barChartDefault;
   const dataGroupedBar = barGroupedDefault;
 
-  console.log(session);
-
-  if (!session) {
-    return redirect("/admin/auth");
-  }
-
   return (
     <section className="w-full">
       <Heading
-        title={`Hi ${session.user.name}, welcome back!`}
+        title={`Hi ${session?.user.name}, welcome back!`}
         subTitle="Dashboard"
       />
       <GridWrapper>

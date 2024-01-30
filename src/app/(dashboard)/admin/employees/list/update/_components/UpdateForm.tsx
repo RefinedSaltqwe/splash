@@ -34,8 +34,6 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ uid }) => {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
-
-  console.log("This is the UID for Update: ", uid);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">

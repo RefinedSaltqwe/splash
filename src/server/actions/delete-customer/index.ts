@@ -14,9 +14,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    return {
-      error: "Unauthorized",
-    };
+    throw new Error("Unauthorized");
   }
 
   const { id } = data;
@@ -28,10 +26,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         id,
       },
     });
-  } catch (error) {
-    return {
-      error: "Failed to delete.",
-    };
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return {
+        error: err.message,
+      };
+    }
   }
 
   revalidatePath(`/admin/customers`);

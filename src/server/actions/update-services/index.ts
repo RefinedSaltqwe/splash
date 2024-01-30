@@ -26,10 +26,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         name,
       },
     });
-  } catch (error) {
-    return {
-      error: "Failed to create.",
-    };
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return {
+        error: err.message,
+      };
+    }
   }
 
   revalidatePath(`/admin/services`);

@@ -27,9 +27,14 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         },
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return {
+        error: err.message,
+      };
+    }
     return {
-      error: `Failed to create: ${!err}`,
+      error: "Error deleting",
     };
   }
 

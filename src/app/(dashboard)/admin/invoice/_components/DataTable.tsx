@@ -124,8 +124,10 @@ export function DataTable<TData, TValue>({
         onClose();
         setRowSelection({});
       },
-      onError: () => {
-        toast.error("Error deleting records.");
+      onError: (error) => {
+        toast.error(error, {
+          duration: 5000,
+        });
       },
     },
   );

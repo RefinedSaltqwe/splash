@@ -87,12 +87,12 @@ export const columns: ColumnDef<Invoice>[] = [
           ? person[0]?.companyName
           : person[0]?.name;
       return (
-        <div className="flex shrink-0 flex-col">
+        <div className="flex min-w-[175px] flex-col">
           <Link
             href={`/admin/invoice/view/${data.id}`}
             className="text-left font-medium hover:cursor-pointer hover:underline"
           >
-            <span className="w-[200px]">
+            <span className="w-full">
               {customerName ? (
                 customerName
               ) : (
@@ -114,7 +114,11 @@ export const columns: ColumnDef<Invoice>[] = [
     ),
     cell: ({ row }) => {
       const date = row.original.createdAt;
-      return <div className="font-medium">{formatDateTime(date).dateOnly}</div>;
+      return (
+        <div className="min-w-[120px] font-medium">
+          {formatDateTime(date).dateOnly}
+        </div>
+      );
     },
   },
   {
@@ -124,7 +128,11 @@ export const columns: ColumnDef<Invoice>[] = [
     ),
     cell: ({ row }) => {
       const date = row.original.dueDate;
-      return <div className="font-medium">{formatDateTime(date).dateOnly}</div>;
+      return (
+        <div className="min-w-[120px] font-medium">
+          {formatDateTime(date).dateOnly}
+        </div>
+      );
     },
   },
   {

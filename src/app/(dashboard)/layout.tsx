@@ -17,7 +17,9 @@ const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
 
   if (pathname.includes("auth")) {
     //* LAYOUT FOR AUTH
-    return <div className="flex h-screen flex-col">{children}</div>;
+    return (
+      <div className="flex h-screen flex-col bg-background">{children}</div>
+    );
   } else {
     //* LAYOUT FOR MAIN DASHBOARD
     return (

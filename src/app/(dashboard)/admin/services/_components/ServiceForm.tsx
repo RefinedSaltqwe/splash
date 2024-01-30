@@ -17,10 +17,12 @@ import { type UpdateService } from "@/server/actions/update-services/schema";
 import { useServiceModal } from "@/stores/useServiceModal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { lazy } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
+
+const Loader = lazy(() => import("@/components/shared/Loader"));
 
 type ServiceFormProps = {
   className?: string;
@@ -32,35 +34,45 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ className }) => {
   const name = useServiceModal((state) => state.drawerName);
   const queryClient = useQueryClient();
 
-  const { execute: create } = useAction(createService, {
-    onSuccess: (data) => {
-      toast.success(`New service "${data.name}" created.`);
-      void queryClient.invalidateQueries({
-        queryKey: ["serviceTypes"],
-      });
+  const { execute: create, isLoading: createLoading } = useAction(
+    createService,
+    {
+      onSuccess: (data) => {
+        toast.success(`New service "${data.name}" created.`);
+        void queryClient.invalidateQueries({
+          queryKey: ["serviceTypes"],
+        });
+      },
+      onError: (error) => {
+        toast.error(error, {
+          duration: 5000,
+        });
+      },
+      onComplete: () => {
+        onClose();
+      },
     },
-    onError: () => {
-      toast.error("Error creating service: ");
-    },
-    onComplete: () => {
-      onClose();
-    },
-  });
+  );
 
-  const { execute: update } = useAction(updateService, {
-    onSuccess: (data) => {
-      toast.success(`"${name}" has been updated to "${data.name}".`);
-      void queryClient.invalidateQueries({
-        queryKey: ["serviceTypes"],
-      });
+  const { execute: update, isLoading: updateLoading } = useAction(
+    updateService,
+    {
+      onSuccess: (data) => {
+        toast.success(`"${name}" has been updated to "${data.name}".`);
+        void queryClient.invalidateQueries({
+          queryKey: ["serviceTypes"],
+        });
+      },
+      onError: (error) => {
+        toast.error(error, {
+          duration: 5000,
+        });
+      },
+      onComplete: () => {
+        onClose();
+      },
     },
-    onError: () => {
-      toast.error("Error updating service: ");
-    },
-    onComplete: () => {
-      onClose();
-    },
-  });
+  );
   const form = useForm<z.infer<typeof UpdateService>>({
     resolver: zodResolver(CreateService),
     defaultValues:
@@ -124,7 +136,12 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ className }) => {
             Cancel
           </Button>
           <Button type="submit" variant={"default"}>
-            Save
+            <span className="sr-only">Save</span>
+            {updateLoading || createLoading ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Save"
+            )}
           </Button>
         </div>
       </form>

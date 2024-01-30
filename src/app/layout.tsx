@@ -38,7 +38,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("min-h-screen font-sans", inter.variable)}>

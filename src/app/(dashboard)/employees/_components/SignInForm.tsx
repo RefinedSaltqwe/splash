@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authFormDefaultValues } from "@/constants";
-import { authValidatorSchema } from "@/lib/validator";
+import { LoginFormSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import React from "react";
@@ -21,8 +21,8 @@ type SignInFormProps = object;
 
 const SignInForm: React.FC<SignInFormProps> = ({}) => {
   const initialValues = authFormDefaultValues;
-  const form = useForm<z.infer<typeof authValidatorSchema>>({
-    resolver: zodResolver(authValidatorSchema),
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: initialValues,
   });
 

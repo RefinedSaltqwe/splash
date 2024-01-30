@@ -194,6 +194,7 @@ html.dark .apexcharts-gridline {
   .splash-base-input {
     @apply border-[1px] border-slate-200 bg-background/20 font-normal text-foreground;
   }
+  /*border-slate-200 dark:border-slate-700*/
   .splash-inputs {
     @apply focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-slate-700;
   }

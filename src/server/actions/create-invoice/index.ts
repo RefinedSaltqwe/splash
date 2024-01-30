@@ -84,10 +84,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       ...invoice,
       services: [],
     };
-  } catch (err) {
-    return {
-      error: `Failed to create: ${!err}`,
-    };
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return {
+        error: err.message,
+      };
+    }
   }
 
   revalidatePath(`/admin/invoice`);

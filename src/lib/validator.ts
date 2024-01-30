@@ -1,6 +1,12 @@
 import * as z from "zod";
 
-export const authValidatorSchema = z.object({
+export const LoginFormSchema = z.object({
+  email: z.string().email({ message: "Must be a valid email" }),
+  password: z.string(),
+  code: z.optional(z.string()),
+});
+
+export const EmailVerificationSchema = z.object({
   email: z.string().email({ message: "Must be a valid email" }),
 });
 

@@ -1,54 +1,93 @@
 "use client";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authFormDefaultValues } from "@/constants";
-import { authValidatorSchema } from "@/lib/validator";
+import { LoginFormSchema } from "@/lib/validator";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { type z } from "zod";
 import AuthHeader from "../../_components/AuthHeader";
-import { signIn } from "next-auth/react";
-import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type SignInFormProps = object;
 
 const SignInForm: React.FC<SignInFormProps> = ({}) => {
+  const [loading, isLoading] = useState(false);
+  const [twoFactor, setTwoFactor] = useState(false);
   const initialValues = authFormDefaultValues;
-  const form = useForm<z.infer<typeof authValidatorSchema>>({
-    resolver: zodResolver(authValidatorSchema),
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: initialValues,
   });
 
-  async function onSubmit(values: z.infer<typeof authValidatorSchema>) {
-    const signInResult = await signIn("email", {
+  async function onSubmit(values: z.infer<typeof LoginFormSchema>) {
+    if (twoFactor && values.code === "") {
+      toast.error("Code is required.", {
+        description: "Please try again.",
+      });
+      return;
+    }
+    const signInResult = await signIn("credentials", {
       email: values.email,
-      callbackUrl: `/admin/dashboard`,
+      password: values.password,
+      code: values.code,
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
       redirect: false,
     });
 
     if (!signInResult?.ok) {
-      console.log("Failed");
-
-      toast.error("Well this did not work...", {
-        description: "Something went wrong, please try again",
-      });
+      if (signInResult?.error === "AccessDenied") {
+        toast.error(`${signInResult?.error}: Email not verified`, {
+          description: "Confirmation link sent to email.",
+        });
+      } else if (signInResult?.error === "two-factor-needed") {
+        setTwoFactor(true);
+        toast.success("Check your email");
+        return;
+      } else if (signInResult?.error === "Account does not exist.") {
+        toast.error(signInResult?.error, {
+          description: "Please try again or use Google Authentication.",
+        });
+      } else {
+        toast.error(signInResult?.error, {
+          description: "Please try again.",
+        });
+      }
     } else {
-      form.reset();
-      toast.success("Check your email", {
-        description: "A magic link has been sent to you",
+      isLoading(true);
+      router.push(DEFAULT_LOGIN_REDIRECT);
+      toast.loading("Redirecting...", {
+        description: "Please wait",
       });
     }
   }
-
+  if (loading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-background">
+        <Loader
+          type="spinner"
+          classNames="h-6 w-6 border-2 border-primary brightness-100 saturate-200 border-r-transparent"
+        />
+      </div>
+    );
+  }
   return (
     <section className="flex min-h-full flex-1 bg-background">
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -61,7 +100,7 @@ const SignInForm: React.FC<SignInFormProps> = ({}) => {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="flex flex-col gap-5"
                 >
-                  <div className="flex flex-col gap-5 md:flex-row">
+                  <div className={cn("flex flex-col", !twoFactor && "gap-5")}>
                     <FormField
                       control={form.control}
                       name="email"
@@ -71,13 +110,64 @@ const SignInForm: React.FC<SignInFormProps> = ({}) => {
                             <Input
                               placeholder="Email"
                               {...field}
-                              className="input-field bg-background text-muted-foreground"
+                              disabled={twoFactor}
+                              className={cn(
+                                "input-field bg-background text-muted-foreground",
+                                twoFactor && "hidden",
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Password"
+                              {...field}
+                              disabled={twoFactor}
+                              className={cn(
+                                "input-field bg-background text-muted-foreground",
+                                twoFactor && "hidden",
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    {twoFactor && (
+                      <FormField
+                        control={form.control}
+                        name="code"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel
+                              htmlFor="2fa"
+                              className="block text-sm font-medium leading-6 text-foreground"
+                            >
+                              Two Factor Authentication
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                id="2fa"
+                                type="text"
+                                placeholder="Code"
+                                {...field}
+                                className="input-field bg-background text-muted-foreground"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </div>
 
                   <Button
@@ -86,12 +176,17 @@ const SignInForm: React.FC<SignInFormProps> = ({}) => {
                     disabled={form.formState.isSubmitting}
                     className="button col-span-2 w-full"
                   >
-                    {form.formState.isSubmitting ? "Signing in..." : `Sign In`}
+                    {form.formState.isSubmitting ? (
+                      <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                    ) : twoFactor ? (
+                      "Confirm"
+                    ) : (
+                      `Sign In`
+                    )}
                   </Button>
                 </form>
               </Form>
             </div>
-
             <div className="mt-10">
               <div className="relative">
                 <div
@@ -113,7 +208,7 @@ const SignInForm: React.FC<SignInFormProps> = ({}) => {
                   variant="outline"
                   onClick={() =>
                     signIn("google", {
-                      callbackUrl: `/admin/dashboard`,
+                      callbackUrl: DEFAULT_LOGIN_REDIRECT,
                     })
                   }
                 >
@@ -139,10 +234,9 @@ const SignInForm: React.FC<SignInFormProps> = ({}) => {
           className="absolute inset-0 h-full w-full object-cover"
           src="https://images.unsplash.com/photo-1496917756835-20cb06e75b4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
           alt="background"
-          loading="lazy"
+          priority
           width={500}
           height={500}
-          priority
         />
       </div>
     </section>

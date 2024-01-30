@@ -16,7 +16,9 @@ import { cn } from "@/lib/utils";
 import { getCustomers, getServiceTypes } from "@/server/actions/fetch";
 import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { lazy, useState } from "react";
+
+const Loader = lazy(() => import("@/components/shared/Loader"));
 
 const DeleteInvoicePrompt: React.FC = () => {
   const modalIds = useDeleteManyModal((state) => state.modalIds);
@@ -120,7 +122,11 @@ const DeleteInvoicePrompt: React.FC = () => {
             }}
             disabled={proceed ? proceed : notConfirm}
           >
-            {proceed ? "Deleting..." : "Delete"}
+            {proceed ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Delete"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

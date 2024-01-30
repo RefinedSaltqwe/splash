@@ -4,11 +4,11 @@ import { revalidatePath } from "next/cache";
 
 import { createSafeAction } from "@/lib/create-safe-actions";
 
-import { CreateCustomer } from "./schema";
-import { type InputType, type ReturnType } from "./types";
+import { authOptions } from "@/server/auth";
 import { db } from "@/server/db";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/server/auth";
+import { CreateCustomer } from "./schema";
+import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const session = await getServerSession(authOptions);
@@ -30,10 +30,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         phoneNumber,
       },
     });
-  } catch (error) {
-    return {
-      error: "Failed to create.",
-    };
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return {
+        error: err.message,
+      };
+    }
   }
 
   revalidatePath(`/admin/customers/create`);

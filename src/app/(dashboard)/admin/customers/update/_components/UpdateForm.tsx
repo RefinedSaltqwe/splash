@@ -19,11 +19,13 @@ import { type UpdateCustomer } from "@/server/actions/update-customer/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { lazy } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { type z } from "zod";
+
+const Loader = lazy(() => import("@/components/shared/Loader"));
 
 type UpdateFormProps = {
   cid: string;
@@ -53,7 +55,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ cid }) => {
     },
     onError: (error) => {
       toast.error(error, {
-        duration: 2000,
+        duration: 5000,
       });
     },
     onComplete: () => {
@@ -273,7 +275,11 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ cid }) => {
             Cancel
           </Button>
           <Button type="submit" variant={"default"} disabled={isLoading}>
-            {isLoading ? "Updating..." : "Update"}
+            {isLoading ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Update"
+            )}
           </Button>
         </div>
       </form>
