@@ -52,118 +52,118 @@ declare module "next-auth" {
 let isCredentialsCallback: boolean;
 
 export const authOptions: NextAuthOptions = {
-  // callbacks: {
-  //   async signIn({ user, account }) {
-  //     if (account?.provider === "credentials" && user) {
-  //       // Check if email verified
-  //       const existingUser = await getUserByEmail(user.email ? user.email : "");
-  //       if (!existingUser?.emailVerified) {
-  //         await confirmationEmail(user.email ? user.email : "");
-  //         return false;
-  //       }
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "credentials" && user) {
+        // Check if email verified
+        const existingUser = await getUserByEmail(user.email ? user.email : "");
+        if (!existingUser?.emailVerified) {
+          await confirmationEmail(user.email ? user.email : "");
+          return false;
+        }
 
-  //       //Check if there is confirmation
-  //       if (existingUser.isTwoFactorEnabled) {
-  //         //Check if 2fa confirmed
-  //         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-  //           existingUser.id,
-  //         );
-  //         // If it is not confirmed yet
-  //         if (!twoFactorConfirmation) {
-  //           return false;
-  //         }
+        //Check if there is confirmation
+        if (existingUser.isTwoFactorEnabled) {
+          //Check if 2fa confirmed
+          const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+            existingUser.id,
+          );
+          // If it is not confirmed yet
+          if (!twoFactorConfirmation) {
+            return false;
+          }
 
-  //         // Delete Confirmation after authenticated
-  //         await db.twoFactorConfirmation.delete({
-  //           where: { id: twoFactorConfirmation.id },
-  //         });
-  //       }
+          // Delete Confirmation after authenticated
+          await db.twoFactorConfirmation.delete({
+            where: { id: twoFactorConfirmation.id },
+          });
+        }
 
-  //       isCredentialsCallback = true;
-  //       // Generate session token and set cookie
-  //       const sessionToken = randomUUID();
-  //       const sessionExpiry = new Date(Date.now() + 60 * 60 * 24 * 30 * 1000);
+        isCredentialsCallback = true;
+        // Generate session token and set cookie
+        const sessionToken = randomUUID();
+        const sessionExpiry = new Date(Date.now() + 60 * 60 * 24 * 30 * 1000);
 
-  //       await db.session.create({
-  //         data: {
-  //           sessionToken,
-  //           userId: user.id,
-  //           expires: sessionExpiry,
-  //         },
-  //       });
+        await db.session.create({
+          data: {
+            sessionToken,
+            userId: user.id,
+            expires: sessionExpiry,
+          },
+        });
 
-  //       cookies().set("next-auth.session-token", sessionToken, {
-  //         expires: sessionExpiry,
-  //       });
-  //     } else {
-  //       //Using OAuth
-  //       const userExist = await db.authorizedEmail.findUnique({
-  //         where: {
-  //           email: user.email ? user.email : "",
-  //         },
-  //       });
-  //       //Check if email exist in the db
-  //       if (!userExist) {
-  //         return false;
-  //       } else {
-  //         // If exist and not registered then update to true
-  //         if (userExist.registered === false) {
-  //           const updateAuthEmail = await db.authorizedEmail.update({
-  //             where: {
-  //               email: user.email ? user.email : "",
-  //             },
-  //             data: {
-  //               registered: true,
-  //             },
-  //           });
-  //           if (updateAuthEmail) {
-  //             return true;
-  //           }
-  //         }
-  //         return true;
-  //       }
-  //     }
-  //     return true;
-  //   },
-  //   session({ session, user }) {
-  //     session.user.role = user.role ? user.role : "user";
-  //     session.user.id = user.id;
-  //     return session;
-  //   },
-  // },
-  // jwt: {
-  //   maxAge: 60 * 60 * 24 * 30,
-  //   encode: async (arg) => {
-  //     if (isCredentialsCallback) {
-  //       // Retrieve and return session token from the cookie
-  //       const cookie = cookies().get("next-auth.session-token");
-  //       return cookie?.value ?? "";
-  //     }
-  //     return encode(arg);
-  //   },
-  //   decode: async (arg) => {
-  //     if (isCredentialsCallback) {
-  //       // Prevent decoding during credentials callback
-  //       return null;
-  //     }
-  //     return decode(arg);
-  //   },
-  // },
-  // events: {
-  //   async signOut({ session }) {
-  //     const { sessionToken = "" } = session as unknown as {
-  //       sessionToken?: string;
-  //     };
+        cookies().set("next-auth.session-token", sessionToken, {
+          expires: sessionExpiry,
+        });
+      } else {
+        //Using OAuth
+        const userExist = await db.authorizedEmail.findUnique({
+          where: {
+            email: user.email ? user.email : "",
+          },
+        });
+        //Check if email exist in the db
+        if (!userExist) {
+          return false;
+        } else {
+          // If exist and not registered then update to true
+          if (userExist.registered === false) {
+            const updateAuthEmail = await db.authorizedEmail.update({
+              where: {
+                email: user.email ? user.email : "",
+              },
+              data: {
+                registered: true,
+              },
+            });
+            if (updateAuthEmail) {
+              return true;
+            }
+          }
+          return true;
+        }
+      }
+      return true;
+    },
+    session({ session, user }) {
+      session.user.role = user.role ? user.role : "user";
+      session.user.id = user.id;
+      return session;
+    },
+  },
+  jwt: {
+    maxAge: 60 * 60 * 24 * 30,
+    encode: async (arg) => {
+      if (isCredentialsCallback) {
+        // Retrieve and return session token from the cookie
+        const cookie = cookies().get("next-auth.session-token");
+        return cookie?.value ?? "";
+      }
+      return encode(arg);
+    },
+    decode: async (arg) => {
+      if (isCredentialsCallback) {
+        // Prevent decoding during credentials callback
+        return null;
+      }
+      return decode(arg);
+    },
+  },
+  events: {
+    async signOut({ session }) {
+      const { sessionToken = "" } = session as unknown as {
+        sessionToken?: string;
+      };
 
-  //     if (sessionToken) {
-  //       await db.session.deleteMany({
-  //         where: {
-  //           sessionToken,
-  //         },
-  //       });
-  //     }
-  //   },
-  // },
+      if (sessionToken) {
+        await db.session.deleteMany({
+          where: {
+            sessionToken,
+          },
+        });
+      }
+    },
+  },
   adapter: PrismaAdapter(db),
   providers: [
     GoogleProvider({
@@ -198,6 +198,11 @@ export const authOptions: NextAuthOptions = {
 
             if (isPasswordCorrect) {
               // If Two Factor Authentication enabled
+              const codeLength = code ? code.length : 0;
+              console.log(
+                "+++++++++++++++++++++++++++++Code: ",
+                codeLength >= 0,
+              );
 
               if (user?.isTwoFactorEnabled) {
                 if (code) {
