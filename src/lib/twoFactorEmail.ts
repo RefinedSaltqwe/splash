@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { sendTwoFactorEmail } from "./mail";
 import { generateTwoFactorToken } from "./tokens";
 
-export const twoFactorEmail = async (email: string) => {
+export const twoFactorEmail = async (email: string, name: string) => {
   const twoFactorToken = await generateTwoFactorToken(email);
 
   try {
@@ -11,7 +11,11 @@ export const twoFactorEmail = async (email: string) => {
       console.log("Failed to create token");
       throw new Error("Failed to create two factor token");
     } else {
-      await sendTwoFactorEmail(twoFactorToken.email, twoFactorToken.token);
+      await sendTwoFactorEmail(
+        name,
+        twoFactorToken.email,
+        twoFactorToken.token,
+      );
       return twoFactorToken;
     }
   } catch (error) {

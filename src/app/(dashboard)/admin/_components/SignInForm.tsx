@@ -61,6 +61,12 @@ const SignInForm: React.FC<SignInFormProps> = ({}) => {
         setTwoFactor(true);
         toast.success("Check your email");
         return;
+      } else if (signInResult?.error === "Code has expired!") {
+        setTwoFactor(false);
+        form.reset();
+        toast.error(signInResult?.error, {
+          description: "Please try again.",
+        });
       } else if (signInResult?.error === "Account does not exist.") {
         toast.error(signInResult?.error, {
           description: "Please try again or use Google Authentication.",

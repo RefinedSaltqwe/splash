@@ -192,6 +192,7 @@ export const authOptions: NextAuthOptions = {
               },
             });
 
+            const userName = `${user?.firstName}`;
             const userEmail = user?.email ? user?.email : "";
             const userPassword = user?.password ? user.password : "";
             const isPasswordCorrect = await compare(password, userPassword);
@@ -244,7 +245,7 @@ export const authOptions: NextAuthOptions = {
                   });
                 } else {
                   // ? SEND two factor code
-                  await twoFactorEmail(userEmail);
+                  await twoFactorEmail(userEmail, userName);
                   throw new Error("two-factor-needed");
                 }
               }

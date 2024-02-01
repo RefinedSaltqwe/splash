@@ -7,7 +7,17 @@ type QueryProviderProps = {
 };
 
 const QueryProvider: React.FC<QueryProviderProps> = ({ children }) => {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 6 * 1000,
+            refetchInterval: 6 * 1000,
+          },
+        },
+      }),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
