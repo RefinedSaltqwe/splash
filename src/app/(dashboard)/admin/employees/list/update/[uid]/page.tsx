@@ -1,7 +1,13 @@
 import Card from "@/app/(dashboard)/_components/containers/Card";
-import React from "react";
 import Heading from "@/components/shared/Heading";
-import UpdateForm from "../_components/UpdateForm";
+import React from "react";
+import InputForm from "../../_components/InputForm";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
+import { getUserById } from "@/server/actions/fetch";
 
 type UpdateUserProps = {
   params: {
@@ -9,12 +15,19 @@ type UpdateUserProps = {
   };
 };
 
-const UpdateUser: React.FC<UpdateUserProps> = ({ params }) => {
+const UpdateUser: React.FC<UpdateUserProps> = async ({ params }) => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["user", params.uid],
+    queryFn: () => getUserById(params.uid),
+  });
   return (
     <section className="flex w-full flex-col">
       <Heading title="Update" subTitle="Update user infomration" />
       <Card>
-        <UpdateForm uid={params.uid} />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <InputForm uid={params.uid} />
+        </HydrationBoundary>
       </Card>
     </section>
   );

@@ -5,6 +5,7 @@ generator client {
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
 }
 
 model JobRole {
@@ -40,22 +41,22 @@ model Session {
 
 model User {
     id            String @id @default(cuid())
-    name          String?
-    firstName     String?
-    lastName      String?
-    email         String? @unique
-    password      String?
-    emailVerified DateTime?
-    image         String?
-    status        String?
-    phoneNumber   String?
-    role          String?
-    country       String?
-    street        String?
-    city          String?
-    state         String?
-    postalCode    String?
-    jobRole       String?
+    name          String @default("")
+    firstName     String @default("")
+    lastName      String @default("")
+    email         String @unique
+    password      String @default("")
+    emailVerified DateTime? 
+    image         String @default("")
+    status        String @default("Pending")
+    phoneNumber   String @default("")
+    role          String @default("user")
+    country       String @default("")
+    street        String @default("")
+    city          String @default("")
+    state         String @default("")
+    postalCode    String @default("")
+    jobRole       String @default("")
     isTwoFactorEnabled Boolean @default(false)
     twoFactorConfirmation TwoFactorConfirmation? 
     createdAt     DateTime @default(now())

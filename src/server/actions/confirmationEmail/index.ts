@@ -36,6 +36,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       data: {
         emailVerified: new Date(),
         email: existingToken.email,
+        status: "Active",
       },
     });
 

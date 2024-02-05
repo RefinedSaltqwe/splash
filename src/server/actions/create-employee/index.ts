@@ -20,7 +20,9 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         password: hashedPassword,
         ...rest,
         role: "user",
-        status: "active",
+        status: "Pending",
+        image: "",
+        jobRole: "",
       },
     });
 

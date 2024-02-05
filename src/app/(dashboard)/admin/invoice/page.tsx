@@ -21,8 +21,8 @@ import {
   ClipboardList,
 } from "lucide-react";
 import React from "react";
+import { ClientData } from "./_components/ClientData";
 import { columns } from "./_components/Columns";
-import { DataTable } from "./_components/DataTable";
 import Stats from "./_components/Stats";
 
 type InvoicePageProps = object;
@@ -33,6 +33,10 @@ const InvoicePage: React.FC<InvoicePageProps> = async () => {
   await queryClient.prefetchQuery({
     queryKey: ["serviceTypes"],
     queryFn: () => getServiceTypes(),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["invoices"],
+    queryFn: () => getInvoices(),
   });
 
   const randomInvoice: Invoice[] = generateRandomInvoice(1);
@@ -145,11 +149,10 @@ const InvoicePage: React.FC<InvoicePageProps> = async () => {
       </div>
       <Card padding={false}>
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <DataTable
+          <ClientData
             columns={columns}
-            data={invoicesData ? invoicesData : tempData}
-            invoice={invoicesData ? invoicesData : tempData}
             customersData={customersData!}
+            tempData={tempData}
           />
         </HydrationBoundary>
       </Card>

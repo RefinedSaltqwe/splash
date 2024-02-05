@@ -74,7 +74,7 @@ export const columns: ColumnDef<Invoice>[] = [
   },
   {
     id: "name",
-    header: "Supplier Name",
+    header: "Customer",
     size: 100,
     cell: ({ row }) => {
       const data = row.original;
@@ -115,7 +115,7 @@ export const columns: ColumnDef<Invoice>[] = [
     cell: ({ row }) => {
       const date = row.original.createdAt;
       return (
-        <div className="min-w-[120px] font-medium">
+        <div className="min-w-[120px] font-medium text-muted-foreground">
           {formatDateTime(date).dateOnly}
         </div>
       );
@@ -129,7 +129,7 @@ export const columns: ColumnDef<Invoice>[] = [
     cell: ({ row }) => {
       const date = row.original.dueDate;
       return (
-        <div className="min-w-[120px] font-medium">
+        <div className="min-w-[120px] font-medium text-muted-foreground">
           {formatDateTime(date).dateOnly}
         </div>
       );
@@ -176,7 +176,11 @@ export const columns: ColumnDef<Invoice>[] = [
         item.tax,
       );
       const amount = formatPrice(String(total));
-      return <div className="text-left font-medium">{amount}</div>;
+      return (
+        <div className="text-left font-medium text-muted-foreground">
+          {amount}
+        </div>
+      );
     },
   },
   {
@@ -184,7 +188,11 @@ export const columns: ColumnDef<Invoice>[] = [
     header: () => <div className="text-left">Balance</div>,
     cell: ({ row }) => {
       const amount = formatPrice(row.getValue("total"));
-      return <div className="text-left font-medium">{amount}</div>;
+      return (
+        <div className="text-left font-medium text-muted-foreground">
+          {amount}
+        </div>
+      );
     },
   },
   {

@@ -1,5 +1,6 @@
 "use client";
 
+import { DataTableColumnHeader } from "@/app/(dashboard)/_components/datatable/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,11 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { type User } from "@/types";
+import { type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { DataTableColumnHeader } from "@/app/(dashboard)/_components/datatable/DataTableColumnHeader";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -59,58 +59,24 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
   },
-
   {
-    id: "fullname",
-    header: "Full Name",
+    accessorKey: "name",
+    header: "Name",
     cell: ({ row }) => {
       const data = row.original;
-      const fullname = `${data.firstname} ${data.lastname}`;
+      const fullname = `${data.name}`;
       return (
         <Link
           href={`/admin/employees/list/update/${data.id}`}
-          className="text-right font-medium hover:cursor-pointer hover:underline"
+          className="text-left font-medium hover:cursor-pointer hover:underline"
         >
-          {fullname}
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {fullname}
+          </span>
         </Link>
       );
     },
   },
-  {
-    accessorKey: "firstname",
-    header: "First Name",
-    cell: ({ row }) => {
-      const data = row.original;
-      return (
-        <span
-          onClick={() =>
-            console.log("Columns.tsx: line 97: ", row.getValue("id"))
-          }
-          className="text-right font-medium hover:cursor-pointer hover:underline"
-        >
-          {data.firstname}
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: "lastname",
-    header: "Last Name",
-    cell: ({ row }) => {
-      const data = row.original;
-      return (
-        <span
-          onClick={() =>
-            console.log("Columns.tsx: line 97: ", row.getValue("id"))
-          }
-          className="text-right font-medium hover:cursor-pointer hover:underline"
-        >
-          {data.lastname}
-        </span>
-      );
-    },
-  },
-
   {
     accessorKey: "status",
     header: ({ column }) => (
@@ -155,6 +121,13 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      return (
+        <span className="font-medium text-muted-foreground">
+          {row.original.email}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "role",
@@ -171,30 +144,59 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const rowData = row.original;
+      return (
+        <Badge
+          className={cn(
+            `min-w-[100px] justify-center bg-slate-300/60 text-slate-800 hover:bg-slate-300/60 dark:bg-slate-200/40 dark:text-slate-100 hover:dark:bg-slate-200/40`,
+          )}
+        >
+          <span className="text-medium overflow-hidden text-ellipsis whitespace-nowrap capitalize">
+            {rowData.role}
+          </span>
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "phoneNumber",
     header: () => <div className="text-left">Phone Number</div>,
     cell: ({ row }) => {
-      return <span>{row.original.phoneNumber}</span>;
+      return (
+        <span className="text-medium overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground">
+          {row.original.phoneNumber}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "jobRole",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Job Role" />
+    ),
+    cell: ({ row }) => {
+      const rowData = row.original;
+      const role = rowData.jobRole;
+
+      return (
+        <Badge
+          className={cn(
+            `min-w-[100px] justify-center bg-slate-300/60 text-slate-800 hover:bg-slate-300/60 dark:bg-slate-200/40 dark:text-slate-100 hover:dark:bg-slate-200/40`,
+          )}
+        >
+          {role.length > 1 ? role : "None"}
+        </Badge>
+      );
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const user = row.original;
 
       return (
         <div className="flex flex-row space-x-1 text-muted-foreground">
-          <Button
-            variant="ghost"
-            size={"icon"}
-            className="rounded-full hover:!bg-muted-foreground/20"
-            onClick={() => console.log(payment.id)}
-          >
-            <span className="sr-only">Edit</span>
-            <Pencil size={20} />
-          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -209,15 +211,12 @@ export const columns: ColumnDef<User>[] = [
             <DropdownMenuContent align="end" className="bg-drop-downmenu">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(payment.id)}
+              <Link
+                href={`/admin/employees/list/update/${user.id}`}
+                className="text-left hover:cursor-pointer"
               >
-                Copy payment ID
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => console.log(payment.id)}>
-                View customer
-              </DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
+                <DropdownMenuItem>Update</DropdownMenuItem>
+              </Link>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

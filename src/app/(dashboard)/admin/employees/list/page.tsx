@@ -1,64 +1,32 @@
 import ClientButtonLink from "@/app/(dashboard)/_components/ButtonLinks/ClientButtonLink";
 import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
-import { type User } from "@/types";
+import { getData } from "@/lib/utils";
+import { getUsersExcludeCurrentUserById } from "@/server/actions/fetch";
+import { authOptions } from "@/server/auth";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
+import { getServerSession } from "next-auth";
 import React from "react";
+import { ClientData } from "./_components/ClientData";
 import { columns } from "./_components/Columns";
-import { DataTable } from "./_components/DataTable";
 
-type EmployeeListProps = object;
+const EmployeeListPage: React.FC = async () => {
+  const tempUser = getData();
+  const userSession = getServerSession(authOptions);
+  const [user, session] = await Promise.all([tempUser, userSession]);
 
-async function getData(): Promise<User[]> {
-  //? Fetch data from your API here.
-  const generatedUsers: User[] = generateRandomUsers(15);
-  const users = generatedUsers;
-  return users;
-}
-// ! ----------------------------------------------------------TEMPORARY DATA ----------------------
-function generateRandomId(): string {
-  // You can implement your own logic to generate unique IDs
-  return Math.random().toString(36).substring(2, 10);
-}
+  const uid = session?.user.id;
 
-function generateRandomPhoneNumber(): string {
-  // You can implement your own logic to generate random phone numbers
-  return Math.floor(Math.random() * 10000000000).toString();
-}
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["usersExcludingCurrentUser"],
+    queryFn: () => getUsersExcludeCurrentUserById(uid ? uid : ""),
+  });
 
-function generateRandomNumber(): number {
-  // You can implement your own logic to generate random phone numbers
-  return Math.floor(Math.random() * 5);
-}
-
-const generateRandomUser = (): User => ({
-  id: generateRandomId(),
-  firstname: "John",
-  lastname: "Doe",
-  status:
-    generateRandomNumber() === 1
-      ? "Active"
-      : generateRandomNumber() === 2
-        ? "Disabled"
-        : generateRandomNumber() === 3
-          ? "Pending"
-          : "Terminated",
-  email: "john.doe@example.com",
-  amount: 100,
-  phoneNumber: generateRandomPhoneNumber(),
-  role: "Mason",
-});
-
-const generateRandomUsers = (count: number): User[] => {
-  const users: User[] = [];
-  for (let i = 0; i < count; i++) {
-    users.push(generateRandomUser());
-  }
-  return users;
-};
-// !-----------------------------------------------------------------------------------
-
-const EmployeeList: React.FC<EmployeeListProps> = async () => {
-  const data = await getData();
   return (
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
@@ -71,10 +39,12 @@ const EmployeeList: React.FC<EmployeeListProps> = async () => {
       </div>
 
       <Card padding={false}>
-        <DataTable columns={columns} data={data} users={data} />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <ClientData columns={columns} tempUsers={user} uid={uid ? uid : ""} />
+        </HydrationBoundary>
       </Card>
     </section>
   );
 };
 
-export default EmployeeList;
+export default EmployeeListPage;

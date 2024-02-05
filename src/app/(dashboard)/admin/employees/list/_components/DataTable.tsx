@@ -26,9 +26,11 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { type User } from "@/types";
 import { Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
+import { type User } from "@prisma/client";
+import { jobRoles } from "@/constants";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -66,6 +68,7 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilterString, setGlobalFilterString] = useState("");
+  const myRole = useCurrentUserStore((state) => state.role);
   const table = useReactTable({
     data,
     columns,
@@ -186,14 +189,8 @@ export function DataTable<TData, TValue>({
           globalFilterString={globalFilterString}
           searchFilter={searchFilter}
           selectPlaceholder="Role"
-          selectFilterColumm="role"
-          selectItems={[
-            "All",
-            "HR Manager",
-            "Mason",
-            "Labourer",
-            "Civil Engineer",
-          ]}
+          selectFilterColumm="jobRole"
+          selectItems={["All", ...jobRoles]}
         />
       </div>
       {/* Data Table */}
@@ -230,23 +227,49 @@ export function DataTable<TData, TValue>({
                     index === headerGroup.headers.length - 1 &&
                     selectedRowsLength !== 0
                   ) {
-                    return (
-                      <TableHead key={header.id} className="text-right">
-                        <Button
-                          onClick={deleteSelecetedUsers}
-                          variant={"ghost"}
-                          size={"sm"}
-                          className="rounded-full  hover:bg-primary/20"
-                        >
-                          <Trash2
-                            size={16}
-                            className="text-primary brightness-100 saturate-200"
-                          />
-                        </Button>
-                      </TableHead>
-                    );
+                    if (myRole === "super-admin") {
+                      return (
+                        <TableHead key={header.id} className="text-right">
+                          <Button
+                            onClick={deleteSelecetedUsers}
+                            variant={"ghost"}
+                            size={"sm"}
+                            className="rounded-full  hover:bg-primary/20"
+                          >
+                            <Trash2
+                              size={16}
+                              className="text-primary brightness-100 saturate-200"
+                            />
+                          </Button>
+                        </TableHead>
+                      );
+                    } else {
+                      return (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      );
+                    }
                   } else {
-                    return <TableHead key={header.id}></TableHead>;
+                    if (myRole === "super-admin") {
+                      return <TableHead key={header.id}></TableHead>;
+                    } else {
+                      return (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      );
+                    }
                   }
                 })}
               </TableRow>

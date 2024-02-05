@@ -47,7 +47,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { lazy, useCallback, useEffect, useState } from "react";
+import React, { lazy, useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -144,22 +144,24 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
     [calculatedPrice],
   );
 
-  const subTotal = () => {
+  // Expensive Calculation
+  const subTotal = useMemo(() => {
     let val = 0;
     services.forEach((item) => {
       val += item.price;
     });
     return val;
-  };
+  }, [services]);
 
-  const total = () => {
+  // Expensive Calculation
+  const total = useMemo(() => {
     let total = 0;
     let addTaxes = 0;
     const minusPayment = calculatedPrice.payment;
 
     addTaxes = taxValue(
       subTotalPlusShippingMinusDiscount(
-        subTotal(),
+        subTotal,
         calculatedPrice.shipping,
         calculatedPrice.discount,
       ),
@@ -167,14 +169,20 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
     );
     total =
       subTotalPlusShippingMinusDiscount(
-        subTotal(),
+        subTotal,
         calculatedPrice.shipping,
         calculatedPrice.discount,
       ) +
       addTaxes -
       minusPayment;
     return Math.round((total + Number.EPSILON) * 100) / 100;
-  };
+  }, [
+    subTotal,
+    calculatedPrice.shipping,
+    calculatedPrice.discount,
+    calculatedPrice.tax,
+    calculatedPrice.payment,
+  ]);
 
   useEffect(() => {
     if (type === "update") {
@@ -193,6 +201,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
               : receiver?.name
           } has been created.`,
         );
+        void queryClient.invalidateQueries({
+          queryKey: ["invoices"],
+        });
       },
       onError: (error) => {
         toast.error(error, {
@@ -217,6 +228,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
         });
         void queryClient.invalidateQueries({
           queryKey: ["invoice", invId],
+        });
+        void queryClient.invalidateQueries({
+          queryKey: ["invoices"],
         });
       },
       onError: (error) => {
@@ -254,7 +268,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
       status: statusGenerator(
         calculatedPrice.payment,
         totalValueWithTax(
-          subTotal(),
+          subTotal,
           calculatedPrice.shipping,
           calculatedPrice.discount,
           calculatedPrice.tax,
@@ -266,8 +280,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
       tax: calculatedPrice.tax,
       payment: calculatedPrice.payment,
       discount: calculatedPrice.discount,
-      subTotal: subTotal(),
-      total: total(),
+      subTotal: subTotal,
+      total: total,
     };
 
     if (type === "create" && proceed == 0) {
@@ -343,7 +357,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
                       statusGenerator(
                         calculatedPrice.payment,
                         totalValueWithTax(
-                          subTotal(),
+                          subTotal,
                           calculatedPrice.shipping,
                           calculatedPrice.discount,
                           calculatedPrice.tax,
@@ -506,7 +520,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
               calculatedPrice={calculatedPrice}
             />
             <div className="col-span-full grid grid-cols-2 items-center justify-center gap-4 px-3 py-2 sm:col-span-4 sm:col-start-9">
-              <FinalDetails title="Subtotal" value={subTotal()} />
+              <FinalDetails title="Subtotal" value={subTotal} />
               <FinalDetails
                 title="Travel Expense"
                 value={calculatedPrice.shipping}
@@ -521,7 +535,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
                 title={`Tax (%${calculatedPrice.tax})`}
                 value={taxValue(
                   subTotalPlusShippingMinusDiscount(
-                    subTotal(),
+                    subTotal,
                     calculatedPrice.shipping,
                     calculatedPrice.discount,
                   ),
@@ -531,7 +545,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
               <FinalDetails
                 title="Total"
                 value={totalValueWithTax(
-                  subTotal(),
+                  subTotal,
                   calculatedPrice.shipping,
                   calculatedPrice.discount,
                   calculatedPrice.tax,
@@ -547,7 +561,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId }) => {
                 title="Balance"
                 parentClassNames="text-foreground font-semibold"
                 childClassNames="text-foreground font-semibold"
-                value={total()}
+                value={total}
               />
             </div>
           </div>

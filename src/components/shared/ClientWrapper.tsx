@@ -9,13 +9,14 @@ type ClientWrapperProps = {
 };
 
 const ClientWrapper: React.FC<ClientWrapperProps> = ({ children, session }) => {
-  const setUser = useCurrentUserStore();
+  const setUser = useCurrentUserStore((state) => state.setUser);
   useEffect(() => {
-    setUser.setUser(
+    setUser(
       session?.user.id,
       session?.user.name,
       session?.user.image,
       session?.user.email,
+      session?.user.role,
     );
   }, [session]);
   return <div className="h-full">{children}</div>;

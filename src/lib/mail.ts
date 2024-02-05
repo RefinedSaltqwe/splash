@@ -40,26 +40,31 @@ export const sendTwoFactorEmail = async (
   });
 };
 
-export const sendVerificationEmail = async (email: string, token: string) => {
+export const sendVerificationEmail = async (
+  name: string,
+  email: string,
+  token: string,
+) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const resend = new Resend(env.RESEND_API_KEY);
+  const companyEmail = "support@splash@gmail.com";
   const confirmLink = `${env.NEXTAUTH_URL}/admin/auth/new-verification?token=${token}`;
-  const body = `<p>Dear [User's Name],</p>
+  const body = `<p>Dear ${name},</p>
 
-        <p>Thank you for signing up for [Service or Company Name]! We're excited to have you on board. To get started, please verify your email address.</p>
+        <p>Thank you for signing up for ${siteConfig.name}! We're excited to have you on board. To get started, please verify your email address.</p>
 
-        <p><a href="[Verification Link]" class="button">Verify Your Email</a></p>
+        <p><a href="${confirmLink}" class="button">Verify Your Email</a></p>
 
         <p>This link will expire in 24 hours. If it expires, you can request a new one from our website.</p>
 
-        <p>If you did not create an account with [Service or Company Name], please disregard this email or contact our support team if you believe this is an error.</p>
+        <p>If you did not create an account with ${siteConfig.name}, please disregard this email or contact our support team if you believe this is an error.</p>
 
-        <p>For any assistance or further information, feel free to reach out to us at <a href="mailto:[Support Email]">[Support Email or Contact Information]</a>.</p>
+        <p>For any assistance or further information, feel free to reach out to us at <a href="mailto:${companyEmail}">${companyEmail}</a>.</p>
 
-        <p>Welcome to [Service or Company Name], and we look forward to providing you with [type of service provided].</p>
+        <p>Welcome to ${siteConfig.name}, and we look forward to providing you with [type of service provided].</p>
 
         <p>Best regards,<br>
-        The [Service or Company Name] Team</p>
+        The ${siteConfig.name} Team</p>
 
         <div class="footer">
             <p>Please do not reply to this email as it is automatically generated.</p>
@@ -71,6 +76,6 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     from: "onboarding@resend.dev",
     to: email,
     subject: `${siteConfig.name}: Confirm your email`,
-    html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`,
+    html: body,
   });
 };

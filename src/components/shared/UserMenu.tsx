@@ -39,7 +39,11 @@ const UserMenu: React.FC<UserMenuProps> = () => {
           <Avatar className="h-8 w-8">
             <AvatarImage
               src={
-                getUser.image ? getUser.image : "https://github.com/shadcn.png"
+                getUser.image
+                  ? getUser.image.length > 1
+                    ? getUser.image
+                    : "https://github.com/shadcn.png"
+                  : "https://github.com/shadcn.png"
               }
             />
             <AvatarFallback>CN</AvatarFallback>

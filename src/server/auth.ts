@@ -13,6 +13,7 @@ import { db } from "./db";
 
 import { env } from "@/env";
 import { confirmationEmail } from "@/lib/confirmationEmail";
+import { twoFactorEmail } from "@/lib/twoFactorEmail";
 import { LoginFormSchema } from "@/lib/validator";
 import { Prisma } from "@prisma/client";
 import { compare } from "bcrypt";
@@ -24,7 +25,6 @@ import {
   getTwoFactorTokenByEmail,
   getUserByEmail,
 } from "./actions/fetch";
-import { twoFactorEmail } from "@/lib/twoFactorEmail";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -97,17 +97,17 @@ export const authOptions: NextAuthOptions = {
         });
       } else {
         //Using OAuth
-        const userExist = await db.authorizedEmail.findUnique({
+        const userExistAuthorizedEmail = await db.authorizedEmail.findUnique({
           where: {
             email: user.email ? user.email : "",
           },
         });
         //Check if email exist in the db
-        if (!userExist) {
+        if (!userExistAuthorizedEmail) {
           return false;
         } else {
           // If exist and not registered then update to true
-          if (userExist.registered === false) {
+          if (userExistAuthorizedEmail.registered === false) {
             const updateAuthEmail = await db.authorizedEmail.update({
               where: {
                 email: user.email ? user.email : "",
@@ -116,8 +116,26 @@ export const authOptions: NextAuthOptions = {
                 registered: true,
               },
             });
+
             if (updateAuthEmail) {
               return true;
+            }
+          } else {
+            const userExist = await db.user.findUnique({
+              where: { id: user.id },
+            });
+            if (userExist?.emailVerified === null) {
+              const updateUser = await db.user.update({
+                where: { id: user.id },
+                data: {
+                  emailVerified: new Date(),
+                  status: "Active",
+                },
+              });
+              if (!updateUser) {
+                console.log("Error Updating the user: ", updateUser);
+                return false;
+              }
             }
           }
           return true;
@@ -199,11 +217,6 @@ export const authOptions: NextAuthOptions = {
 
             if (isPasswordCorrect) {
               // If Two Factor Authentication enabled
-              const codeLength = code ? code.length : 0;
-              console.log(
-                "+++++++++++++++++++++++++++++Code: ",
-                codeLength >= 0,
-              );
 
               if (user?.isTwoFactorEnabled) {
                 if (code) {

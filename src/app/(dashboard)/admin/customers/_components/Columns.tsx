@@ -90,7 +90,7 @@ export const columns: ColumnDef<Customer>[] = [
           onClick={() =>
             console.log("Columns.tsx: line 97: ", row.getValue("id"))
           }
-          className="text-right font-medium hover:cursor-pointer hover:underline"
+          className="text-right font-medium text-muted-foreground hover:cursor-pointer hover:underline"
         >
           {data.companyName}
         </span>
@@ -112,6 +112,13 @@ export const columns: ColumnDef<Customer>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      return (
+        <span className="text-medium text-muted-foreground">
+          {row.original.email}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "phoneNumber",
@@ -129,7 +136,11 @@ export const columns: ColumnDef<Customer>[] = [
       );
     },
     cell: ({ row }) => {
-      return <span>{row.original.phoneNumber}</span>;
+      return (
+        <span className="text-medium text-muted-foreground">
+          {row.original.phoneNumber}
+        </span>
+      );
     },
   },
   {

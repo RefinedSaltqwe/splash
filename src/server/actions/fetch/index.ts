@@ -285,3 +285,66 @@ export const getUserByEmail = cache(
     }
   },
 );
+
+export const getUsers = cache(async (): Promise<User[] | undefined> => {
+  try {
+    const user = await db.user.findMany({
+      orderBy: { createdAt: "asc" },
+    });
+    return user;
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientInitializationError ||
+      error instanceof Prisma.PrismaClientKnownRequestError
+    ) {
+      throw new Error("System error. There is an error fetching user.");
+    }
+    throw error;
+  }
+});
+
+export const getUsersExcludeCurrentUserById = cache(
+  async (id: string): Promise<User[] | undefined> => {
+    try {
+      const users = await db.user.findMany({
+        orderBy: { createdAt: "asc" },
+      });
+      let usersWithoutCurrentUser;
+
+      if (users) {
+        usersWithoutCurrentUser = users.filter((user) => user.id !== id);
+      }
+
+      return usersWithoutCurrentUser;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching user.");
+      }
+      throw error;
+    }
+  },
+);
+
+export const getUserById = cache(
+  async (id: string): Promise<User | undefined> => {
+    try {
+      const user = await db.user.findUnique({
+        where: {
+          id,
+        },
+      });
+      return user!;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching user.");
+      }
+      throw error;
+    }
+  },
+);

@@ -1,4 +1,4 @@
-import { type Invoice } from "@prisma/client";
+import { type User, type Invoice } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 
 import { twMerge } from "tailwind-merge";
@@ -161,7 +161,7 @@ export const totalValueWithTax = (
     discount,
   );
   const taxVal = taxValue(subTotalVal, tax);
-  return subTotalVal + taxVal;
+  return Math.round((subTotalVal + taxVal + Number.EPSILON) * 100) / 100;
 };
 
 function generateRandomId(): string {
@@ -179,7 +179,7 @@ function generateDate(): Date {
   return currentDate;
 }
 
-const generateRandomUser = (): Invoice => ({
+const generateRandomUserForInvoice = (): Invoice => ({
   id: `INV-${generateRandomNumber(100000)}`,
   customerId: generateRandomId(),
   createdAt: generateDate(),
@@ -200,10 +200,59 @@ const generateRandomUser = (): Invoice => ({
   discount: 0,
 });
 
-export const generateRandomInvoice = (count: number): Invoice[] => {
-  const users: Invoice[] = [];
+function generateRandomPhoneNumber(): string {
+  // You can implement your own logic to generate random phone numbers
+  return Math.floor(Math.random() * 10000000000).toString();
+}
+
+const generateRandomUser = (): User => ({
+  id: generateRandomId(),
+  name: "fasdf",
+  firstName: "John",
+  lastName: "Doe",
+  email: "exmaple@gmail.com",
+  password: "asdd",
+  emailVerified: new Date(),
+  image: "",
+  status:
+    generateRandomNumber(5) === 1
+      ? "Active"
+      : generateRandomNumber(5) === 2
+        ? "Disabled"
+        : generateRandomNumber(5) === 3
+          ? "Pending"
+          : "Terminated",
+  phoneNumber: generateRandomPhoneNumber(),
+  role: "user",
+  jobRole: "Mason",
+  country: "Canada",
+  street: "james hill rd",
+  city: "Regina",
+  state: "Sask",
+  postalCode: "s4w 0r2",
+  isTwoFactorEnabled: false,
+  createdAt: new Date(),
+});
+
+const generateRandomUsers = (count: number): User[] => {
+  const users: User[] = [];
   for (let i = 0; i < count; i++) {
     users.push(generateRandomUser());
   }
   return users;
 };
+
+export const generateRandomInvoice = (count: number): Invoice[] => {
+  const users: Invoice[] = [];
+  for (let i = 0; i < count; i++) {
+    users.push(generateRandomUserForInvoice());
+  }
+  return users;
+};
+
+export async function getData(): Promise<User[]> {
+  //? Fetch data from your API here.
+  const generatedUsers: User[] = generateRandomUsers(1);
+  const users = generatedUsers;
+  return users;
+}

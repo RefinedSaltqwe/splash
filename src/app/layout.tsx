@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { authOptions } from "@/server/auth";
 import "@/styles/globals.css";
 import { siteConfig } from "config/site";
+import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
@@ -17,7 +18,7 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: siteConfig.name,
   description: siteConfig.description,
   icons: [{ rel: "icon", url: siteConfig.icon, href: siteConfig.icon }],

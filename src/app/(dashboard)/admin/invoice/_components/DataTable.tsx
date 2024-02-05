@@ -27,13 +27,13 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
 import { deleteInvoice } from "@/server/actions/delete-invoice";
+import { useCustomerList } from "@/stores/useCustomersList";
 import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { type Customer, type Invoice } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { lazy, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
-import { useCustomerList } from "@/stores/useCustomersList";
 
 const Loader = lazy(() => import("@/components/shared/Loader"));
 
@@ -80,6 +80,7 @@ export function DataTable<TData, TValue>({
   const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const setCustomers = useCustomerList((state) => state.setCustomers);
   const ids = useDeleteManyModal((state) => state.modalIds);
+
   const table = useReactTable({
     data,
     columns,

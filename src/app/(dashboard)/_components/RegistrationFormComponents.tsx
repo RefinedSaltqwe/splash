@@ -1,13 +1,13 @@
 "use client";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { confirmationEmail } from "@/lib/confirmationEmail";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React, { memo, useCallback, useState } from "react";
+import { toast } from "sonner";
 import RegistrationForm from "./auth/RegistrationForm";
 import Verification from "./auth/Verification";
-import Loader from "@/components/shared/Loader";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 type RegistrationFormComponentsProps = {
   setCurrentTab: (number: string) => void;
@@ -23,6 +23,7 @@ const RegistrationFormComponents: React.FC<RegistrationFormComponentsProps> = ({
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const getVerifiedEmail = useCallback(
     (email: string) => {
       setEmail(email);
@@ -34,8 +35,6 @@ const RegistrationFormComponents: React.FC<RegistrationFormComponentsProps> = ({
     mutationFn: confirmationEmail,
     mutationKey: ["send-confirmation-link"],
   });
-
-  const [loading, setLoading] = useState(false);
 
   if (current == "01") {
     return (

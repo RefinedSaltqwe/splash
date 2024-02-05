@@ -27,11 +27,13 @@ const Stats: React.FC<StatsProps> = ({
         </div>
       </div>
       <div className="flex flex-col space-y-1 pr-5">
-        <span className="font-semibold">{title}</span>
+        <span className="font-semibold text-foreground">{title}</span>
         <span className="text-sm font-normal text-muted-foreground">
           {`${numberOfInv} ${numberOfInv > 1 ? "invoices" : "invoice"}`}
         </span>
-        <span className="font-semibold">{formatPrice(amount.toString())}</span>
+        <span className="font-semibold text-muted-foreground">
+          {formatPrice(amount.toString())}
+        </span>
       </div>
     </div>
   );

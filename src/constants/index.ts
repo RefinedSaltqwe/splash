@@ -416,6 +416,15 @@ export const eventDefaultValues = {
   pushNotifications: "everything",
 };
 
+export const jobRoles = [
+  "IT",
+  "Mason",
+  "HR Manager",
+  "Labourer",
+  "Civil Engineer",
+];
+export const roles = ["admin", "super-admin", "user"];
+
 // Data-Table
 type Payment = {
   id: string;
