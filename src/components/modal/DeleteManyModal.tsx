@@ -13,7 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { getCustomers, getServiceTypes } from "@/server/actions/fetch";
+import {
+  getCustomers,
+  getServiceTypes,
+  getSuppliers,
+} from "@/server/actions/fetch";
 import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { useQuery } from "@tanstack/react-query";
 import React, { lazy, useState } from "react";
@@ -37,6 +41,11 @@ const DeleteInvoicePrompt: React.FC = () => {
   const { data: customers } = useQuery({
     queryKey: ["customers"],
     queryFn: () => getCustomers(),
+    enabled: modalType === "customer",
+  });
+  const { data: suppliers } = useQuery({
+    queryKey: ["suppliers"],
+    queryFn: () => getSuppliers(),
     enabled: modalType === "customer",
   });
 
@@ -68,6 +77,13 @@ const DeleteInvoicePrompt: React.FC = () => {
               finalName = name ? name[0]!.name : item;
             } else if (modalType === "customer") {
               const name = customers?.filter((i) => i.id === item);
+              finalName = name
+                ? name[0]!.companyName !== "N/A"
+                  ? name[0]!.companyName
+                  : name[0]!.name
+                : item;
+            } else if (modalType === "supplier") {
+              const name = suppliers?.filter((i) => i.id === item);
               finalName = name
                 ? name[0]!.companyName !== "N/A"
                   ? name[0]!.companyName

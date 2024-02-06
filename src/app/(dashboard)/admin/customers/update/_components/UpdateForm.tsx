@@ -54,6 +54,15 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ cid }) => {
       });
     },
     onError: (error) => {
+      if (error.includes("(`email`)")) {
+        toast.error(
+          "Email has already exist in our server. Use a different email.",
+          {
+            duration: 5000,
+          },
+        );
+        return;
+      }
       toast.error(error, {
         duration: 5000,
       });

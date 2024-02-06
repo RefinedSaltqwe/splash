@@ -13,10 +13,13 @@ import { Input } from "@/components/ui/input";
 import { customerDefaultValues } from "@/constants/defaultsValues";
 import { useAction } from "@/hooks/useAction";
 import { cn, formatDateTime } from "@/lib/utils";
-import { createCustomer } from "@/server/actions/create-customer";
 import { CreateCustomer } from "@/server/actions/create-customer/schema";
+import { createSupplier } from "@/server/actions/create-supplier";
+import { getSupplierById } from "@/server/actions/fetch";
+import { updateSupplier } from "@/server/actions/update-supplier";
+import { type UpdateSupplier } from "@/server/actions/update-supplier/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { lazy } from "react";
 import { useForm } from "react-hook-form";
@@ -26,54 +29,107 @@ import { type z } from "zod";
 
 const Loader = lazy(() => import("@/components/shared/Loader"));
 
-const CreateForm: React.FC = () => {
+type InputFormProps = {
+  sid?: string;
+  type: "update" | "create";
+};
+
+const InputForm: React.FC<InputFormProps> = ({ sid, type }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { execute, isLoading } = useAction(createCustomer, {
-    onSuccess: (data) => {
-      const companyName = data.companyName;
-      const custName = companyName !== "N/A" ? companyName : data.name;
-      toast.success(`New customer "${custName}" has been created.`, {
-        description: formatDateTime(data.createdAt).dateOnly,
-        duration: 2000,
-      });
-      //? Refetch the updated customer data
-      void queryClient.invalidateQueries({
-        queryKey: ["customers"],
-      });
-    },
-    onError: (error) => {
-      if (error.includes("(`email`)")) {
-        toast.error(
-          "Email has already exist in our server. Use a different email.",
-          {
-            duration: 5000,
-          },
-        );
-        return;
-      }
-      toast.error(error, {
-        duration: 5000,
-      });
-    },
-    onComplete: () => {
-      router.push(`/admin/customers`);
-    },
+  const { data: supplierData } = useQuery({
+    queryKey: ["supplier-", sid!],
+    queryFn: () => getSupplierById(sid!),
+    enabled: !!sid && type === "update",
   });
-
-  const form = useForm<z.infer<typeof CreateCustomer>>({
-    resolver: zodResolver(CreateCustomer),
-    defaultValues: customerDefaultValues,
-  });
-
-  function onSubmit(values: z.infer<typeof CreateCustomer>) {
-    void execute({
-      name: values.name,
-      companyName: values.companyName,
-      address: values.address,
-      email: values.email,
-      phoneNumber: values.phoneNumber,
+  const initialSupplierValues =
+    supplierData && type === "update"
+      ? {
+          ...supplierData,
+        }
+      : customerDefaultValues;
+  // ! Change Update
+  const { execute: executeUpdateSupplier, isLoading: isLoadingUpdate } =
+    useAction(updateSupplier, {
+      onSuccess: (data) => {
+        const companyName = data.companyName;
+        const custName = companyName ? companyName : data.name;
+        toast.success(`${custName} has been updated.`, {
+          description: formatDateTime(data.createdAt).dateOnly,
+          duration: 2000,
+        });
+        void queryClient.invalidateQueries({
+          queryKey: ["supplier-", sid],
+        });
+        void queryClient.invalidateQueries({
+          queryKey: ["suppliers"],
+        });
+      },
+      onError: (error) => {
+        toast.error(error, {
+          duration: 5000,
+        });
+      },
+      onComplete: () => {
+        router.push(`/admin/suppliers`);
+      },
     });
+
+  const { execute: executeCreateSupplier, isLoading: isLoadingCreate } =
+    useAction(createSupplier, {
+      onSuccess: (data) => {
+        toast.success(
+          `New supplier "${
+            data.companyName !== "N/A" ? data.companyName : data.name
+          }" has been created.`,
+        );
+        void queryClient.invalidateQueries({
+          queryKey: ["suppliers"],
+        });
+      },
+      onError: (error) => {
+        if (error.includes("(`email`)")) {
+          toast.error(
+            "Email has already exist in our server. Use a different email.",
+            {
+              duration: 5000,
+            },
+          );
+          return;
+        }
+        toast.error(error, {
+          duration: 5000,
+        });
+      },
+      onComplete: () => {
+        router.push("/admin/suppliers");
+      },
+    });
+
+  const form = useForm<z.infer<typeof UpdateSupplier>>({
+    resolver: zodResolver(CreateCustomer),
+    defaultValues: initialSupplierValues,
+  });
+
+  function onSubmit(values: z.infer<typeof UpdateSupplier>) {
+    if (type === "create") {
+      void executeCreateSupplier({
+        name: values.name,
+        companyName: values.companyName,
+        address: values.address,
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+      });
+    } else {
+      void executeUpdateSupplier({
+        id: sid,
+        name: values.name,
+        companyName: values.companyName,
+        address: values.address,
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+      });
+    }
   }
   return (
     <Form {...form}>
@@ -81,7 +137,7 @@ const CreateForm: React.FC = () => {
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-slate-200 px-6 py-10 pb-12 md:grid-cols-3 dark:border-slate-700">
           <div>
             <h2 className="text-base font-semibold leading-7 text-foreground">
-              Customer Information
+              Supplier Information
             </h2>
             <p className="mt-1 text-sm font-normal leading-6 text-muted-foreground">
               Must be valid address where they can receive mail.
@@ -269,15 +325,23 @@ const CreateForm: React.FC = () => {
             variant={"card_outline"}
             onClick={() => router.push("/admin/customers")}
           >
-            <span className="sr-only">Cancel</span>
             Cancel
           </Button>
-          <Button type="submit" variant={"default"} disabled={isLoading}>
-            <span className="sr-only">Create</span>
-            {isLoading ? (
+          <Button
+            type="submit"
+            variant={"default"}
+            disabled={type === "create" ? isLoadingCreate : isLoadingUpdate}
+          >
+            {type == "create" ? (
+              isLoadingCreate ? (
+                <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+              ) : (
+                "Create"
+              )
+            ) : isLoadingUpdate ? (
               <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
             ) : (
-              "Create"
+              "Update"
             )}
           </Button>
         </div>
@@ -285,4 +349,4 @@ const CreateForm: React.FC = () => {
     </Form>
   );
 };
-export default CreateForm;
+export default InputForm;

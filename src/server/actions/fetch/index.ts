@@ -10,6 +10,7 @@ import {
   type User,
   type TwoFactorToken,
   type TwoFactorConfirmation,
+  type Supplier,
 } from "@prisma/client";
 import { cache } from "react";
 import { db } from "../../db";
@@ -34,12 +35,50 @@ export const getCustomers = cache(async (): Promise<Customer[] | undefined> => {
 export const getCustomer = cache(
   async (id: string): Promise<Customer | undefined> => {
     try {
-      const customers = await db.customer.findUnique({
+      const customer = await db.customer.findUnique({
         where: {
           id,
         },
       });
-      return customers!;
+      return customer!;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching customer.");
+      }
+      throw error;
+    }
+  },
+);
+
+export const getSuppliers = cache(async (): Promise<Supplier[] | undefined> => {
+  try {
+    const suppliers = await db.supplier.findMany({
+      orderBy: { createdAt: "asc" },
+    });
+    return [...suppliers];
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientInitializationError ||
+      error instanceof Prisma.PrismaClientKnownRequestError
+    ) {
+      throw new Error("System error. There is an error fetching customers.");
+    }
+    throw error;
+  }
+});
+
+export const getSupplierById = cache(
+  async (id: string): Promise<Customer | undefined> => {
+    try {
+      const supplier = await db.supplier.findUnique({
+        where: {
+          id,
+        },
+      });
+      return supplier!;
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientInitializationError ||

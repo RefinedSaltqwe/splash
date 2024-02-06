@@ -110,6 +110,17 @@ model Customer {
     createdAt   DateTime @default(now())
 }
 
+model Supplier {
+    id          String @id @default(cuid())
+    name        String
+    companyName String
+    address     String
+    email       String @unique
+    phoneNumber String
+
+    createdAt   DateTime @default(now())
+}
+
 model ServiceType {
     id          String @id @default(cuid())
     name        String

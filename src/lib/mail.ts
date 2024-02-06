@@ -9,6 +9,7 @@ export const sendTwoFactorEmail = async (
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const resend = new Resend(env.RESEND_API_KEY);
+  const companyEmail = env.EMAIL_FROM;
 
   const body = `<div class="container">
         <p>Dear ${name},</p>
@@ -33,7 +34,7 @@ export const sendTwoFactorEmail = async (
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   await resend.emails.send({
-    from: "onboarding@resend.dev",
+    from: companyEmail,
     to: email,
     subject: `${siteConfig.name}: Two Factor Authentication Code`,
     html: body,
@@ -47,7 +48,7 @@ export const sendVerificationEmail = async (
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const resend = new Resend(env.RESEND_API_KEY);
-  const companyEmail = "support@splash@gmail.com";
+  const companyEmail = env.EMAIL_FROM;
   const confirmLink = `${env.NEXTAUTH_URL}/admin/auth/new-verification?token=${token}`;
   const body = `<p>Dear ${name},</p>
 
@@ -73,7 +74,7 @@ export const sendVerificationEmail = async (
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   await resend.emails.send({
-    from: "onboarding@resend.dev",
+    from: companyEmail,
     to: email,
     subject: `${siteConfig.name}: Confirm your email`,
     html: body,
