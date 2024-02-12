@@ -87,16 +87,16 @@ export const columns: ColumnDef<Invoice>[] = [
           ? person[0]?.companyName
           : person[0]?.name;
       return (
-        <div className="flex min-w-[175px] flex-col">
+        <div className="max-[120px] flex flex-col">
           <Link
             href={`/admin/invoice/view/${data.id}`}
-            className="text-left font-medium hover:cursor-pointer hover:underline"
+            className="max-w-[135px] overflow-hidden text-ellipsis whitespace-nowrap text-left font-medium hover:cursor-pointer hover:underline"
           >
-            <span className="w-full">
+            <span className="text-medium w-full">
               {customerName ? (
                 customerName
               ) : (
-                <Skeleton className="h-4 w-[150px] bg-muted-foreground/20" />
+                <Skeleton className="h-4 w-[120px] bg-muted-foreground/20" />
               )}
             </span>
           </Link>

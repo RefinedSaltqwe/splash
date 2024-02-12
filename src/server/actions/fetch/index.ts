@@ -1,5 +1,8 @@
 "use server";
-import { type InvoiceWithService } from "@/types/prisma";
+import {
+  type TimesheetWithInputTimes,
+  type InvoiceWithService,
+} from "@/types/prisma";
 import {
   Prisma,
   type AuthorizedEmail,
@@ -382,6 +385,33 @@ export const getUserById = cache(
         error instanceof Prisma.PrismaClientKnownRequestError
       ) {
         throw new Error("System error. There is an error fetching user.");
+      }
+      throw error;
+    }
+  },
+);
+
+export const getTimesheets = cache(
+  async (): Promise<TimesheetWithInputTimes[] | undefined | null> => {
+    try {
+      const timesheets = db.timesheet.findMany({
+        include: {
+          timeIn: true,
+          timeOut: true,
+          breakIn: true,
+          breakOut: true,
+          timeTotal: true,
+        },
+      });
+      return timesheets;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error(
+          "System error. There is an error fetching invoice and services.",
+        );
       }
       throw error;
     }

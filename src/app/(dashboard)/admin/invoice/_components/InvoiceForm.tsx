@@ -39,6 +39,7 @@ import {
   getInvoiceWithServices,
   getServiceTypes,
 } from "@/server/actions/fetch";
+import { updateInvoice } from "@/server/actions/update-invoice";
 import { useAddInvoiceReceiverModal } from "@/stores/useAddInvoiceReceiverModal";
 import { type Service } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,7 +56,6 @@ import FinalDetails from "./form/FinalDetails";
 import PriceInputs from "./form/PriceInputs";
 import Receiver from "./form/Receiver";
 import ServiceInputs from "./form/ServiceInputs";
-import { updateInvoice } from "@/server/actions/update-invoice";
 
 const Loader = lazy(() => import("@/components/shared/Loader"));
 

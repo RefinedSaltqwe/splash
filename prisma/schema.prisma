@@ -62,6 +62,7 @@ model User {
     createdAt     DateTime @default(now())
     accounts      Account[]
     sessions      Session[]
+    timesheets    Timesheet[]
 }
 
 model TwoFactorToken {
@@ -159,3 +160,96 @@ model Invoice {
     dueDate     DateTime
 }
 
+model Timesheet {
+    id              String @id @default(cuid())
+    dateFr          DateTime
+    dateTo          DateTime
+    status          String @default("draft") //Darft or Submit
+
+    userId          String 
+    user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    timeIn          TimeIn?
+    timeOut         TimeOut?
+    breakIn         BreakIn?
+    breakOut        BreakOut?
+    timeTotal       TimeTotal?
+
+    @@unique([userId])
+}
+
+model TimeIn {
+    id              String @id @default(cuid())
+    mon             DateTime?
+    tue             DateTime?
+    wed             DateTime?
+    thu             DateTime?
+    fri             DateTime?
+    sat             DateTime?
+    sun             DateTime?
+
+    timesheetId     String 
+    timesheet       Timesheet @relation(fields: [timesheetId], references: [id], onDelete: Cascade)
+    @@unique([timesheetId])
+}
+
+model BreakOut {
+    id              String @id @default(cuid())
+    mon             DateTime?
+    tue             DateTime?
+    wed             DateTime?
+    thu             DateTime?
+    fri             DateTime?
+    sat             DateTime?
+    sun             DateTime?
+
+    timesheetId     String 
+    timesheet       Timesheet @relation(fields: [timesheetId], references: [id], onDelete: Cascade)
+    @@unique([timesheetId])
+}
+
+model BreakIn {
+    id              String @id @default(cuid())
+    mon             DateTime?
+    tue             DateTime?
+    wed             DateTime?
+    thu             DateTime?
+    fri             DateTime?
+    sat             DateTime?
+    sun             DateTime?
+
+    timesheetId     String 
+    timesheet       Timesheet @relation(fields: [timesheetId], references: [id], onDelete: Cascade)
+    @@unique([timesheetId])
+}
+
+model TimeOut {
+    id              String @id @default(cuid())
+    mon             DateTime?
+    tue             DateTime?
+    wed             DateTime?
+    thu             DateTime?
+    fri             DateTime?
+    sat             DateTime?
+    sun             DateTime?
+
+    timesheetId     String 
+    timesheet       Timesheet @relation(fields: [timesheetId], references: [id], onDelete: Cascade)
+    @@unique([timesheetId])
+}
+
+model TimeTotal {
+    id              String @id @default(cuid())
+    mon             Float @default(0.00)
+    tue             Float @default(0.00)
+    wed             Float @default(0.00)
+    thu             Float @default(0.00)
+    fri             Float @default(0.00)
+    sat             Float @default(0.00)
+    sun             Float @default(0.00)
+    total           Float @default(0.00)
+
+    timesheetId     String 
+    timesheet       Timesheet @relation(fields: [timesheetId], references: [id], onDelete: Cascade)
+    @@unique([timesheetId])
+}

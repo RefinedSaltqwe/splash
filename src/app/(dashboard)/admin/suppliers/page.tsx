@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import React from "react";
 import ClientButtonLink from "../../_components/ButtonLinks/ClientButtonLink";
-import CustomerList from "./_components/CustomerList";
+import SupplierList from "./_components/SupplierList";
 
 const SupplierPage: React.FC = async () => {
   const queryClient = new QueryClient();
@@ -28,7 +28,7 @@ const SupplierPage: React.FC = async () => {
       </div>
 
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <CustomerList />
+        <SupplierList />
       </HydrationBoundary>
     </section>
   );

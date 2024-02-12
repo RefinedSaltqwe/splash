@@ -6,6 +6,7 @@ import React, { lazy } from "react";
 import { ModeToggle } from "../themeModeToggle";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import GenerateTimesheetButton from "./GenerateTimesheetButton";
 
 const UserMenu = lazy(() => import("./UserMenu"));
 
@@ -44,6 +45,7 @@ const Header: React.FC<HeaderProps> = () => {
 
         <div className="flex w-full items-center justify-end space-x-2 align-middle md:flex md:w-auto">
           <ModeToggle />
+          <GenerateTimesheetButton />
           {menuItems.map((item) => (
             <Button
               className="text-foreground"

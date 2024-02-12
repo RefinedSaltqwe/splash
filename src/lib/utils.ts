@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const formatDateTime = (dateString: Date) => {
+export const formatDateTime = (dateString: Date | string) => {
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
     weekday: "short", // abbreviated weekday name (e.g., 'Mon')
     month: "short", // abbreviated month name (e.g., 'Oct')
@@ -31,17 +31,17 @@ export const formatDateTime = (dateString: Date) => {
   };
 
   const formattedDateTime: string = new Date(dateString).toLocaleString(
-    "en-US",
+    "en-CA",
     dateTimeOptions,
   );
 
   const formattedDate: string = new Date(dateString).toLocaleString(
-    "en-US",
+    "en-CA",
     dateOptions,
   );
 
   const formattedTime: string = new Date(dateString).toLocaleString(
-    "en-US",
+    "en-CA",
     timeOptions,
   );
 
@@ -256,3 +256,23 @@ export async function getData(): Promise<User[]> {
   const users = generatedUsers;
   return users;
 }
+
+export const getDayOfNextWeek = (dayOfWeek: number) => {
+  const date = new Date();
+  const resultDate = new Date(date.getTime());
+
+  resultDate.setDate(
+    date.getDate() + ((7 + (dayOfWeek - 1) - date.getDay()) % 8),
+  );
+  return resultDate;
+};
+
+export const getDayWithSpecificDate = (dayOfWeek: number, startDate: Date) => {
+  const date = new Date();
+  const resultDate = new Date(startDate);
+
+  resultDate.setDate(
+    date.getDate() + ((7 + (dayOfWeek - 1) - date.getDay()) % 7),
+  );
+  return resultDate;
+};
