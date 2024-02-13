@@ -11,7 +11,6 @@ export const generateTwoFactorToken = async (email: string) => {
   //TODO: change to 15 mins
   // const expires = new Date(new Date().getTime() + 3600 * 1000);
   const expires = new Date(new Date().getTime() + 15 * 60 * 1000);
-  console.log(expires);
 
   try {
     const existingToken = await getTwoFactorTokenByEmail(email);

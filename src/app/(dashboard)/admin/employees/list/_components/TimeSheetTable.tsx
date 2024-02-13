@@ -38,6 +38,7 @@ const TimeSheetTable = ({
       ",",
     );
   };
+
   const onSetTimesheets = useCallback(
     (timesheetId: string, newTimesheet: TimesheetWithInputTimes) => {
       setTimesheets((prev) => [
@@ -47,9 +48,6 @@ const TimeSheetTable = ({
     },
     [activeTimesheet[0]],
   );
-  if (timesheetId == "clrzpd2u3000021odj3bkofnh20240211") {
-    console.log("SheetTable: ", activeTimesheet[0]?.timeIn);
-  }
 
   return (
     <Table className="mt-6">
@@ -127,14 +125,16 @@ const TimeSheetTable = ({
             />
           </TableCell>
           <TableCell>
-            <TimeInput
-              timeInput={activeTimesheet[0]!.timeIn}
-              activeTimesheet={activeTimesheet[0]}
-              onSetTimesheets={onSetTimesheets}
-              field="mon"
-              rowKey="timeIn"
-              theDate={getDayWithSpecificDate(2, dateFr)}
-            />
+            {activeTimesheet[0] && (
+              <TimeInput
+                timeInput={activeTimesheet[0].timeIn}
+                activeTimesheet={activeTimesheet[0]}
+                onSetTimesheets={onSetTimesheets}
+                field="mon"
+                rowKey="timeIn"
+                theDate={getDayWithSpecificDate(2, dateFr)}
+              />
+            )}
           </TableCell>
           <TableCell>
             <TimeInput

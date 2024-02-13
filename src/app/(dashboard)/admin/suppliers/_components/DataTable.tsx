@@ -103,7 +103,6 @@ export function DataTable<TData, TValue>({
   const queryClient = useQueryClient();
   const { execute, isLoading } = useAction(deleteSuppliers, {
     onSuccess: (data) => {
-      console.log(data, "==============");
       toast.success(
         `${
           modalIds?.length && modalIds?.length > 1
@@ -122,7 +121,6 @@ export function DataTable<TData, TValue>({
       });
     },
     onComplete: () => {
-      console.log("COmpleted");
       setRowSelection([]);
       onIsProceed(false);
       onClose();

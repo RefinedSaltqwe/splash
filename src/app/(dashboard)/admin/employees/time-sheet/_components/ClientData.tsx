@@ -19,7 +19,7 @@ const ClientData: React.FC<ClientDataProps> = ({
     setTimesheets(timesheetsData ? timesheetsData : []);
   }, [timesheetsData]);
 
-  console.log(timesheets);
+  console.log("Client Data Timesheets: ", timesheets);
   if (timesheets.length === 0) {
     return (
       <div className="flex w-full flex-col">

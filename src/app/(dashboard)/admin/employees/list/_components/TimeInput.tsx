@@ -1,4 +1,4 @@
-import { cn, formatDateTime } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { type TimesheetWithInputTimes } from "@/types/prisma";
 import { Switch } from "@headlessui/react";
 import {
@@ -30,33 +30,29 @@ const TimeInput: React.FC<TimeInputProps> = ({
   timeInput,
   theDate,
 }) => {
-  const [isPm, setIsPm] = useState<boolean>(false);
+  const newTimesheet = activeTimesheet;
+  const newTimeInput = timeInput;
   const getFieldValue = timeInput
     ? timeInput[field]
       ? timeInput[field]
       : ""
     : "";
-  const newTimeInput = timeInput;
   const removeDateNullish = getFieldValue ?? "";
   const dbTimeArray = removeDateNullish
     .toLocaleString()
     .split(" ")[1]
     ?.split(":");
-  // ! FIX INITIAL VALUE NOT SHOWING UP =============================
-  // Possible fix: extract time in TImeSheetTable
   const initialTimeValue = dbTimeArray
     ? `${
         parseInt(dbTimeArray[0]!) < 10 ? "0" : ""
       }${`${dbTimeArray[0]!}:${dbTimeArray[1]!}`}`
     : "";
-  const [value, setValue] = useState<string>("12:30");
-  if (rowKey === "timeIn" && field === "mon") {
-    console.log(`TimeInput(${rowKey})${field}: `, value);
-  }
-  const [finalTime, setFinalTime] = useState<string>(value);
+
   const finalIsPm = useRef<boolean>(false);
   const firstRender = useRef<boolean>(false);
-  const newTimesheet = activeTimesheet;
+  const [isPm, setIsPm] = useState<boolean>(false);
+  const [value, setValue] = useState<string>(initialTimeValue);
+  const [finalTime, setFinalTime] = useState<string>(value);
 
   const timeSplit = value?.split(":");
   const hour = timeSplit[0] ? timeSplit[0] : "";
@@ -89,6 +85,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
         finalIsPm.current = true;
       } else if (minute.includes("-") || (intHour > 0 && intMinute > 0)) {
         console.log("in2", intHour);
+        setValue(`${intHour}:${intMinute}`);
         if (intHour === 12 && finalIsPm.current == true && intMinute > 59) {
           console.log("in2.1", intHour);
           setValue(`11:59`);
@@ -289,13 +286,13 @@ const TimeInput: React.FC<TimeInputProps> = ({
           newTimesheet[rowKey] = newTimeInput;
         }
         onSetTimesheets(activeTimesheet!.id, newTimesheet);
-      }, 500);
+      }, 1000);
       return () => clearTimeout(timer);
     }
 
     const firstRenderTimer = setTimeout(() => {
       firstRender.current = true;
-    }, 1000);
+    }, 500);
     return () => clearTimeout(firstRenderTimer);
   }, [finalTime, isPm]);
 

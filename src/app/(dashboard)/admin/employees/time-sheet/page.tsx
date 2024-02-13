@@ -9,7 +9,6 @@ const TimeSheetPage: React.FC = async () => {
   const users = getUsers();
 
   const [usersData, timesheetsData] = await Promise.all([users, timesheets]);
-  console.log(timesheetsData);
   return (
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">

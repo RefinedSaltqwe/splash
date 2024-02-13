@@ -52,6 +52,10 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
         }
       },
       onError: (error) => {
+        if (error.includes("Foreign key constraint failed")) {
+          toast.warning(`Timesheets for were already created.`);
+          return;
+        }
         toast.error(error, {
           duration: 5000,
         });
