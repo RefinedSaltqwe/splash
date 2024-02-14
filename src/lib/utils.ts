@@ -257,18 +257,18 @@ export async function getData(): Promise<User[]> {
   return users;
 }
 
-export const getDayOfNextWeek = (dayOfWeek: number) => {
-  const date = new Date();
-  const resultDate = new Date(date.getTime());
+export const getFirstAndLastDatesNextWeek = (dayOfWeek: number) => {
+  const curr = new Date();
+  // current date eg. 2024-02-13(Tue) => 13 + 7 = 2024-02-20(Tue) => 19-2(Tue) = 18(Sun) start day of the week
+  const firstDayOfNextWeek = curr.getDate() + 7 - curr.getDay();
+  const specificDate = firstDayOfNextWeek + (dayOfWeek - 1);
+  const date: Date = new Date(curr.setDate(specificDate));
 
-  resultDate.setDate(
-    date.getDate() + ((7 + (dayOfWeek - 1) - date.getDay()) % 8),
-  );
-  return resultDate;
+  return date;
 };
 
 export const getDayWithSpecificDate = (dayOfWeek: number, startDate: Date) => {
-  const date = new Date();
+  const date = new Date(startDate);
   const resultDate = new Date(startDate);
 
   resultDate.setDate(

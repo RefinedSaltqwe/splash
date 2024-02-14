@@ -9,6 +9,16 @@ export type User = {
   amount: number;
 };
 
+export type TimesheetField =
+  | "sun"
+  | "mon"
+  | "tue"
+  | "wed"
+  | "thu"
+  | "fri"
+  | "sat";
+export type TimesheetRowKey = "timeIn" | "timeOut" | "breakIn" | "breakOut";
+
 export type Team = {
   id: string;
   members: string[];

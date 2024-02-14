@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useAction } from "@/hooks/useAction";
-import { cn, formatDateTime, getDayOfNextWeek } from "@/lib/utils";
+import { cn, formatDateTime, getFirstAndLastDatesNextWeek } from "@/lib/utils";
 import { createTimesheet } from "@/server/actions/create-timesheet";
 import { CreateTimesheet } from "@/server/actions/create-timesheet/schema";
 import { useGenerateTimesheetModal } from "@/stores/useGenerateTimesheetModal";
@@ -69,8 +69,8 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
   const form = useForm<z.infer<typeof CreateTimesheet>>({
     resolver: zodResolver(CreateTimesheet),
     defaultValues: {
-      dateFr: getDayOfNextWeek(1),
-      dateTo: getDayOfNextWeek(7),
+      dateFr: getFirstAndLastDatesNextWeek(1),
+      dateTo: getFirstAndLastDatesNextWeek(7),
     },
   });
 

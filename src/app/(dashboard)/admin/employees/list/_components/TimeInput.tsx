@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { type TimesheetField, type TimesheetRowKey } from "@/types";
 import { type TimesheetWithInputTimes } from "@/types/prisma";
 import { Switch } from "@headlessui/react";
 import {
@@ -11,8 +12,8 @@ import React, { memo, useEffect, useRef, useState } from "react";
 import { PatternFormat } from "react-number-format";
 
 type TimeInputProps = {
-  rowKey: "timeIn" | "timeOut" | "breakIn" | "breakOut";
-  field: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+  rowKey: TimesheetRowKey;
+  field: TimesheetField;
   activeTimesheet: TimesheetWithInputTimes;
   onSetTimesheets: (
     timesheetId: string,
