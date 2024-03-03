@@ -61,7 +61,7 @@ html.dark .apexcharts-gridline {
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 262.1 83.3% 57.8%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 20% 98%;
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 220.9 39.3% 11%;
@@ -73,7 +73,7 @@ html.dark .apexcharts-gridline {
     --destructive-foreground: 210 20% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
   }
 
@@ -84,7 +84,7 @@ html.dark .apexcharts-gridline {
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 210 20% 98%;
     --secondary: 215 27.9% 16.9%;
     --secondary-foreground: 210 20% 98%;
@@ -96,7 +96,7 @@ html.dark .apexcharts-gridline {
     --destructive-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
+    --ring: 217.2 91.2% 59.8%;
   }
 }
 @layer utilities {
@@ -127,7 +127,7 @@ html.dark .apexcharts-gridline {
     @apply border-transparent bg-card/75 backdrop-blur dark:dark:bg-muted/75;
   }
   div[role="dialog"] {
-    @apply border-transparent bg-card backdrop-blur dark:dark:bg-muted/75;
+    @apply !border-transparent !bg-card !backdrop-blur dark:!bg-muted/75;
   }
   .bg-drop-downmenu div[role="menuitem"],
   div[role="menuitemcheckbox"] {
@@ -191,6 +191,9 @@ html.dark .apexcharts-gridline {
     @apply border-border bg-card text-muted-foreground dark:bg-muted !important;
   }
   /* INPUTS */
+  .splash-border-color {
+    @apply border-slate-200 dark:border-slate-700;
+  }
   .splash-base-input {
     @apply border-[1px] border-slate-200 bg-background/20 font-normal text-foreground;
   }

@@ -5,9 +5,12 @@ import React, { useEffect, useState } from "react";
 import { Sheet, SheetContent } from "../ui/sheet";
 import Sidebar from "../shared/Sidebar";
 
-type MobileSidebarProps = object;
+type MobileSidebarProps = {
+  id: string;
+  type: "agency" | "subaccount";
+};
 
-const MobileSidebar: React.FC<MobileSidebarProps> = () => {
+const MobileSidebar: React.FC<MobileSidebarProps> = ({ id, type }) => {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const onClose = useMobileSidebar((state) => state.onClose);
@@ -35,7 +38,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = () => {
           side={"left"}
           className="w-[288px] border-transparent p-0"
         >
-          <Sidebar />
+          <Sidebar id={id} type={type} />
         </SheetContent>
       </Sheet>
     </div>

@@ -9,12 +9,11 @@ import {
   Truck,
   Users,
   type LucideIcon,
-  ShieldHalf,
 } from "lucide-react";
 
 export const headerLinks = [
   {
-    label: "Home",
+    label: "Site",
     route: "/",
   },
 ];
@@ -94,12 +93,6 @@ export const sideMenuLinks: SideMenuLinks[] = [
     name: "Invoice",
     href: "/admin/invoice",
     icon: Receipt,
-    children: [],
-  },
-  {
-    name: "Teams",
-    href: "/admin/teams",
-    icon: ShieldHalf,
     children: [],
   },
 ];
@@ -423,7 +416,12 @@ export const jobRoles = [
   "Labourer",
   "Civil Engineer",
 ];
-export const roles = ["admin", "super-admin", "user"];
+export const roles = [
+  "AGENCY_OWNER",
+  "AGENCY_ADMIN",
+  "SUBACCOUNT_USER",
+  "SUBACCOUNT_GUEST",
+];
 
 // Data-Table
 type Payment = {

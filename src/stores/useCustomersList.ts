@@ -19,6 +19,7 @@ export const useCustomerList = create<CustomerListStore>((set) => ({
     address: "",
     email: "",
     phoneNumber: "",
+    agencyId: "",
     createdAt: new Date(),
   },
   setCustomer: (data: Customer) => {

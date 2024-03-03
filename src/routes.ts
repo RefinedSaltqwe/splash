@@ -2,7 +2,12 @@
  * An Array of routes are accessible to the public
  * These routes do not require authentication
  */
-export const publicRoutes = ["/", "/admin/auth/new-verification"];
+export const publicRoutes = [
+  "/",
+  "/site",
+  "/api/uploadthing",
+  "/admin/sign-in",
+];
 /**
  * An Array of routes are not accessible to the public
  * These routes do not require authentication

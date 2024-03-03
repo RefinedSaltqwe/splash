@@ -19,6 +19,13 @@ export type TimesheetField =
   | "sat";
 export type TimesheetRowKey = "timeIn" | "timeOut" | "breakIn" | "breakOut";
 
+export type TimesheetRowKeyObject = {
+  timeIn: string;
+  breakOut: string;
+  breakIn: string;
+  timeOut: string;
+};
+
 export type Team = {
   id: string;
   members: string[];

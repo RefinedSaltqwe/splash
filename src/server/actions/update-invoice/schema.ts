@@ -12,6 +12,7 @@ export const UpdateInvoice = z.object({
   total: z.coerce.number().multipleOf(0.01),
   dueDate: z.date(),
   createdAt: z.date(),
+  agencyId: z.string().optional(),
   services: z.array(
     z.object({
       price: z.coerce.number().multipleOf(0.01),

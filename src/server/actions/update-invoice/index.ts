@@ -1,14 +1,13 @@
 "use server";
 import { createSafeAction } from "@/lib/create-safe-actions";
-import { authOptions } from "@/server/auth";
 import { db } from "@/server/db";
-import { getServerSession } from "next-auth";
+import { currentUser } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { UpdateInvoice } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
 
   if (!session) {
     return {
@@ -21,23 +20,20 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   let promiseAll;
 
   try {
-    const updateInvoice = db.invoice.update({
-      where: {
-        id,
-      },
-      data: {
-        ...rest,
-      },
-    });
-    const deleteServices = db.service.deleteMany({
-      where: {
-        invoiceId: id,
-      },
-    });
-
-    const [invoicePromise, servicesPromise] = await Promise.all([
-      updateInvoice,
-      deleteServices,
+    const [invoicePromise, servicesPromise] = await db.$transaction([
+      db.invoice.update({
+        where: {
+          id,
+        },
+        data: {
+          ...rest,
+        },
+      }),
+      db.service.deleteMany({
+        where: {
+          invoiceId: id,
+        },
+      }),
     ]);
 
     const servicesWithInvoiceId = services.map((service) => {
@@ -46,6 +42,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         invoiceId: id,
         serviceTypeId: service.serviceTypeId,
         description: service.description,
+        agencyId: rest.agencyId!,
       };
       return newService;
     });

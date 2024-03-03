@@ -7,4 +7,5 @@ export const UpdateCustomer = z.object({
   address: z.string().min(5, { message: "Please enter the full address." }),
   email: z.string().email({ message: "Must be a valid email." }),
   phoneNumber: z.string(),
+  agencyId: z.string().optional(),
 });

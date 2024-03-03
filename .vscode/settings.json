@@ -1,0 +1,11 @@
+{
+  "editor.accessibilitySupport": "auto",
+  "workbench.tree.stickyScrollMaxItemCount": 1,
+  "workbench.tree.enableStickyScroll": false,
+  "editor.stickyScroll.scrollWithEditor": true,
+  "editor.stickyScroll.maxLineCount": 1,
+  "terminal.integrated.stickyScroll.maxLineCount": 1,
+  "editor.hover.sticky": true,
+  "editor.stickyScroll.enabled": false,
+  "notebook.stickyScroll.enabled": true
+}

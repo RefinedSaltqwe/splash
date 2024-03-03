@@ -1,7 +1,6 @@
 export const siteConfig = {
   name: "Splash",
-  description:
-    "Collaborate, manage projects, and reach new productivity peaks.",
+  description: "All in one Agency Solution",
   icon: "/favicon.ico",
   theme_color: "#0d1117",
   color_scheme: "dark only",

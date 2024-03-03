@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const CreateInvoice = z.object({
   id: z.string(),
+  agencyId: z.string().optional(),
   customerId: z.string(),
   status: z.string(),
   shipping: z.coerce.number().multipleOf(0.01),

@@ -18,9 +18,10 @@ import {
   getServiceTypes,
   getSuppliers,
 } from "@/server/actions/fetch";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { useQuery } from "@tanstack/react-query";
-import React, { lazy, useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 
 const Loader = lazy(() => import("@/components/shared/Loader"));
 
@@ -31,6 +32,7 @@ const DeleteInvoicePrompt: React.FC = () => {
   const onClose = useDeleteManyModal((state) => state.onClose);
   const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const modalType = useDeleteManyModal((state) => state.type);
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
   const [notConfirm, setNotConfirm] = useState<boolean>(true);
 
   const { data: serviceTypes } = useQuery({
@@ -40,14 +42,20 @@ const DeleteInvoicePrompt: React.FC = () => {
   });
   const { data: customers } = useQuery({
     queryKey: ["customers"],
-    queryFn: () => getCustomers(),
+    queryFn: () => getCustomers(agencyId ?? ""),
     enabled: modalType === "customer",
   });
   const { data: suppliers } = useQuery({
     queryKey: ["suppliers"],
     queryFn: () => getSuppliers(),
-    enabled: modalType === "customer",
+    enabled: modalType === "supplier",
   });
+
+  useEffect(() => {
+    if (!proceed) {
+      setNotConfirm(true);
+    }
+  }, [proceed]);
 
   return (
     <Dialog

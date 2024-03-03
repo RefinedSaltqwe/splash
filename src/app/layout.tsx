@@ -1,15 +1,12 @@
 import DrawerProvider from "@/components/providers/DrawerProvider";
 import ModalProvider from "@/components/providers/ModalProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
-import ClientWrapper from "@/components/shared/ClientWrapper";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
-import { authOptions } from "@/server/auth";
 import "@/styles/globals.css";
 import { siteConfig } from "config/site";
 import { type Metadata } from "next";
-import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 
@@ -19,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: `${siteConfig.name} Innovations`,
   description: siteConfig.description,
   icons: [{ rel: "icon", url: siteConfig.icon, href: siteConfig.icon }],
   other: {
@@ -38,12 +35,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("min-h-screen font-sans", inter.variable)}>
         <NextTopLoader
-          color="#7C3AED"
+          color="#3c82f6"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
@@ -62,10 +58,8 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <ClientWrapper session={session}>
-              {children}
-              <Toaster expand={false} richColors={true} />
-            </ClientWrapper>
+            {children}
+            <Toaster expand={false} richColors={true} position="bottom-right" />
             <DrawerProvider />
             <ModalProvider />
           </QueryProvider>

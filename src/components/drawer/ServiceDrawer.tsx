@@ -1,5 +1,4 @@
 "use client";
-import ServiceForm from "@/app/(dashboard)/admin/services/_components/ServiceForm";
 import { useServiceModal } from "@/stores/useServiceModal";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -17,6 +16,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "../ui/drawer";
+import ServiceForm from "@/app/(dashboard)/admin/[agencyId]/services/_components/ServiceForm";
 
 const ServiceDrawer: React.FC = () => {
   const [open, setOpen] = useState(false);

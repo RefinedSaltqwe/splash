@@ -80,3 +80,32 @@ export const sendVerificationEmail = async (
     html: body,
   });
 };
+
+export const sendEmailInvitationByResend = async (
+  name: string,
+  email: string,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const resend = new Resend(env.RESEND_API_KEY);
+  const companyEmail = env.EMAIL_FROM;
+
+  const body = `<div class="container">
+        <h1>Your invitation</h1>
+
+        <p>${name} has invited you to join them on ${siteConfig.name}.</p>
+
+        <a href="${env.NEXT_PUBLIC_URL}/admin">Accept Invitation</a>
+
+        <div class="footer">
+            <p>Please do not reply to this email as it is automatically generated.</p>
+        </div>
+    </div>`;
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  await resend.emails.send({
+    from: companyEmail,
+    to: email,
+    subject: `Invitation to join ${siteConfig.name}`,
+    html: body,
+  });
+};

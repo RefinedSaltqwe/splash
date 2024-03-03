@@ -1,14 +1,13 @@
 "use server";
 import { createSafeAction } from "@/lib/create-safe-actions";
-import { authOptions } from "@/server/auth";
 import { db } from "@/server/db";
-import { getServerSession } from "next-auth";
+import { currentUser } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { CreateTimesheet } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
 
   if (!session) {
     return {
@@ -16,15 +15,16 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  const { dateFr, dateTo } = data;
+  const { dateFr, dateTo, agencyId } = data;
 
   let promiseAll;
 
   try {
     const getUsers = await db.user.findMany({
       where: {
+        agencyId: "",
         role: {
-          not: "super-admin",
+          not: "SUPER_ADMIN" || "AGENCY_OWNER",
         },
       },
       select: {
@@ -37,6 +37,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         userId: string;
         dateFr: Date;
         dateTo: Date;
+        agencyId: string;
       }[] = [];
       const constructedDataForTimeInputs: { timesheetId: string }[] = [];
 
@@ -50,6 +51,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
           userId: user.id,
           dateFr,
           dateTo,
+          agencyId,
         });
         constructedDataForTimeInputs.push({
           timesheetId: generatedId,

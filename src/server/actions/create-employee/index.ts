@@ -19,7 +19,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         name: `${rest.firstName} ${rest.lastName}`,
         password: hashedPassword,
         ...rest,
-        role: "user",
+        role: "SUBACCOUNT_USER",
         status: "Pending",
         image: "",
         jobRole: "",

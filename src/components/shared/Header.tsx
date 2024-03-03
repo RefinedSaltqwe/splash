@@ -1,20 +1,25 @@
-import { headerLinks } from "@/constants";
+"use client";
+import { cn } from "@/lib/utils";
 import { useMobileSidebar } from "@/stores/useMobileSidebar";
+import { type NotificationWithUser } from "@/types/stripe";
+import { UserButton } from "@clerk/nextjs";
+import { type Role } from "@prisma/client";
+import { Globe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { lazy } from "react";
+import React from "react";
 import { ModeToggle } from "../themeModeToggle";
 import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 import GenerateTimesheetButton from "./GenerateTimesheetButton";
+import NotificationMenu from "./NotificationMenu";
 
-const UserMenu = lazy(() => import("./UserMenu"));
+type HeaderProps = {
+  notifications: NotificationWithUser | [];
+  role?: Role;
+};
 
-type HeaderProps = object;
-
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC<HeaderProps> = ({ notifications, role }) => {
   const onOpen = useMobileSidebar((state) => state.onOpen);
-  const menuItems = headerLinks;
 
   return (
     <header className="flex h-full w-full items-center bg-background/60 px-10 backdrop-blur dark:bg-background/60">
@@ -45,8 +50,19 @@ const Header: React.FC<HeaderProps> = () => {
 
         <div className="flex w-full items-center justify-end space-x-2 align-middle md:flex md:w-auto">
           <ModeToggle />
+          <NotificationMenu notifications={notifications} role={role} />
           <GenerateTimesheetButton />
-          {menuItems.map((item) => (
+          <Button
+            className="rounded-full text-foreground"
+            variant={"ghost"}
+            size={"icon"}
+            asChild
+          >
+            <Link href={"/"}>
+              <Globe className="h-5 w-5" />
+            </Link>
+          </Button>
+          {/* {menuItems.map((item) => (
             <Button
               className="text-foreground"
               key={item.label}
@@ -56,8 +72,9 @@ const Header: React.FC<HeaderProps> = () => {
             >
               <Link href={item.route}>{item.label}</Link>
             </Button>
-          ))}
-          <UserMenu />
+          ))} */}
+          {/* <UserMenu /> */}
+          <UserButton afterSignOutUrl="/" />
         </div>
       </div>
     </header>

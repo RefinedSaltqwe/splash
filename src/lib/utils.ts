@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { type User, type Invoice } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 
@@ -5,6 +6,13 @@ import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function getStripeOAuthLink(
+  accountType: "agency" | "subaccount",
+  state: string,
+) {
+  return `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${env.NEXT_PUBLIC_STRIPE_CLIENT_ID}&scope=read_write&redirect_uri=${env.NEXT_PUBLIC_URL}${accountType}&state=${state}`;
 }
 
 export const formatDateTime = (dateString: Date | string) => {
@@ -62,6 +70,10 @@ export const formatPrice = (price: string) => {
   }).format(amount);
 
   return formattedPrice;
+};
+export const floatToTwoDecimal = (number: number) => {
+  const formattedNumber = (Math.round(number * 100) / 100).toFixed(2);
+  return formattedNumber;
 };
 
 export const convertInvoiceStatus = (num: string) => {
@@ -198,6 +210,7 @@ const generateRandomUserForInvoice = (): Invoice => ({
   shipping: 0,
   subTotal: 0,
   discount: 0,
+  agencyId: "",
 });
 
 function generateRandomPhoneNumber(): string {
@@ -205,39 +218,40 @@ function generateRandomPhoneNumber(): string {
   return Math.floor(Math.random() * 10000000000).toString();
 }
 
-const generateRandomUser = (): User => ({
-  id: generateRandomId(),
-  name: "fasdf",
-  firstName: "John",
-  lastName: "Doe",
-  email: "exmaple@gmail.com",
-  password: "asdd",
-  emailVerified: new Date(),
-  image: "",
-  status:
-    generateRandomNumber(5) === 1
-      ? "Active"
-      : generateRandomNumber(5) === 2
-        ? "Disabled"
-        : generateRandomNumber(5) === 3
-          ? "Pending"
-          : "Terminated",
-  phoneNumber: generateRandomPhoneNumber(),
-  role: "user",
-  jobRole: "Mason",
-  country: "Canada",
-  street: "james hill rd",
-  city: "Regina",
-  state: "Sask",
-  postalCode: "s4w 0r2",
-  isTwoFactorEnabled: false,
-  createdAt: new Date(),
-});
+// const generateRandomUser = (): User => ({
+//   id: generateRandomId(),
+//   name: "fasdf",
+//   firstName: "John",
+//   lastName: "Doe",
+//   email: "exmaple@gmail.com",
+//   password: "asdd",
+//   emailVerified: new Date(),
+//   image: "",
+//   status:
+//     generateRandomNumber(5) === 1
+//       ? "Active"
+//       : generateRandomNumber(5) === 2
+//         ? "Disabled"
+//         : generateRandomNumber(5) === 3
+//           ? "Pending"
+//           : "Terminated",
+//   phoneNumber: generateRandomPhoneNumber(),
+//   agencyId: "",
+//   role: "SUBACCOUNT_USER",
+//   jobRole: "Mason",
+//   country: "Canada",
+//   street: "james hill rd",
+//   city: "Regina",
+//   state: "Sask",
+//   postalCode: "s4w 0r2",
+//   isTwoFactorEnabled: false,
+//   createdAt: new Date(),
+// });
 
 const generateRandomUsers = (count: number): User[] => {
   const users: User[] = [];
   for (let i = 0; i < count; i++) {
-    users.push(generateRandomUser());
+    // users.push(generateRandomUser());
   }
   return users;
 };

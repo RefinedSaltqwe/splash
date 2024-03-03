@@ -1,5 +1,5 @@
 "use client";
-import { Plus } from "lucide-react";
+import { CalendarPlus, Plus } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import {
@@ -15,8 +15,8 @@ const GenerateTimesheetButton: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="default">
-          Generate
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <CalendarPlus className="h-5 w-5" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>

@@ -4,21 +4,20 @@ import { revalidatePath } from "next/cache";
 
 import { createSafeAction } from "@/lib/create-safe-actions";
 
-import { authOptions } from "@/server/auth";
 import { db } from "@/server/db";
-import { getServerSession } from "next-auth";
+import { currentUser } from "@clerk/nextjs";
 import { CreateCustomer } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
 
-  if (!session) {
+  if (!session?.id) {
     return {
       error: "Unauthorized",
     };
   }
-  const { name, companyName, email, address, phoneNumber } = data;
+  const { name, companyName, email, address, phoneNumber, agencyId } = data;
   let newCustomer;
   try {
     newCustomer = await db.customer.create({
@@ -28,6 +27,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         address,
         email,
         phoneNumber,
+        agencyId,
       },
     });
   } catch (err: unknown) {
@@ -38,7 +38,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/customers/create`);
+  revalidatePath(`/admin/${agencyId}/customers/create`);
   return { data: newCustomer };
 };
 

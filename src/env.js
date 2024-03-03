@@ -11,7 +11,7 @@ export const env = createEnv({
       .string()
       .url()
       .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
+        (str) => !str.includes("YOUR_POSTGRESQL_URL_HERE"),
         "You forgot to change the default URL",
       ),
     NODE_ENV: z
@@ -36,6 +36,10 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     RESEND_API_KEY: z.string(),
+    CLERK_SECRET_KEY: z.string(),
+    UPLOADTHING_SECRET: z.string(),
+    UPLOADTHING_APP_ID: z.string(),
+    STRIPE_SECRET_KEY: z.string(),
   },
 
   /**
@@ -44,7 +48,16 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string(),
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string(),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string(),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string(),
+    NEXT_PUBLIC_URL: z.string(),
+    NEXT_PUBLIC_DOMAIN: z.string(),
+    NEXT_PUBLIC_SCHEME: z.string(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
+    // NEXT_PUBLIC_STRIPE_CLIENT_ID: z.string(),
   },
 
   /**
@@ -64,6 +77,24 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
+    UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
+      process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
+      process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+    NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+    NEXT_PUBLIC_SCHEME: process.env.NEXT_PUBLIC_SCHEME,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    // NEXT_PUBLIC_STRIPE_CLIENT_ID: process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

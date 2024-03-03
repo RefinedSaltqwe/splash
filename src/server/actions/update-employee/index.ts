@@ -7,6 +7,7 @@ import { createSafeAction } from "@/lib/create-safe-actions";
 import { db } from "@/server/db";
 import { UpdateEmployee } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { clerkClient } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { id, ...user } = data;
@@ -25,6 +26,11 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     if (!updateEmployee) {
       throw new Error("Failed to update employee");
     }
+    await clerkClient.users.updateUserMetadata(updateEmployee.id, {
+      privateMetadata: {
+        role: updateEmployee.role || "SUBACCOUNT_USER",
+      },
+    });
     promiseAll = {
       ...updateEmployee,
     };
@@ -36,7 +42,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/customers/create`);
+  revalidatePath(`/admin/${promiseAll?.agencyId}/employees/list`);
   return { data: promiseAll };
 };
 

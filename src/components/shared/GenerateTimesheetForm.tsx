@@ -5,6 +5,7 @@ import { useAction } from "@/hooks/useAction";
 import { cn, formatDateTime, getFirstAndLastDatesNextWeek } from "@/lib/utils";
 import { createTimesheet } from "@/server/actions/create-timesheet";
 import { CreateTimesheet } from "@/server/actions/create-timesheet/schema";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { useGenerateTimesheetModal } from "@/stores/useGenerateTimesheetModal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -24,15 +25,18 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
 }) => {
   const onClose = useGenerateTimesheetModal((state) => state.onClose);
   const queryClient = useQueryClient();
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
 
   const { execute: create, isLoading: createLoading } = useAction(
     createTimesheet,
     {
       onSuccess: (data) => {
         if (data.count === 0) {
-          toast.warning(
-            `Timesheets for ${formatDateTime(data.dateFr).dateOnly} to ${
-              formatDateTime(data.dateTo).dateOnly
+          toast.error(
+            `Timesheets for ${
+              formatDateTime(getFirstAndLastDatesNextWeek(1)).dateOnly
+            } to ${
+              formatDateTime(getFirstAndLastDatesNextWeek(7)).dateOnly
             } were already created.`,
           );
         } else {
@@ -69,8 +73,9 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
   const form = useForm<z.infer<typeof CreateTimesheet>>({
     resolver: zodResolver(CreateTimesheet),
     defaultValues: {
-      dateFr: getFirstAndLastDatesNextWeek(1),
+      dateFr: getFirstAndLastDatesNextWeek(1), // get the next week from lastest timesheet dateTo instead
       dateTo: getFirstAndLastDatesNextWeek(7),
+      agencyId: agencyId!,
     },
   });
 
@@ -78,6 +83,7 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
     void create({
       dateFr: values.dateFr,
       dateTo: values.dateTo,
+      agencyId: agencyId!,
     });
   }
 
@@ -91,15 +97,12 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
           )}
         >
           <Button type="button" variant={"ghost"} onClick={onClose}>
-            Cancel
+            Close
           </Button>
           <Button type="submit" variant={"default"} disabled={createLoading}>
             <span className="sr-only">Submit</span>
             {createLoading ? (
-              <>
-                {`Please wait `}
-                <Loader classNames="ml-2 h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
-              </>
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
             ) : (
               "Submit"
             )}

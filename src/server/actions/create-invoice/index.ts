@@ -1,15 +1,14 @@
 "use server";
-import { revalidatePath } from "next/cache";
 import { createSafeAction } from "@/lib/create-safe-actions";
-import { authOptions } from "@/server/auth";
+import { idGenerator } from "@/lib/utils";
 import { db } from "@/server/db";
-import { getServerSession } from "next-auth";
+import { currentUser } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
 import { CreateInvoice } from "./schema";
 import { type InputType, type ReturnType } from "./types";
-import { idGenerator } from "@/lib/utils";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
 
   if (!session) {
     return {
@@ -27,6 +26,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     discount,
     subTotal,
     total,
+    agencyId,
     services,
   } = data;
 
@@ -47,6 +47,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     //Insert invoiceId into service.invoiceId
     const servicesWithInvoiceId = services.map((service) => {
       const newService = {
+        agencyId: agencyId!,
         price: service.price,
         invoiceId: generateInvoiceId,
         serviceTypeId: service.serviceTypeId,
@@ -67,6 +68,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         discount,
         subTotal,
         total,
+        agencyId: agencyId!,
       },
     });
 

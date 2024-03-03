@@ -1,80 +1,180 @@
 "use server";
 import {
-  type TimesheetWithInputTimes,
+  type PipelineWithLanesAndTickets,
+  type AgencyWithSubAccounts,
+  type GetAllUsersInAgency,
+  type GetAuthUserDetails,
   type InvoiceWithService,
+  type TimesheetWithInputTimes,
 } from "@/types/prisma";
+import { type UserWithPermissionsAndSubAccounts } from "@/types/stripe";
+import { currentUser } from "@clerk/nextjs";
 import {
   Prisma,
   type AuthorizedEmail,
   type Customer,
   type Invoice,
   type ServiceType,
-  type VerificationToken,
-  type User,
-  type TwoFactorToken,
-  type TwoFactorConfirmation,
   type Supplier,
+  type TwoFactorConfirmation,
+  type TwoFactorToken,
+  type User,
+  type VerificationToken,
 } from "@prisma/client";
 import { cache } from "react";
 import { db } from "../../db";
 
-export const getCustomers = cache(async (): Promise<Customer[] | undefined> => {
-  try {
-    const customers = await db.customer.findMany({
-      orderBy: { createdAt: "asc" },
-    });
-    return [...customers];
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientInitializationError ||
-      error instanceof Prisma.PrismaClientKnownRequestError
-    ) {
-      throw new Error("System error. There is an error fetching customers.");
-    }
-    throw error;
-  }
-});
-
-export const getCustomer = cache(
-  async (id: string): Promise<Customer | undefined> => {
+export const getUserPermissions = cache(
+  async (userId: string): Promise<UserWithPermissionsAndSubAccounts | null> => {
+    let response;
     try {
-      const customer = await db.customer.findUnique({
-        where: {
-          id,
-        },
+      response = await db.user.findUnique({
+        where: { id: userId },
+        select: { Permissions: { include: { SubAccount: true } } },
       });
-      return customer!;
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientInitializationError ||
         error instanceof Prisma.PrismaClientKnownRequestError
       ) {
-        throw new Error("System error. There is an error fetching customer.");
+        throw new Error("System error. There is an error fetching customers.");
+      }
+      throw error;
+    }
+    return response;
+  },
+);
+
+export const getAuthUserDetails = cache(
+  async (): Promise<GetAuthUserDetails | null> => {
+    try {
+      const user = await currentUser();
+      if (!user) {
+        return null;
+      }
+
+      const userData = await db.user.findUnique({
+        where: {
+          email: user.emailAddresses[0]!.emailAddress,
+        },
+        include: {
+          Agency: {
+            include: {
+              SidebarOption: {
+                orderBy: {
+                  order: "asc",
+                },
+                include: {
+                  Children: true,
+                },
+              },
+              SubAccount: {
+                include: {
+                  SidebarOption: {
+                    orderBy: {
+                      order: "asc",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          Permissions: true,
+        },
+      });
+
+      return userData;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching customers.");
       }
       throw error;
     }
   },
 );
 
-export const getSuppliers = cache(async (): Promise<Supplier[] | undefined> => {
+export const getCustomers = cache(
+  async (agencyId: string): Promise<Customer[] | undefined> => {
+    try {
+      const customers = await db.customer.findMany({
+        where: {
+          agencyId,
+        },
+        orderBy: { createdAt: "asc" },
+      });
+      return [...customers];
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching customers.");
+      }
+      throw error;
+    }
+  },
+);
+
+export const getCustomer = cache(async (id: string): Promise<Customer> => {
   try {
-    const suppliers = await db.supplier.findMany({
-      orderBy: { createdAt: "asc" },
+    const customer = await db.customer.findUnique({
+      where: {
+        id,
+      },
     });
-    return [...suppliers];
+    return customer!;
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientInitializationError ||
       error instanceof Prisma.PrismaClientKnownRequestError
     ) {
-      throw new Error("System error. There is an error fetching customers.");
+      throw new Error("System error. There is an error fetching customer.");
     }
     throw error;
   }
 });
 
+export const getPipelines = cache(
+  async (subaccountId: string): Promise<PipelineWithLanesAndTickets[] | []> => {
+    const response = await db.pipeline.findMany({
+      where: { subAccountId: subaccountId },
+      include: {
+        Lane: {
+          include: { Tickets: true },
+        },
+      },
+    });
+    return response;
+  },
+);
+
+export const getSuppliers = cache(
+  async (agencyId: string): Promise<Supplier[] | []> => {
+    try {
+      const suppliers = await db.supplier.findMany({
+        where: {
+          agencyId,
+        },
+        orderBy: { createdAt: "asc" },
+      });
+      return [...suppliers];
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching customers.");
+      }
+      throw error;
+    }
+  },
+);
+
 export const getSupplierById = cache(
-  async (id: string): Promise<Customer | undefined> => {
+  async (id: string): Promise<Supplier | []> => {
     try {
       const supplier = await db.supplier.findUnique({
         where: {
@@ -118,9 +218,12 @@ export const getServiceType = cache(
 );
 
 export const getServiceTypes = cache(
-  async (): Promise<ServiceType[] | undefined> => {
+  async (agencyId: string): Promise<ServiceType[] | undefined> => {
     try {
       const services = await db.serviceType.findMany({
+        where: {
+          agencyId,
+        },
         orderBy: { name: "asc" },
       });
       return [...services];
@@ -138,22 +241,27 @@ export const getServiceTypes = cache(
   },
 );
 
-export const getInvoices = cache(async (): Promise<Invoice[] | undefined> => {
-  try {
-    const invoices = await db.invoice.findMany({
-      orderBy: { createdAt: "asc" },
-    });
-    return [...invoices];
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientInitializationError ||
-      error instanceof Prisma.PrismaClientKnownRequestError
-    ) {
-      throw new Error("System error. There is an error fetching invoices.");
+export const getInvoices = cache(
+  async (agencyId: string): Promise<Invoice[] | undefined> => {
+    try {
+      const invoices = await db.invoice.findMany({
+        where: {
+          agencyId,
+        },
+        orderBy: { createdAt: "asc" },
+      });
+      return [...invoices];
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching invoices.");
+      }
+      throw error;
     }
-    throw error;
-  }
-});
+  },
+);
 
 export const getInvoiceWithServices = cache(
   async (id: string): Promise<InvoiceWithService | undefined | null> => {
@@ -328,31 +436,42 @@ export const getUserByEmail = cache(
   },
 );
 
-export const getUsers = cache(async (): Promise<User[] | undefined> => {
-  try {
-    const user = await db.user.findMany({
-      orderBy: { createdAt: "asc" },
-    });
-    return user;
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientInitializationError ||
-      error instanceof Prisma.PrismaClientKnownRequestError
-    ) {
-      throw new Error("System error. There is an error fetching user.");
-    }
-    throw error;
-  }
-});
-
-export const getUsersExcludeCurrentUserById = cache(
-  async (id: string): Promise<User[] | undefined> => {
+export const getUsers = cache(
+  async (agencyId: string): Promise<User[] | undefined> => {
     try {
-      const users = await db.user.findMany({
+      const user = await db.user.findMany({
+        where: {
+          agencyId,
+        },
         orderBy: { createdAt: "asc" },
       });
-      let usersWithoutCurrentUser;
+      return user;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching user.");
+      }
+      throw error;
+    }
+  },
+);
 
+export const getUsersExcludeCurrentUserById = cache(
+  async (id: string, agencyId: string): Promise<User[] | undefined> => {
+    try {
+      const users = await db.user.findMany({
+        where: {
+          agencyId,
+        },
+        orderBy: { createdAt: "asc" },
+        include: {
+          Agency: { include: { SubAccount: true } },
+          Permissions: { include: { SubAccount: true } },
+        },
+      });
+      let usersWithoutCurrentUser;
       if (users) {
         usersWithoutCurrentUser = users.filter((user) => user.id !== id);
       }
@@ -369,13 +488,119 @@ export const getUsersExcludeCurrentUserById = cache(
     }
   },
 );
+export const getAllUsersInAgency = cache(
+  async (agencyId: string): Promise<GetAllUsersInAgency[] | undefined> => {
+    try {
+      const users = await db.user.findMany({
+        where: {
+          Agency: {
+            id: agencyId,
+          },
+        },
+        orderBy: { createdAt: "asc" },
+        include: {
+          Agency: { include: { SubAccount: true } },
+          Permissions: { include: { SubAccount: true } },
+        },
+      });
 
+      return users;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching user.");
+      }
+      throw error;
+    }
+  },
+);
+
+export const getUserDetails = cache(
+  async (id: string): Promise<GetAuthUserDetails | null> => {
+    try {
+      const user = await currentUser();
+      if (!user) {
+        return null;
+      }
+
+      const userData = await db.user.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          Agency: {
+            include: {
+              SidebarOption: {
+                orderBy: {
+                  order: "asc",
+                },
+                include: {
+                  Children: true,
+                },
+              },
+              SubAccount: {
+                include: {
+                  SidebarOption: {
+                    orderBy: {
+                      order: "asc",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          Permissions: true,
+        },
+      });
+
+      return userData;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching customers.");
+      }
+      throw error;
+    }
+  },
+);
+
+export const getAgencyByIdWithSubAccounts = cache(
+  async (id: string): Promise<AgencyWithSubAccounts | undefined> => {
+    try {
+      const agency = await db.agency.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          SubAccount: true,
+        },
+      });
+      return agency!;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error("System error. There is an error fetching user.");
+      }
+      throw error;
+    }
+  },
+);
 export const getUserById = cache(
-  async (id: string): Promise<User | undefined> => {
+  async (id: string): Promise<GetAllUsersInAgency | undefined> => {
     try {
       const user = await db.user.findUnique({
         where: {
           id,
+        },
+        include: {
+          Agency: { include: { SubAccount: true } },
+          Permissions: { include: { SubAccount: true } },
         },
       });
       return user!;
@@ -392,9 +617,15 @@ export const getUserById = cache(
 );
 
 export const getTimesheets = cache(
-  async (): Promise<TimesheetWithInputTimes[] | undefined | null> => {
+  async (agencyId: string): Promise<TimesheetWithInputTimes[] | undefined> => {
     try {
       const timesheets = db.timesheet.findMany({
+        where: {
+          Agency: {
+            id: agencyId,
+          },
+        },
+        orderBy: { id: "asc" },
         include: {
           timeIn: true,
           timeOut: true,

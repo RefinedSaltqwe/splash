@@ -4,20 +4,19 @@ import { revalidatePath } from "next/cache";
 
 import { createSafeAction } from "@/lib/create-safe-actions";
 
-import { authOptions } from "@/server/auth";
 import { db } from "@/server/db";
-import { getServerSession } from "next-auth";
+import { currentUser } from "@clerk/nextjs";
 import { DeleteCustomers } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
 
   if (!session) {
     throw new Error("Unauthorized");
   }
 
-  const { ids } = data;
+  const { ids, agencyId } = data;
 
   try {
     await db.customer.deleteMany({
@@ -35,8 +34,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/customers`);
-  return { data: undefined };
+  revalidatePath(`/admin/${agencyId}customers`);
+  return { data: "success" };
 };
 
 export const deleteCustomers = createSafeAction(DeleteCustomers, handler);
