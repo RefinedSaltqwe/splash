@@ -163,6 +163,7 @@ export const columns: ColumnDef<Customer>[] = [
                 <MoreHorizontal size={20} />
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end" className="bg-drop-downmenu">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />

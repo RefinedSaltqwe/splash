@@ -7,7 +7,6 @@ export const sendTwoFactorEmail = async (
   email: string,
   token: string,
 ) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const resend = new Resend(env.RESEND_API_KEY);
   const companyEmail = env.EMAIL_FROM;
 
@@ -32,7 +31,6 @@ export const sendTwoFactorEmail = async (
         </div>
     </div>`;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   await resend.emails.send({
     from: companyEmail,
     to: email,
@@ -46,7 +44,6 @@ export const sendVerificationEmail = async (
   email: string,
   token: string,
 ) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const resend = new Resend(env.RESEND_API_KEY);
   const companyEmail = env.EMAIL_FROM;
   const confirmLink = `${env.NEXTAUTH_URL}/admin/auth/new-verification?token=${token}`;
@@ -72,7 +69,6 @@ export const sendVerificationEmail = async (
         </div>
     </div>`;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   await resend.emails.send({
     from: companyEmail,
     to: email,
@@ -85,7 +81,6 @@ export const sendEmailInvitationByResend = async (
   name: string,
   email: string,
 ) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const resend = new Resend(env.RESEND_API_KEY);
   const companyEmail = env.EMAIL_FROM;
 
@@ -101,7 +96,6 @@ export const sendEmailInvitationByResend = async (
         </div>
     </div>`;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   await resend.emails.send({
     from: companyEmail,
     to: email,

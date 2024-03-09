@@ -86,21 +86,21 @@ export const createTeamUser = async (agencyId: string, user: User) => {
       id: user.id,
       image: user.image,
       email: user.email,
-      name: `${user.firstName} ${user.lastName}`,
+      name: user.name,
       role: user.role,
-      firstName: user.firstName ?? "",
-      lastName: user.lastName ?? "",
-      password: "",
-      emailVerified: new Date(),
-      status: "Active",
-      phoneNumber: "",
-      country: "Canada",
-      street: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      jobRole: "",
-      isTwoFactorEnabled: false,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      password: user.password,
+      emailVerified: user.emailVerified,
+      status: user.status,
+      phoneNumber: user.phoneNumber,
+      country: user.country,
+      street: user.street,
+      city: user.city,
+      state: user.state,
+      postalCode: user.postalCode,
+      jobRole: user.jobRole,
+      isTwoFactorEnabled: user.isTwoFactorEnabled,
     },
   });
 
@@ -130,7 +130,7 @@ export const verifyAndAcceptInvitation = async () => {
           updatedAt: new Date(),
           firstName: user.firstName ?? "",
           lastName: user.lastName ?? "",
-          password: "",
+          password: user.passwordEnabled,
           emailVerified: new Date(),
           status: "Active",
           phoneNumber: "",
@@ -299,7 +299,7 @@ export const initUser = async (newUser: Partial<User>) => {
       role: newUser.role ?? "SUBACCOUNT_USER",
       firstName: user.firstName ?? "",
       lastName: user.lastName ?? "",
-      password: "",
+      password: user.passwordEnabled,
       emailVerified: new Date(),
       status: "Active",
       phoneNumber: newUser.phoneNumber,
@@ -608,16 +608,6 @@ export const _getTicketsWithAllRelations = async (laneId: string) => {
   return response;
 };
 
-export const getMedia = async (subaccountId: string) => {
-  const mediafiles = await db.subAccount.findUnique({
-    where: {
-      id: subaccountId,
-    },
-    include: { Media: true },
-  });
-  return mediafiles;
-};
-
 export const createMedia = async (
   subaccountId: string,
   mediaFile: CreateMediaType,
@@ -633,41 +623,10 @@ export const createMedia = async (
   return response;
 };
 
-export const deleteMedia = async (mediaId: string) => {
+export const deleteMediaQuery = async (mediaId: string) => {
   const response = await db.media.delete({
     where: {
       id: mediaId,
-    },
-  });
-  return response;
-};
-
-export const getPipelineDetails = async (pipelineId: string) => {
-  const response = await db.pipeline.findUnique({
-    where: {
-      id: pipelineId,
-    },
-  });
-  return response;
-};
-
-export const getLanesWithTicketAndTags = async (pipelineId: string) => {
-  const response = await db.lane.findMany({
-    where: {
-      pipelineId,
-    },
-    orderBy: { order: "asc" },
-    include: {
-      Tickets: {
-        orderBy: {
-          order: "asc",
-        },
-        include: {
-          Tags: true,
-          Assigned: true,
-          Customer: true,
-        },
-      },
     },
   });
   return response;
@@ -703,7 +662,7 @@ export const upsertPipeline = async (
   return response;
 };
 
-export const deletePipeline = async (pipelineId: string) => {
+export const executeDeletePipeline = async (pipelineId: string) => {
   const response = await db.pipeline.delete({
     where: { id: pipelineId },
   });
@@ -724,9 +683,12 @@ export const updateLanesOrder = async (lanes: Lane[]) => {
     );
 
     await db.$transaction(updateTrans);
-    console.log("🟢 Done reordered 🟢");
-  } catch (error) {
-    console.log(error, "ERROR UPDATE LANES ORDER");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return {
+        error: err.message,
+      };
+    }
   }
 };
 
@@ -745,31 +707,49 @@ export const updateTicketsOrder = async (tickets: Ticket[]) => {
     );
 
     await db.$transaction(updateTrans);
-    console.log("🟢 Done reordered 🟢");
-  } catch (error) {
-    console.log(error, "🔴 ERROR UPDATE TICKET ORDER");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return {
+        error: err.message,
+      };
+    }
   }
 };
 
-export const upsertLane = async (lane: Prisma.LaneUncheckedCreateInput) => {
-  let order: number;
+export const upsertLane = async (
+  name: string,
+  id: string | undefined,
+  pipelineId: string,
+  order: number | undefined,
+) => {
+  let orderr: number;
+  const lane = { name, id, pipelineId, order };
 
-  if (!lane.order) {
+  if (!order) {
     const lanes = await db.lane.findMany({
       where: {
-        pipelineId: lane.pipelineId,
+        pipelineId,
       },
     });
 
-    order = lanes.length;
+    orderr = lanes.length;
   } else {
-    order = lane.order;
+    orderr = order;
   }
 
   const response = await db.lane.upsert({
-    where: { id: lane.id ?? randomUUID() },
+    where: { id: id ?? randomUUID() },
     update: lane,
-    create: { ...lane, order },
+    create: { ...lane, order: orderr },
+    include: {
+      Tickets: {
+        include: {
+          Tags: true,
+          Assigned: true,
+          Customer: true,
+        },
+      },
+    },
   });
 
   return response;
@@ -778,51 +758,6 @@ export const upsertLane = async (lane: Prisma.LaneUncheckedCreateInput) => {
 export const deleteLane = async (laneId: string) => {
   const resposne = await db.lane.delete({ where: { id: laneId } });
   return resposne;
-};
-
-export const getTicketsWithTags = async (pipelineId: string) => {
-  const response = await db.ticket.findMany({
-    where: {
-      Lane: {
-        pipelineId,
-      },
-    },
-    include: { Tags: true, Assigned: true, Customer: true },
-  });
-  return response;
-};
-
-export const getSubAccountTeamMembers = async (subaccountId: string) => {
-  const subaccountUsersWithAccess = await db.user.findMany({
-    where: {
-      Agency: {
-        SubAccount: {
-          some: {
-            id: subaccountId,
-          },
-        },
-      },
-      role: "SUBACCOUNT_USER",
-      Permissions: {
-        some: {
-          subAccountId: subaccountId,
-          access: true,
-        },
-      },
-    },
-  });
-  return subaccountUsersWithAccess;
-};
-
-export const searchContacts = async (searchTerms: string) => {
-  const response = await db.contact.findMany({
-    where: {
-      name: {
-        contains: searchTerms,
-      },
-    },
-  });
-  return response;
 };
 
 export const upsertTicket = async (
@@ -876,14 +811,6 @@ export const upsertTag = async (
     create: { ...tag, subAccountId: subaccountId },
   });
 
-  return response;
-};
-
-export const getTagsForSubaccount = async (subaccountId: string) => {
-  const response = await db.subAccount.findUnique({
-    where: { id: subaccountId },
-    select: { Tags: true },
-  });
   return response;
 };
 

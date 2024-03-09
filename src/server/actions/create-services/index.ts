@@ -31,7 +31,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/services`);
+  revalidatePath(`/admin/${agencyId}/services`);
   return { data: newService };
 };
 

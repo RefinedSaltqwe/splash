@@ -37,7 +37,7 @@ const DeleteInvoicePrompt: React.FC = () => {
 
   const { data: serviceTypes } = useQuery({
     queryKey: ["serviceTypes"],
-    queryFn: () => getServiceTypes(),
+    queryFn: () => getServiceTypes(agencyId ?? ""),
     enabled: modalType === "serviceType",
   });
   const { data: customers } = useQuery({
@@ -47,7 +47,7 @@ const DeleteInvoicePrompt: React.FC = () => {
   });
   const { data: suppliers } = useQuery({
     queryKey: ["suppliers"],
-    queryFn: () => getSuppliers(),
+    queryFn: () => getSuppliers(agencyId ?? ""),
     enabled: modalType === "supplier",
   });
 

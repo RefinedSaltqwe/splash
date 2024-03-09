@@ -10,6 +10,6 @@ const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = async ({
   children,
 }) => {
   const agencyId = await verifyAndAcceptInvitation();
-  return <LayoutClient agencyId={agencyId ?? ""} children={children} />;
+  return <LayoutClient agencyId={agencyId ?? ""}>{children}</LayoutClient>;
 };
 export default AdminDashboardLayout;

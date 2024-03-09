@@ -20,6 +20,9 @@ const SubAccountMainPage = async ({
   const user = await getAuthUserDetails();
   if (!user) return;
 
+  if (user.status === "Terminated") {
+    return <Unauthorized />;
+  }
   const getFirstSubaccountWithAccess = user.Permissions.find(
     (permission) => permission.access === true,
   );

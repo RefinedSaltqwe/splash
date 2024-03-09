@@ -11,7 +11,6 @@ import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   let promiseAll;
-  console.log(data);
   try {
     let custId;
     if (!data?.id) {

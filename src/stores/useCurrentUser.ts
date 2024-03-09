@@ -1,4 +1,22 @@
+import { type PricesList, type TicketDetails } from "@/types/stripe";
+import {
+  type Agency,
+  type Contact,
+  type Plan,
+  type User,
+} from "@prisma/client";
 import { create } from "zustand";
+
+export type Data = {
+  user?: User;
+  agency?: Agency;
+  ticket?: TicketDetails[0];
+  contact?: Contact;
+  plans?: {
+    defaultPriceId: Plan;
+    plans: PricesList["data"];
+  };
+};
 
 type CurrentUserStore = {
   id?: string | null | undefined;
@@ -8,6 +26,21 @@ type CurrentUserStore = {
   email?: string | null | undefined;
   role: string | null | undefined;
   subaccountId?: string | null | undefined;
+  userData?: User | undefined;
+  agencyData?: Agency | undefined;
+  ticketData?: TicketDetails[0] | undefined;
+  contactData?: Contact | undefined;
+  plansData?:
+    | {
+        defaultPriceId: Plan;
+        plans: PricesList["data"];
+      }
+    | undefined;
+  setUserData: (user: User | undefined) => void;
+  setAgencyData: (agency: Agency | undefined) => void;
+  setTicketData: (ticket: TicketDetails[0] | undefined) => void;
+  setContactData: (contact: Contact | undefined) => void;
+  setPlansData: (defaultPriceId: Plan, plans: PricesList["data"]) => void;
   setUser: (
     id: string | null | undefined,
     agencyId: string | null | undefined,
@@ -27,6 +60,37 @@ export const useCurrentUserStore = create<CurrentUserStore>((set) => ({
   email: "",
   role: "",
   subaccountId: "",
+  userData: undefined,
+  agencyData: undefined,
+  ticketData: undefined,
+  contactData: undefined,
+  plansData: {
+    defaultPriceId: "price_1OYxkqFj9oKEERu1NbKUxXxN",
+    plans: [],
+  },
+  setUserData: (user: User | undefined) =>
+    set(() => ({
+      userData: user,
+    })),
+  setAgencyData: (agency: Agency | undefined) =>
+    set(() => ({
+      agencyData: agency,
+    })),
+  setTicketData: (ticket: TicketDetails[0] | undefined) =>
+    set(() => ({
+      ticketData: ticket,
+    })),
+  setContactData: (contact: Contact | undefined) =>
+    set(() => ({
+      contactData: contact,
+    })),
+  setPlansData: (defaultPriceId: Plan, plans: PricesList["data"]) =>
+    set(() => ({
+      plansData: {
+        defaultPriceId,
+        plans,
+      },
+    })),
   setUser: (
     id: string | null | undefined,
     agencyId: string | null | undefined,

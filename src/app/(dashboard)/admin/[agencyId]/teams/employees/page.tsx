@@ -752,7 +752,7 @@ const Employees: React.FC<EmployeesProps> = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-x-6">
+          <div className="mt-6 flex items-center justify-end gap-x-4">
             <Button type="button" variant={"ghost"}>
               Cancel
             </Button>

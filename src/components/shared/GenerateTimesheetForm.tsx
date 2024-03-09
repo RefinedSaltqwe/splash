@@ -92,7 +92,7 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div
           className={cn(
-            "mt-4 flex items-center justify-end gap-x-6",
+            "mt-4 flex items-center justify-end gap-x-4",
             className,
           )}
         >

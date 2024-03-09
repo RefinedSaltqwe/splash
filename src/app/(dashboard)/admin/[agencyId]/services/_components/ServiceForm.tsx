@@ -131,7 +131,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ className }) => {
 
         <div
           className={cn(
-            "mt-4 flex items-center justify-end gap-x-6",
+            "mt-4 flex items-center justify-end gap-x-4",
             className,
           )}
         >

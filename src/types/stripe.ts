@@ -11,16 +11,18 @@ import {
 import {
   type _getTicketsWithAllRelations,
   type getFunnels,
-  type getMedia,
-  type getPipelineDetails,
-  type getTicketsWithTags,
   type getUserPermissions,
 } from "@/server/queries";
 import { z } from "zod";
 
 import type Stripe from "stripe";
 import { db } from "@/server/db";
-import { type getAuthUserDetails } from "@/server/actions/fetch";
+import {
+  type getMedia,
+  type getAuthUserDetails,
+  type getPipelineDetails,
+  type getTicketsWithTags,
+} from "@/server/actions/fetch";
 
 export type NotificationWithUser =
   | ({
@@ -102,16 +104,6 @@ export const LaneFormSchema = z.object({
 export type TicketWithTags = Prisma.PromiseReturnType<
   typeof getTicketsWithTags
 >;
-
-const currencyNumberRegex = /^\d+(\.\d{1,2})?$/;
-
-export const TicketFormSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  value: z.string().refine((value) => currencyNumberRegex.test(value), {
-    message: "Value must be a valid price.",
-  }),
-});
 
 export type TicketDetails = Prisma.PromiseReturnType<
   typeof _getTicketsWithAllRelations

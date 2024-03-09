@@ -504,7 +504,7 @@ const InputForm: React.FC<InputFormProps> = ({ uid }) => {
             </div>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="mt-6 flex items-center justify-end gap-x-4">
           <Button
             type="button"
             variant={"ghost"}

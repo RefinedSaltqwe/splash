@@ -1,6 +1,7 @@
 "use client";
 import { getAuthUserDetails } from "@/server/actions/fetch";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
+import { Agency, type User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 
@@ -20,7 +21,11 @@ const DashboardWrapper: React.FC<DashboardWrapperProps> = ({
     queryFn: () => getAuthUserDetails(),
   });
   const setUser = useCurrentUserStore((state) => state.setUser);
+  const setUserData = useCurrentUserStore((state) => state.setUserData);
+  const setAgencyData = useCurrentUserStore((state) => state.setAgencyData);
   useEffect(() => {
+    setUserData(user as User);
+    setAgencyData((user?.Agency ?? undefined) as Agency);
     setUser(
       user?.id,
       agencyId,

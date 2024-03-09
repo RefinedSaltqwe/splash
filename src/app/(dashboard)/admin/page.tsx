@@ -7,6 +7,7 @@ import Heading from "@/components/shared/Heading";
 import AdminRegistrationForm from "./[agencyId]/_components/form/AdminRegistrationForm";
 import { getAuthUserDetails } from "@/server/actions/fetch";
 import Loader from "@/components/shared/Loader";
+import Unauthorized from "@/components/shared/Unauthorized";
 
 type AdminPageProps = {
   searchParams: { plan: Plan; state: string; code: string };
@@ -17,7 +18,13 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
 
   //get the users details
   const user = await getAuthUserDetails();
+  if (user?.status === "Terminated") {
+    return <Unauthorized />;
+  }
   if (agencyId) {
+    if (user?.password && user.isTwoFactorEnabled) {
+      console.log("Send Two-Factor Authentication Code");
+    }
     if (user?.role === "SUBACCOUNT_GUEST" || user?.role === "SUBACCOUNT_USER") {
       return redirect("/subaccount");
     } else if (user?.role === "AGENCY_OWNER" || user?.role === "AGENCY_ADMIN") {

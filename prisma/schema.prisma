@@ -95,7 +95,7 @@ model User {
     firstName     String @default("")
     lastName      String @default("")
     email         String @unique
-    password      String @default("")
+    password      Boolean @default(false)
     emailVerified DateTime? 
     image         String @db.Text @default("") 
     status        String @default("Pending")

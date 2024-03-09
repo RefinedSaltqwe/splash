@@ -210,4 +210,10 @@ html.dark .apexcharts-gridline {
   .placeholders-select {
     @apply data-[placeholder]:text-gray-400 dark:data-[placeholder]:text-gray-600;
   }
+
+  /* Clerk */
+
+  .cl-modalContent {
+    @apply rounded-lg;
+  }
 }

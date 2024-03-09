@@ -19,6 +19,10 @@ import {
   type Pipeline,
   type Lane,
   type Ticket,
+  type Media,
+  type Tag,
+  type Customer,
+  type Contact,
 } from "@prisma/client";
 // ? Custom Types
 export type InvoiceWithService = Invoice & { services: Service[] };
@@ -96,6 +100,7 @@ export type FunnelsWithFunnelPages =
       FunnelPages: FunnelPage[];
     })
   | null;
+
 export type TotalFunnelVisits = number | undefined;
 
 export type FunnelsWithFunnelPagesAndTotalFunnelVisits =
@@ -110,8 +115,35 @@ export type LaneAndTickets =
       Tickets: Ticket[];
     })
   | null;
+
 export type PipelineWithLanesAndTickets =
   | (Pipeline & {
       Lane: LaneAndTickets[];
     })
   | null;
+//========================== GetMediaFromSubAccount
+export type GetMediaFromSubAccount =
+  | (SubAccount & {
+      Media: Media[];
+    })
+  | null;
+//========================== GetLanesWithTicketAndTags
+
+export type TicketsWithTagsAssignedCustomer =
+  | (Ticket & {
+      Tags: Tag[];
+      Customer: Contact | null;
+      Assigned: User | null;
+    })
+  | null;
+
+export type GetLanesWithTicketAndTags =
+  | (Lane & {
+      Tickets: TicketsWithTagsAssignedCustomer[];
+    })
+  | null;
+
+//========================== GetTagsForSubaccount
+export type GetTagsForSubaccount = {
+  Tags: Tag[];
+} | null;

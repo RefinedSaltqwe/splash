@@ -1,25 +1,33 @@
 "use server";
 import {
-  type PipelineWithLanesAndTickets,
   type AgencyWithSubAccounts,
   type GetAllUsersInAgency,
   type GetAuthUserDetails,
+  type GetLanesWithTicketAndTags,
+  type GetMediaFromSubAccount,
+  type GetTagsForSubaccount,
   type InvoiceWithService,
+  type PipelineWithLanesAndTickets,
   type TimesheetWithInputTimes,
 } from "@/types/prisma";
-import { type UserWithPermissionsAndSubAccounts } from "@/types/stripe";
+import {
+  type LaneDetail,
+  type UserWithPermissionsAndSubAccounts,
+} from "@/types/stripe";
 import { currentUser } from "@clerk/nextjs";
 import {
   Prisma,
   type AuthorizedEmail,
   type Customer,
   type Invoice,
+  type Pipeline,
   type ServiceType,
   type Supplier,
   type TwoFactorConfirmation,
   type TwoFactorToken,
   type User,
   type VerificationToken,
+  type Contact,
 } from "@prisma/client";
 import { cache } from "react";
 import { db } from "../../db";
@@ -42,6 +50,18 @@ export const getUserPermissions = cache(
       throw error;
     }
     return response;
+  },
+);
+
+export const getMedia = cache(
+  async (subaccountId: string): Promise<GetMediaFromSubAccount | null> => {
+    const mediafiles = await db.subAccount.findUnique({
+      where: {
+        id: subaccountId,
+      },
+      include: { Media: true },
+    });
+    return mediafiles;
   },
 );
 
@@ -648,3 +668,102 @@ export const getTimesheets = cache(
     }
   },
 );
+
+export const getPipelineDetails = cache(
+  async (pipelineId: string): Promise<Pipeline | undefined | null> => {
+    const response = await db.pipeline.findUnique({
+      where: {
+        id: pipelineId,
+      },
+    });
+    return response;
+  },
+);
+
+export const getLanesWithTicketAndTags = cache(
+  async (pipelineId: string): Promise<LaneDetail[] | undefined | null> => {
+    const response = await db.lane.findMany({
+      where: {
+        pipelineId,
+      },
+      orderBy: { order: "asc" },
+      include: {
+        Tickets: {
+          orderBy: {
+            order: "asc",
+          },
+          include: {
+            Tags: true,
+            Assigned: true,
+            Customer: true,
+          },
+        },
+      },
+    });
+    return response;
+  },
+);
+
+export const getTagsForSubaccount = cache(
+  async (subaccountId: string): Promise<GetTagsForSubaccount | null> => {
+    const response = await db.subAccount.findUnique({
+      where: { id: subaccountId },
+      select: { Tags: true },
+    });
+    return response;
+  },
+);
+
+export const getTicketsWithTags = cache(async (pipelineId: string) => {
+  const response = await db.ticket.findMany({
+    where: {
+      Lane: {
+        pipelineId,
+      },
+    },
+    include: { Tags: true, Assigned: true, Customer: true },
+  });
+  return response;
+});
+
+export const getSubAccountTeamMembers = cache(
+  async (subaccountId: string): Promise<User[] | null> => {
+    const subaccountUsersWithAccess = await db.user.findMany({
+      where: {
+        Agency: {
+          SubAccount: {
+            some: {
+              id: subaccountId,
+            },
+          },
+        },
+        role: "SUBACCOUNT_USER",
+        Permissions: {
+          some: {
+            subAccountId: subaccountId,
+            access: true,
+          },
+        },
+      },
+    });
+    return subaccountUsersWithAccess;
+  },
+);
+
+export const searchContacts = cache(
+  async (searchTerms: string): Promise<Contact[] | null> => {
+    const response = await db.contact.findMany({
+      where: {
+        name: {
+          contains: searchTerms,
+        },
+      },
+    });
+    return response;
+  },
+);
+
+export const getContacts = cache(async (): Promise<Contact[] | null> => {
+  const response = await db.contact.findMany();
+  return response;
+});
