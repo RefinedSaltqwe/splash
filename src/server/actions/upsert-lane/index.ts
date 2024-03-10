@@ -4,16 +4,19 @@ import { revalidatePath } from "next/cache";
 
 import { createSafeAction } from "@/lib/create-safe-actions";
 
-import { saveActivityLogsNotification, upsertLane } from "@/server/queries";
+import {
+  saveActivityLogsNotification,
+  upsertLaneQuery,
+} from "@/server/queries";
 import { getPipelineDetails } from "../fetch";
-import { CreateLane } from "./schema";
+import { UpsertLane } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { name, order, pipelineId, subAccountId, laneId } = data;
   let promiseAll;
   try {
-    const response = await upsertLane(name, laneId, pipelineId, order);
+    const response = await upsertLaneQuery(name, laneId, pipelineId, order);
 
     if (response) {
       promiseAll = response;
@@ -37,8 +40,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/subaccount/${subAccountId}/pipeline`);
+  revalidatePath(`/subaccount/${subAccountId}/pipelines/${pipelineId}`);
   return { data: promiseAll };
 };
 
-export const createLane = createSafeAction(CreateLane, handler);
+export const upsertLane = createSafeAction(UpsertLane, handler);

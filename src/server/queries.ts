@@ -716,7 +716,7 @@ export const updateTicketsOrder = async (tickets: Ticket[]) => {
   }
 };
 
-export const upsertLane = async (
+export const upsertLaneQuery = async (
   name: string,
   id: string | undefined,
   pipelineId: string,
@@ -755,12 +755,12 @@ export const upsertLane = async (
   return response;
 };
 
-export const deleteLane = async (laneId: string) => {
+export const deleteLaneQuery = async (laneId: string) => {
   const resposne = await db.lane.delete({ where: { id: laneId } });
   return resposne;
 };
 
-export const upsertTicket = async (
+export const upsertTicketQuery = async (
   ticket: Prisma.TicketUncheckedCreateInput,
   tags: Tag[],
 ) => {
@@ -791,7 +791,7 @@ export const upsertTicket = async (
   return response;
 };
 
-export const deleteTicket = async (ticketId: string) => {
+export const deleteTicketQuery = async (ticketId: string) => {
   const response = await db.ticket.delete({
     where: {
       id: ticketId,
@@ -814,7 +814,7 @@ export const upsertTag = async (
   return response;
 };
 
-export const deleteTag = async (tagId: string) => {
+export const deleteTagQuery = async (tagId: string) => {
   const response = await db.tag.delete({ where: { id: tagId } });
   return response;
 };

@@ -1,9 +1,12 @@
 "use server";
 import { createSafeAction } from "@/lib/create-safe-actions";
-import { saveActivityLogsNotification, upsertTicket } from "@/server/queries";
+import {
+  saveActivityLogsNotification,
+  upsertTicketQuery,
+} from "@/server/queries";
 import { currentUser } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
-import { CreateTicket } from "./schema";
+import { UpsertTicket } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
@@ -17,7 +20,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   const { tags, subAccountId, ticketId, ...rest } = data;
   let response;
   try {
-    response = await upsertTicket(
+    response = await upsertTicketQuery(
       {
         id: ticketId,
         ...rest,
@@ -41,8 +44,10 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/subaccount/${subAccountId}/pipelines`);
+  revalidatePath(
+    `/subaccount/${subAccountId}/pipelines/${response?.Lane.pipelineId}`,
+  );
   return { data: response };
 };
 
-export const createTicket = createSafeAction(CreateTicket, handler);
+export const upsertTicket = createSafeAction(UpsertTicket, handler);

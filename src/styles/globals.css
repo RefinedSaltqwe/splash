@@ -130,8 +130,9 @@ html.dark .apexcharts-gridline {
     @apply !border-transparent !bg-card !backdrop-blur dark:!bg-muted/75;
   }
   .bg-drop-downmenu div[role="menuitem"],
+  div[role="option"],
   div[role="menuitemcheckbox"] {
-    @apply hover:bg-muted-foreground/5 data-[state=open]:bg-muted-foreground/5;
+    @apply mt-1 cursor-pointer hover:bg-muted-foreground/5 data-[state=open]:bg-muted-foreground/5;
   }
   div[role="separator"] {
     @apply bg-slate-200 dark:bg-slate-700;
@@ -215,5 +216,10 @@ html.dark .apexcharts-gridline {
 
   .cl-modalContent {
     @apply rounded-lg;
+  }
+
+  /* Button */
+  .splash-red-button {
+    @apply text-red-500 hover:!bg-red-500/20 hover:!text-red-500;
   }
 }

@@ -3,6 +3,7 @@ import {
   getContacts,
   getLanesWithTicketAndTags,
   getPipelineDetails,
+  getPipelinesOnly,
   getSubAccountTeamMembers,
   getTagsForSubaccount,
 } from "@/server/actions/fetch";
@@ -16,6 +17,14 @@ import { redirect } from "next/navigation";
 import PipelineInfoBar from "../_components/PipelineInfoBar";
 import PipelineSettings from "../_components/PipelineSettings";
 import PipelineView from "../_components/PipelineView";
+import { type Pipeline } from "@prisma/client";
+
+export async function generateStaticParams() {
+  const pipelines: Pipeline[] = await db.pipeline.findMany();
+  return pipelines.map(({ id }) => {
+    pipelineId: id;
+  });
+}
 
 type PipelinePageProps = {
   params: { subaccountId: string; pipelineId: string };
@@ -39,23 +48,22 @@ const PipelinePage = async ({ params }: PipelinePageProps) => {
     queryKey: ["ContactList", params.subaccountId],
     queryFn: () => getContacts(),
   });
+  await queryClient.prefetchQuery({
+    queryKey: ["pipelines", params.subaccountId],
+    queryFn: () => getPipelinesOnly(params.subaccountId),
+  });
   const pipelineDetails = await getPipelineDetails(params.pipelineId);
   if (!pipelineDetails) {
     return redirect(`/subaccount/${params.subaccountId}/pipelines`);
   }
 
-  const pipelines = await db.pipeline.findMany({
-    where: { subAccountId: params.subaccountId },
-  });
-
   return (
     <Tabs defaultValue="view" className="w-full">
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <TabsList className="mb-4 h-16 w-full justify-between border-b-2 bg-transparent">
+        <TabsList className="splash-border-color mb-4 h-16 w-full justify-between rounded-none border-b-[1px] bg-transparent">
           <PipelineInfoBar
             pipelineId={params.pipelineId}
             subAccountId={params.subaccountId}
-            pipelines={pipelines}
           />
           <div>
             <TabsTrigger value="view">Pipeline View</TabsTrigger>
@@ -72,7 +80,6 @@ const PipelinePage = async ({ params }: PipelinePageProps) => {
         <TabsContent value="settings">
           <PipelineSettings
             pipelineId={params.pipelineId}
-            pipelines={pipelines}
             subaccountId={params.subaccountId}
           />
         </TabsContent>

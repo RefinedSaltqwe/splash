@@ -1,13 +1,13 @@
 "use server";
 import { createSafeAction } from "@/lib/create-safe-actions";
-import {
-  executeDeletePipeline,
-  saveActivityLogsNotification,
-} from "@/server/queries";
 import { currentUser } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
-import { DeletePipeline } from "./schema";
+import { DeleteLane } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import {
+  deleteLaneQuery,
+  saveActivityLogsNotification,
+} from "@/server/queries";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const session = await currentUser();
@@ -17,19 +17,21 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       error: "Unauthorized",
     };
   }
-  const { pipelineId, subaccountId } = data;
-  let deletePipeline;
+  const { pipelineId, subaccountId, laneId } = data;
+  let deleteLanePromise;
   try {
-    const response = await executeDeletePipeline(pipelineId);
+    const response = await deleteLaneQuery(laneId);
+
+    if (!response) {
+      throw new Error("Error deleting lane.");
+    }
     await saveActivityLogsNotification({
       agencyId: undefined,
-      description: `Deleted a pipeline | ${response?.name}`,
-      subaccountId: response.subAccountId,
+      description: `Deleted a lane | ${response?.name}`,
+      subaccountId,
     });
-    if (!response) {
-      throw new Error("Error deleting pipeline");
-    }
-    deletePipeline = response;
+
+    deleteLanePromise = response;
   } catch (err: unknown) {
     if (err instanceof Error) {
       return {
@@ -41,8 +43,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  revalidatePath(`/subaccount/${subaccountId}/pipelines`);
-  return { data: deletePipeline };
+  revalidatePath(`/subaccount/${subaccountId}/pipelines/${pipelineId}`);
+  return { data: deleteLanePromise };
 };
 
-export const deletePipeline = createSafeAction(DeletePipeline, handler);
+export const deleteLane = createSafeAction(DeleteLane, handler);

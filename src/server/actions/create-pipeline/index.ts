@@ -35,7 +35,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/subaccount/${subAccountId}/pipeline`);
+  revalidatePath(`/subaccount/${subAccountId}/pipelines`);
   return { data: promiseAll };
 };
 

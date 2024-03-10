@@ -1,19 +1,19 @@
 "use client";
-import GlobalModal from "@/components/modal/GlobalModal";
+import GlobalModal from "@/components/drawer/GlobalModal";
+import Heading from "@/components/shared/Heading";
 import { Button } from "@/components/ui/button";
 import useDragAndDrop from "@/hooks/useDragAndDrop";
+import { getLanesWithTicketAndTags } from "@/server/actions/fetch";
 import {
   type LaneDetail,
   type PipelineDetailsWithLanesCardsTagsTickets,
-  type TicketAndTags,
 } from "@/types/stripe";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import { useQuery } from "@tanstack/react-query";
 import { Flag, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import PipelineLane from "./PipelineLane";
-import LaneForm from "./form/CreateLane";
-import { useQuery } from "@tanstack/react-query";
-import { getLanesWithTicketAndTags } from "@/server/actions/fetch";
+import LaneForm from "./form/UpsertLane";
 
 type Props = {
   pipelineId: string;
@@ -23,8 +23,8 @@ type Props = {
 
 const PipelineView = ({ pipelineDetails, pipelineId, subaccountId }: Props) => {
   const [allLanes, setAllLanes] = useState<LaneDetail[] | []>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const { onDragEnd } = useDragAndDrop(allLanes, setAllLanes);
-  const ticketsFromAllLanes: TicketAndTags[] = [];
 
   const { data: lanes } = useQuery({
     queryKey: ["lanes", pipelineId],
@@ -35,28 +35,23 @@ const PipelineView = ({ pipelineDetails, pipelineId, subaccountId }: Props) => {
 
   useEffect(() => {
     setAllLanes(lanes ?? []);
-    lanes?.forEach((item) => {
-      item?.Tickets.forEach((i) => {
-        ticketsFromAllLanes.push(i);
-      });
-    });
   }, [lanes]);
-
-  const [allTickets, setAllTickets] = useState(ticketsFromAllLanes);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="use-automation-zoom-in rounded-xl bg-white/60 p-4 dark:bg-background/60">
+        <div className="use-automation-zoom-in rounded-xl">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl">{pipelineDetails?.name}</h1>
+            <Heading
+              title={pipelineDetails?.name ?? ""}
+              subTitle="Kanban board"
+            />
             <Button
               className="flex items-center gap-4"
               onClick={() => setIsOpen(true)}
             >
               <Plus size={15} />
-              Create Lane
+              Create lane
             </Button>
           </div>
           <Droppable
@@ -71,11 +66,10 @@ const PipelineView = ({ pipelineDetails, pipelineId, subaccountId }: Props) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                <div className="mb-4 mt-4 flex gap-3">
+                <div className="mb-4 mt-4 flex gap-4">
                   {allLanes.map((lane, index) => (
                     <PipelineLane
-                      allTickets={allTickets}
-                      setAllTickets={setAllTickets}
+                      setAllLanes={setAllLanes}
                       subaccountId={subaccountId}
                       pipelineId={pipelineId}
                       tickets={lane.Tickets}
@@ -105,7 +99,7 @@ const PipelineView = ({ pipelineDetails, pipelineId, subaccountId }: Props) => {
       <GlobalModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        title="Create A Lane"
+        title="Create a lane"
         description="Lanes allow you to group tickets"
       >
         <LaneForm

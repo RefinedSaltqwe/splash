@@ -3,7 +3,7 @@ import { type Tag } from "@prisma/client";
 import { PlusCircleIcon, TrashIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import GlobalModal from "@/components/modal/GlobalModal";
+import GlobalModal from "@/components/drawer/GlobalModal";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,12 +17,14 @@ import {
 } from "@/components/ui/command";
 import { useAction } from "@/hooks/useAction";
 import { createTag } from "@/server/actions/create-tag";
+import { deleteTag } from "@/server/actions/delete-tag";
 import { getTagsForSubaccount } from "@/server/actions/fetch";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import TagComponent from "./TagComponent";
 
 type Props = {
+  pipelineId: string;
   subAccountId: string;
   getSelectedTags: (tags: Tag[]) => void;
   defaultTags?: Tag[];
@@ -31,9 +33,15 @@ type Props = {
 const TagColors = ["BLUE", "ORANGE", "ROSE", "PURPLE", "GREEN"] as const;
 export type TagColor = (typeof TagColors)[number];
 
-const TagCreator = ({ getSelectedTags, subAccountId, defaultTags }: Props) => {
+const TagCreator = ({
+  getSelectedTags,
+  subAccountId,
+  defaultTags,
+  pipelineId,
+}: Props) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>(defaultTags ?? []);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [toBeDeletedTag, setToBeDeletedTag] = useState<Tag>();
   const [tags, setTags] = useState<Tag[]>([]);
   const [value, setValue] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -44,20 +52,23 @@ const TagCreator = ({ getSelectedTags, subAccountId, defaultTags }: Props) => {
     enabled: !!subAccountId,
   });
 
-  const { execute: executeCreateTag } = useAction(createTag, {
-    onSuccess: (data) => {
-      toast.success(`New tag created: ${data.name}`);
-      setTags((prev) => [...prev, data]);
-      setValue("");
-      setSelectedColor("");
-      void queryClient.invalidateQueries({
-        queryKey: ["TagsForSubaccount", data.subAccountId],
-      });
+  const { execute: executeCreateTag, isLoading: creatingTag } = useAction(
+    createTag,
+    {
+      onSuccess: (data) => {
+        toast.success(`New tag created: ${data.name}`);
+        setTags((prev) => [...prev, data]);
+        setValue("");
+        setSelectedColor("");
+        void queryClient.invalidateQueries({
+          queryKey: ["TagsForSubaccount", data.subAccountId],
+        });
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
     },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
+  );
 
   useEffect(() => {
     getSelectedTags(selectedTags);
@@ -97,26 +108,30 @@ const TagCreator = ({ getSelectedTags, subAccountId, defaultTags }: Props) => {
       setSelectedTags((prev) => [...prev, tag]);
     }
   };
+
+  const { execute: executeDeleteTag, isLoading: deletingTag } = useAction(
+    deleteTag,
+    {
+      onSuccess: (data) => {
+        setTags((prev) => [...prev.filter((tag) => tag.id !== data.id)]);
+        toast.success("Tag deleted", {
+          description: " The tag is deleted from your subaccount.",
+        });
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
+      onComplete: () => {
+        setIsOpen(false);
+      },
+    },
+  );
   const handleDeleteTag = async (tagId: string) => {
-    // setTags(tags.filter((tag) => tag.id !== tagId));
-    // try {
-    //   const response = await deleteTag(tagId);
-    //   toast({
-    //     title: "Deleted tag",
-    //     description: "The tag is deleted from your subaccount.",
-    //   });
-    //   await saveActivityLogsNotification({
-    //     agencyId: undefined,
-    //     description: `Deleted a tag | ${response?.name}`,
-    //     subaccountId: subAccountId,
-    //   });
-    //   router.refresh();
-    // } catch (error) {
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Could not delete tag",
-    //   });
-    // }
+    void executeDeleteTag({
+      id: tagId,
+      pipelineId,
+      subaccountId: subAccountId,
+    });
   };
 
   return (
@@ -153,65 +168,77 @@ const TagCreator = ({ getSelectedTags, subAccountId, defaultTags }: Props) => {
             value={value}
             onValueChange={setValue}
           />
-          <PlusCircleIcon
-            onClick={handleAddTag}
-            size={20}
-            className="absolute right-2 top-1/2 -translate-y-1/2 transform cursor-pointer text-muted-foreground transition-all hover:text-primary"
-          />
+          {creatingTag ? (
+            <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+          ) : (
+            <PlusCircleIcon
+              onClick={handleAddTag}
+              size={20}
+              className="absolute right-2 top-1/2 -translate-y-1/2 transform cursor-pointer text-muted-foreground transition-all hover:text-primary"
+            />
+          )}
         </div>
         <CommandList>
-          <CommandSeparator />
+          <CommandSeparator className="splash-border-color border-b-[1px]" />
           <CommandGroup heading="Tags">
             {tags.map((tag) => (
               <CommandItem
                 key={tag.id}
-                className="flex cursor-pointer items-center justify-between !bg-transparent !font-light hover:!bg-secondary"
+                className="flex !cursor-default items-center justify-between !bg-transparent !font-light hover:!bg-secondary"
               >
-                <div onClick={() => handleAddSelections(tag)}>
+                <div
+                  onClick={() => handleAddSelections(tag)}
+                  className="cursor-pointer"
+                >
                   <TagComponent title={tag.name} colorName={tag.color} />
                 </div>
-                <Button type="button" variant={"destructive"}>
-                  <TrashIcon
-                    size={16}
-                    className="cursor-pointer text-muted-foreground transition-all  hover:text-rose-400"
-                  />
-                </Button>
-
-                <GlobalModal
-                  isOpen={isOpen}
-                  setIsOpen={setIsOpen}
-                  title="Are you absolutely sure?"
-                  description="This action cannot be undone. This will permanently delete
-                      your the tag and remove it from our servers."
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  size={"icon"}
+                  className="splash-red-button rounded-full text-foreground"
+                  onClick={() => {
+                    setIsOpen(true);
+                    setToBeDeletedTag(tag);
+                  }}
                 >
-                  <div className="flex w-full justify-end gap-x-4">
-                    <Button
-                      type="button"
-                      variant={"ghost"}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant={"destructive"}
-                      onClick={() => handleDeleteTag(tag.id)}
-                    >
-                      <span className="sr-only">Delete</span>
-                      {false ? (
-                        <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
-                      ) : (
-                        "Delete"
-                      )}
-                    </Button>
-                  </div>
-                </GlobalModal>
+                  <TrashIcon className="h-5 w-5 cursor-pointer transition-all" />
+                </Button>
               </CommandItem>
             ))}
           </CommandGroup>
           <CommandEmpty>No results found.</CommandEmpty>
         </CommandList>
       </Command>
+      <GlobalModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title={`Are you sure you want to delete "${toBeDeletedTag?.name}"?`}
+        description="This action cannot be undone. This will permanently delete
+                      your the tag and remove it from our servers."
+      >
+        <div className="flex w-full justify-end gap-x-4">
+          <Button
+            type="button"
+            variant={"ghost"}
+            onClick={() => setIsOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant={"destructive"}
+            onClick={() => handleDeleteTag(toBeDeletedTag!.id)}
+          >
+            <span className="sr-only">Delete</span>
+            {deletingTag ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Delete"
+            )}
+          </Button>
+        </div>
+      </GlobalModal>
     </div>
   );
 };

@@ -18,7 +18,7 @@ import Image from "next/image";
 import { lazy, useState } from "react";
 import { toast } from "sonner";
 
-const GlobalModal = lazy(() => import("@/components/modal/GlobalModal"));
+const GlobalModal = lazy(() => import("@/components/drawer/GlobalModal"));
 type MediaCardProps = { file: Media; subaccountId: string };
 
 const MediaCard = ({ file, subaccountId }: MediaCardProps) => {
@@ -52,6 +52,7 @@ const MediaCard = ({ file, subaccountId }: MediaCardProps) => {
               src={file.link}
               alt="preview image"
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="rounded-2xl object-cover"
             />
           </div>

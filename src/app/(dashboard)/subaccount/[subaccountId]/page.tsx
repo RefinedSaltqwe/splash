@@ -25,6 +25,7 @@ import {
   type FunnelsWithFunnelPages,
   type FunnelsWithFunnelPagesAndTotalFunnelVisits,
 } from "@/types/prisma";
+import { type SubAccount } from "@prisma/client";
 import {
   HydrationBoundary,
   QueryClient,
@@ -40,14 +41,24 @@ import {
 import Link from "next/link";
 import React from "react";
 
-type Props = {
+export async function generateStaticParams() {
+  const subAccounts: SubAccount[] = await db.subAccount.findMany();
+  return subAccounts.map(({ id }) => {
+    subaccountId: id;
+  });
+}
+
+type SubaccountPageIdProps = {
   params: { subaccountId: string };
   searchParams: {
     code: string;
   };
 };
 
-const SubaccountPageId = async ({ params, searchParams }: Props) => {
+const SubaccountPageId = async ({
+  params,
+  searchParams,
+}: SubaccountPageIdProps) => {
   let currency = "USD";
   let sessions;
   let totalClosedSessions;

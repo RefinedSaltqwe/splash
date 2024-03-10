@@ -171,6 +171,15 @@ export const getPipelines = cache(
   },
 );
 
+export const getPipelinesOnly = cache(
+  async (subaccountId: string): Promise<Pipeline[] | []> => {
+    const response = await db.pipeline.findMany({
+      where: { subAccountId: subaccountId },
+    });
+    return response;
+  },
+);
+
 export const getSuppliers = cache(
   async (agencyId: string): Promise<Supplier[] | []> => {
     try {

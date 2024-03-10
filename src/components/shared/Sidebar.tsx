@@ -87,6 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
               src={sideBarLogo}
               alt="Sidebar Logo"
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="rounded-md object-contain"
             />
           </AspectRatio>
@@ -112,7 +113,10 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
                 </div>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="h-100 z-[200] mt-4 w-80 bg-card/75 pb-1 backdrop-blur dark:dark:bg-muted/75">
+            <PopoverContent
+              className="h-100 bg-drop-downmenu z-[200] mt-4 w-80"
+              role="dialog"
+            >
               <Command className="rounded-lg bg-background/5 backdrop-blur">
                 <CommandInput placeholder="Search Accounts..." />
                 <CommandList className="pb-16 ">
@@ -122,48 +126,27 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
                     user?.role === "SUPER_ADMIN") &&
                     user?.Agency && (
                       <CommandGroup heading="Agency">
-                        <CommandItem className="broder-[1px] my-2 cursor-pointer rounded-md border-border !bg-transparent p-2 text-primary transition-all hover:!bg-muted">
-                          {defaultOpen ? (
-                            <Link
-                              href={`/admin/${user?.Agency?.id}`}
-                              className="flex h-full w-full gap-4"
-                            >
-                              <div className="relative w-16">
-                                <Image
-                                  src={user?.Agency?.agencyLogo}
-                                  alt="Agency Logo"
-                                  fill
-                                  className="rounded-md object-contain"
-                                />
-                              </div>
-                              <div className="flex flex-1 flex-col">
-                                {user?.Agency?.name}
-                                <span className="text-muted-foreground">
-                                  {user?.Agency?.address}
-                                </span>
-                              </div>
-                            </Link>
-                          ) : (
-                            <Link
-                              href={`/admin/${user?.Agency?.id}`}
-                              className="flex h-full w-full gap-4"
-                            >
-                              <div className="relative w-16">
-                                <Image
-                                  src={user?.Agency?.agencyLogo}
-                                  alt="Agency Logo"
-                                  fill
-                                  className="rounded-md object-contain"
-                                />
-                              </div>
-                              <div className="flex flex-1 flex-col">
-                                {user?.Agency?.name}
-                                <span className="text-muted-foreground">
-                                  {user?.Agency?.address}
-                                </span>
-                              </div>
-                            </Link>
-                          )}
+                        <CommandItem className="broder-[1px] my-2 cursor-pointer rounded-md border-border !bg-transparent p-2 text-primary transition-all hover:!bg-muted-foreground/5">
+                          <Link
+                            href={`/admin/${user?.Agency?.id}`}
+                            className="flex h-full w-full gap-4"
+                          >
+                            <div className="relative w-16">
+                              <Image
+                                src={user?.Agency?.agencyLogo}
+                                alt="Agency Logo"
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="rounded-md object-contain"
+                              />
+                            </div>
+                            <div className="flex flex-1 flex-col text-foreground">
+                              {user?.Agency?.name}
+                              <span className="text-muted-foreground">
+                                {user?.Agency?.address}
+                              </span>
+                            </div>
+                          </Link>
                         </CommandItem>
                       </CommandGroup>
                     )}
@@ -181,6 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
                                     src={subaccount!.subAccountLogo}
                                     alt="subaccount! Logo"
                                     fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     className="rounded-md object-contain"
                                   />
                                 </div>
@@ -201,6 +185,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
                                     src={subaccount!.subAccountLogo}
                                     alt="subaccount Logo"
                                     fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     className="rounded-md object-contain"
                                   />
                                 </div>

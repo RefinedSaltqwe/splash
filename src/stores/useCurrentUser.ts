@@ -1,4 +1,4 @@
-import { type PricesList, type TicketDetails } from "@/types/stripe";
+import { type PricesList, type TicketWithTags } from "@/types/stripe";
 import {
   type Agency,
   type Contact,
@@ -10,7 +10,7 @@ import { create } from "zustand";
 export type Data = {
   user?: User;
   agency?: Agency;
-  ticket?: TicketDetails[0];
+  ticket?: TicketWithTags[0];
   contact?: Contact;
   plans?: {
     defaultPriceId: Plan;
@@ -28,7 +28,7 @@ type CurrentUserStore = {
   subaccountId?: string | null | undefined;
   userData?: User | undefined;
   agencyData?: Agency | undefined;
-  ticketData?: TicketDetails[0] | undefined;
+  ticketData?: TicketWithTags[0] | undefined;
   contactData?: Contact | undefined;
   plansData?:
     | {
@@ -38,7 +38,7 @@ type CurrentUserStore = {
     | undefined;
   setUserData: (user: User | undefined) => void;
   setAgencyData: (agency: Agency | undefined) => void;
-  setTicketData: (ticket: TicketDetails[0] | undefined) => void;
+  setTicketData: (ticket: TicketWithTags[0] | undefined) => void;
   setContactData: (contact: Contact | undefined) => void;
   setPlansData: (defaultPriceId: Plan, plans: PricesList["data"]) => void;
   setUser: (
@@ -76,7 +76,7 @@ export const useCurrentUserStore = create<CurrentUserStore>((set) => ({
     set(() => ({
       agencyData: agency,
     })),
-  setTicketData: (ticket: TicketDetails[0] | undefined) =>
+  setTicketData: (ticket: TicketWithTags[0] | undefined) =>
     set(() => ({
       ticketData: ticket,
     })),

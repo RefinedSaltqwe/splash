@@ -15,7 +15,7 @@ import { FolderSearch, Plus } from "lucide-react";
 import { lazy, useState } from "react";
 import MediaCard from "./MediaCard";
 
-const GlobalModal = lazy(() => import("@/components/modal/GlobalModal"));
+const GlobalModal = lazy(() => import("@/components/drawer/GlobalModal"));
 const UploadMediaForm = lazy(() => import("./UploadMedia"));
 
 type MediaComponentProps = {

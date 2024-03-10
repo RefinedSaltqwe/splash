@@ -7,8 +7,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { type Pipeline } from "@prisma/client";
-import React from "react";
+import { type Lane } from "@prisma/client";
+import React, { type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
@@ -17,63 +17,86 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
-import { createPipeline } from "@/server/actions/create-pipeline";
-import { CreatePipeline } from "@/server/actions/create-pipeline/schema";
-import { usePipelineStore } from "@/stores/usePipelineStore";
+import { upsertLane } from "@/server/actions/upsert-lane";
+import { UpsertLane } from "@/server/actions/upsert-lane/schema";
+import { type LaneDetail } from "@/types/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-interface CreatePipelineFormProps {
-  defaultData?: Pipeline;
+interface CreateLaneFormProps {
   subAccountId: string;
-  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  defaultData?: Lane;
+  pipelineId: string;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setAllLanes: Dispatch<SetStateAction<[] | LaneDetail[]>>;
 }
 
-const CreatePipelineForm: React.FC<CreatePipelineFormProps> = ({
+const LaneForm: React.FC<CreateLaneFormProps> = ({
   defaultData,
-  subAccountId,
   setIsOpen,
+  pipelineId,
+  subAccountId,
+  setAllLanes,
 }) => {
   const queryClient = useQueryClient();
-  const currentPipelines = usePipelineStore((state) => state.currentPipelines);
-  const setPipelines = usePipelineStore((state) => state.setPipelines);
-  const form = useForm<z.infer<typeof CreatePipeline>>({
-    resolver: zodResolver(CreatePipeline),
+  const form = useForm<z.infer<typeof UpsertLane>>({
+    mode: "onChange",
+    resolver: zodResolver(UpsertLane),
     defaultValues: {
       name: defaultData?.name ?? "",
       subAccountId,
-      pipelineId: defaultData?.id ?? undefined,
+      pipelineId,
+      laneId: defaultData?.id,
+      order: defaultData?.order,
     },
   });
 
-  const { execute: executeCreatePipeline, isLoading } = useAction(
-    createPipeline,
-    {
-      onSuccess: (data) => {
-        toast.success(`${data.name} has been created.`);
-        setPipelines([...currentPipelines, data]);
+  const { execute, isLoading } = useAction(upsertLane, {
+    onSuccess: (data) => {
+      if (data) {
+        toast.success("Success", {
+          description: "New lane added.",
+        });
         void queryClient.invalidateQueries({
-          queryKey: ["pipelines", subAccountId],
+          queryKey: ["lanes", pipelineId],
         });
-      },
-      onError: (error) => {
-        toast.error(error);
-      },
-      onComplete: () => {
-        if (setIsOpen) {
-          setIsOpen(false);
-        }
+        setAllLanes((prev) => {
+          let count = 0;
+          const newLanes = prev.map((lane) => {
+            if (lane.id === data.id) {
+              count++;
+              return data;
+            }
+            return lane;
+          });
 
-        form.reset({
-          name: defaultData?.name ?? "",
+          if (count === 0) {
+            newLanes.push(data);
+          }
+
+          return newLanes;
         });
-      },
+      }
     },
-  );
+    onError: (error) => {
+      toast.error(error);
+    },
+    onComplete: () => {
+      setIsOpen(false);
+      form.reset();
+    },
+  });
 
-  const onSubmit = async (values: z.infer<typeof CreatePipeline>) => {
-    void executeCreatePipeline(values);
+  const onSubmit = async (values: z.infer<typeof UpsertLane>) => {
+    if (!pipelineId) return;
+    void execute({
+      name: values.name,
+      subAccountId,
+      pipelineId,
+      laneId: defaultData?.id,
+      order: defaultData?.order,
+    });
   };
   return (
     <div className="space-y-12 px-1">
@@ -91,26 +114,25 @@ const CreatePipelineForm: React.FC<CreatePipelineFormProps> = ({
                   htmlFor="name"
                   className="block text-sm font-medium leading-6 text-foreground"
                 >
-                  Pipeline name
+                  Lane name
                 </FormLabel>
                 <FormControl>
                   <Input
                     type="text"
                     id="name"
-                    autoComplete="family-name"
+                    autoComplete="lane-name"
                     {...field}
                     className={cn(
                       "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
                       "splash-base-input splash-inputs",
                     )}
-                    placeholder="Name"
+                    placeholder="Lane name"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <div className="flex w-full flex-row justify-end">
             <Button className="mt-4 w-20" disabled={isLoading} type="submit">
               {isLoading ? (
@@ -126,4 +148,4 @@ const CreatePipelineForm: React.FC<CreatePipelineFormProps> = ({
   );
 };
 
-export default CreatePipelineForm;
+export default LaneForm;

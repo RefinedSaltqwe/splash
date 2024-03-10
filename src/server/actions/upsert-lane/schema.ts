@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CreateLane = z.object({
+export const UpsertLane = z.object({
   name: z.string().min(1),
   subAccountId: z.string(),
   pipelineId: z.string(),

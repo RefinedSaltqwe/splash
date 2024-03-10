@@ -1,5 +1,5 @@
 "use client";
-import GlobalModal from "@/components/modal/GlobalModal";
+import GlobalModal from "@/components/drawer/GlobalModal";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -13,26 +13,38 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { type Pipeline } from "@prisma/client";
+import { getPipelinesOnly } from "@/server/actions/fetch";
+import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import CreatePipelineForm from "./form/CreatePipeline";
+import { usePipelineStore } from "@/stores/usePipelineStore";
 
 type Props = {
   subAccountId: string;
-  pipelines: Pipeline[];
   pipelineId: string;
 };
 
-const PipelineInfoBar = ({ pipelineId, pipelines, subAccountId }: Props) => {
+const PipelineInfoBar = ({ pipelineId, subAccountId }: Props) => {
+  const { data: pipelines } = useQuery({
+    queryKey: ["pipelines", subAccountId],
+    queryFn: () => getPipelinesOnly(subAccountId),
+  });
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(pipelineId);
+  const currentPipelines = usePipelineStore((state) => state.currentPipelines);
+  const setPipelines = usePipelineStore((state) => state.setPipelines);
 
   const handleClickCreatePipeline = () => {
     setIsOpen(true);
   };
+
+  useEffect(() => {
+    setPipelines(pipelines ?? []);
+  }, [pipelines]);
 
   return (
     <div>
@@ -43,19 +55,23 @@ const PipelineInfoBar = ({ pipelineId, pipelines, subAccountId }: Props) => {
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-[200px] justify-between"
+              className="w-[200px] justify-between text-foreground"
             >
               {value
-                ? pipelines.find((pipeline) => pipeline.id === value)?.name
+                ? currentPipelines.find((pipeline) => pipeline.id === value)
+                    ?.name
                 : "Select a pipeline..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
+          <PopoverContent
+            className="bg-drop-downmenu w-[200px] p-0"
+            role="dialog"
+          >
             <Command>
               <CommandEmpty>No pipelines found.</CommandEmpty>
               <CommandGroup>
-                {pipelines.map((pipeline) => (
+                {currentPipelines.map((pipeline) => (
                   <Link
                     key={pipeline.id}
                     href={`/subaccount/${subAccountId}/pipelines/${pipeline.id}`}
@@ -79,7 +95,7 @@ const PipelineInfoBar = ({ pipelineId, pipelines, subAccountId }: Props) => {
                   </Link>
                 ))}
                 <Button
-                  variant="secondary"
+                  variant="default"
                   className="mt-4 flex w-full gap-2"
                   onClick={handleClickCreatePipeline}
                 >

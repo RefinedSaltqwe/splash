@@ -174,7 +174,7 @@ export const columns: ColumnDef<Supplier>[] = [
                 View supplier
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-red-500 hover:!bg-red-500/20 hover:!text-red-500"
+                className="splash-red-button"
                 onClick={() => supplierModal.onOpen([item.id], "supplier")}
               >
                 Delete
