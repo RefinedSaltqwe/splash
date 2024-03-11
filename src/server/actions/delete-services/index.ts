@@ -1,14 +1,13 @@
 "use server";
-import { revalidatePath } from "next/cache";
 import { createSafeAction } from "@/lib/create-safe-actions";
+import { db } from "@/server/db";
+import { currentUser } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
 import { DeleteService } from "./schema";
 import { type InputType, type ReturnType } from "./types";
-import { db } from "@/server/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/server/auth";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
 
   if (!session) {
     return {

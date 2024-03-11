@@ -109,7 +109,7 @@ const TimeSheetTable = ({
                   >
                     <TimeInput
                       timeInput={activeTimesheet[0]![rowKey]}
-                      activeTimesheet={activeTimesheet[0]}
+                      activeTimesheet={activeTimesheet[0]!}
                       onSetTimesheets={onSetTimesheets}
                       field={day}
                       rowKey={rowKey}

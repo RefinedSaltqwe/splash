@@ -1,5 +1,6 @@
 import { fields, rowKeys } from "@/constants/defaultsValues";
 import { cn } from "@/lib/utils";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import {
   type TimesheetRowKeyObject,
   type TimesheetField,
@@ -38,6 +39,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
 }) => {
   const newTimesheet = activeTimesheet;
   const newTimeInput = timeInput;
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
   const getFieldValue = timeInput
     ? timeInput[field]
       ? new Date(timeInput[field])
@@ -358,6 +360,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
           //Set values to newTimesheet
           newTimeInput[field] = newDateTime;
           newTimesheet[rowKey] = newTimeInput;
+          newTimesheet.agencyId = agencyId ?? "";
           newTimesheet.timeTotal![field] = fieldTimeTotal;
           //Add over all time total
           fields.forEach((day) => {

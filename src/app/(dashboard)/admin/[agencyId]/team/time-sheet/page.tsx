@@ -5,9 +5,15 @@ import ClientData from "./_components/ClientData";
 import { formatDateTime } from "@/lib/utils";
 import Card from "@/app/(dashboard)/_components/containers/Card";
 
-const TimeSheetPage: React.FC = async () => {
-  const timesheets = getTimesheets();
-  const users = getUsers();
+type TimeSheetPagePops = {
+  params: {
+    agencyId: string;
+  };
+};
+
+const TimeSheetPage: React.FC<TimeSheetPagePops> = async ({ params }) => {
+  const timesheets = getTimesheets(params.agencyId);
+  const users = getUsers(params.agencyId);
 
   const [usersData, timesheetsData] = await Promise.all([users, timesheets]);
   return (

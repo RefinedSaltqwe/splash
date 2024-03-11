@@ -1,11 +1,7 @@
 "use server";
 import { createSafeAction } from "@/lib/create-safe-actions";
-import { authOptions } from "@/server/auth";
 import { db } from "@/server/db";
-import { getServerSession } from "next-auth";
-import { revalidatePath } from "next/cache";
-import { UpdateTimesheets } from "./schema";
-import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 import {
   type BreakIn,
   type BreakOut,
@@ -14,9 +10,12 @@ import {
   type TimeTotal,
   type Timesheet,
 } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { UpdateTimesheets } from "./schema";
+import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
 
   if (!session) {
     return {
@@ -41,6 +40,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
   timesheets.forEach((timesheet) => {
     timesheetsOnly.push({
+      agencyId: timesheet!.agencyId,
       id: timesheet!.id,
       status,
       userId: timesheet!.userId,

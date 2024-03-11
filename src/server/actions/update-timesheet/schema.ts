@@ -15,6 +15,7 @@ export const UpdateTimesheets = z.object({
         userId: z.string(),
         dateFr: z.date(),
         dateTo: z.date(),
+        agencyId: z.string(),
         timeIn: z
           .object({
             id: z.string(),
@@ -87,6 +88,6 @@ export const UpdateTimesheets = z.object({
           .nullable()
           .optional(),
       })
-      .optional(),
+      .nullable(),
   ),
 });

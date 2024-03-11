@@ -11,14 +11,13 @@ import {
   barGroupedDefault,
   pieChartDefault,
 } from "@/constants";
-import { authOptions } from "@/server/auth";
-import { getServerSession } from "next-auth";
+import { currentUser } from "@clerk/nextjs";
 import React from "react";
 
 type AnalyticsPageProps = object;
 
 const AnalyticsPage: React.FC<AnalyticsPageProps> = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await currentUser();
   const dataPieChart = pieChartDefault;
   const dataAreaChart = areaChartDefault;
   const dataBarAreaChart = barChartDefault;
@@ -27,7 +26,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = async () => {
   return (
     <section className="w-full">
       <Heading
-        title={`Hi ${session?.user.name}, welcome back!`}
+        title={`Hi ${session?.firstName}, welcome back!`}
         subTitle="Dashboard"
       />
       <GridWrapper>

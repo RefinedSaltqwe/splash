@@ -22,7 +22,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   try {
     const getUsers = await db.user.findMany({
       where: {
-        agencyId: "",
+        agencyId,
         role: {
           not: "SUPER_ADMIN" || "AGENCY_OWNER",
         },
