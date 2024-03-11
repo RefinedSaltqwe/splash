@@ -251,6 +251,7 @@ const TicketForm = ({
                     id="value"
                     autoComplete="value"
                     {...field}
+                    onFocus={(e) => e.target.select()}
                     className={cn(
                       "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
                       "splash-base-input splash-inputs",

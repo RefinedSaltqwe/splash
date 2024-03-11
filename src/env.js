@@ -40,6 +40,8 @@ export const env = createEnv({
     UPLOADTHING_SECRET: z.string(),
     UPLOADTHING_APP_ID: z.string(),
     STRIPE_SECRET_KEY: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
+    NEXT_SPLASH_PRODUCT_ID: z.string(),
   },
 
   /**
@@ -57,7 +59,10 @@ export const env = createEnv({
     NEXT_PUBLIC_DOMAIN: z.string(),
     NEXT_PUBLIC_SCHEME: z.string(),
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
-    // NEXT_PUBLIC_STRIPE_CLIENT_ID: z.string(),
+    NEXT_PUBLIC_STRIPE_CLIENT_ID: z.string(),
+    NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT: z.string(),
+    NEXT_PUBLIC_PLATFORM_ONETIME_FEE: z.string(),
+    NEXT_PUBLIC_PLATFORM_AGENY_PERCENT: z.string(),
   },
 
   /**
@@ -94,7 +99,15 @@ export const env = createEnv({
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-    // NEXT_PUBLIC_STRIPE_CLIENT_ID: process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    NEXT_PUBLIC_STRIPE_CLIENT_ID: process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID,
+    NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT:
+      process.env.NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT,
+    NEXT_PUBLIC_PLATFORM_ONETIME_FEE:
+      process.env.NEXT_PUBLIC_PLATFORM_ONETIME_FEE,
+    NEXT_PUBLIC_PLATFORM_AGENY_PERCENT:
+      process.env.NEXT_PUBLIC_PLATFORM_AGENY_PERCENT,
+    NEXT_SPLASH_PRODUCT_ID: process.env.NEXT_SPLASH_PRODUCT_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

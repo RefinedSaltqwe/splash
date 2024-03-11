@@ -4,9 +4,15 @@ import React, { useState } from "react";
 
 type ScrollableElementProps = {
   children: React.ReactNode;
+  className?: string;
+  offsetRight?: string;
 };
 
-const ScrollableElement: React.FC<ScrollableElementProps> = ({ children }) => {
+const ScrollableElement: React.FC<ScrollableElementProps> = ({
+  children,
+  className,
+  offsetRight,
+}) => {
   const [isFocus, setIsFocus] = useState(false);
 
   return (
@@ -29,9 +35,10 @@ const ScrollableElement: React.FC<ScrollableElementProps> = ({ children }) => {
         className={cn(
           "splash-scroll flex h-full flex-1 flex-col bg-background dark:bg-background",
           isFocus ? "scroll-focus" : "scroll-blur",
+          className,
         )}
       >
-        {children}
+        <div className={cn(offsetRight)}>{children}</div>
       </div>
     </div>
   );

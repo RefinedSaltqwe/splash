@@ -127,7 +127,7 @@ const AdminRegistrationForm: React.FC<AdminRegistrationFormProps> = ({
                               htmlFor="agencyLogo"
                               className="block text-sm font-medium leading-6 text-foreground"
                             >
-                              Cover photo
+                              Logo
                             </FormLabel>
                             <FormControl>
                               <FileUpload

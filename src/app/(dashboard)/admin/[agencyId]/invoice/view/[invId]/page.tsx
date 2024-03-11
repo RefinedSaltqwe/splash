@@ -15,8 +15,6 @@ import Head from "./_components/Head";
 import HeadClient from "./_components/HeadClient";
 import RightCardDetails from "./_components/RightCardDetails";
 import { TableInvoice } from "./_components/Table";
-import { type Invoice } from "@prisma/client";
-import { db } from "@/server/db";
 
 type InvoiceDetailsPageProps = {
   params: {
@@ -25,20 +23,20 @@ type InvoiceDetailsPageProps = {
   };
 };
 
-export async function generateStaticParams({
-  params,
-}: InvoiceDetailsPageProps) {
-  const invoices: Invoice[] = await db.invoice.findMany({
-    where: {
-      Agency: {
-        id: params.agencyId,
-      },
-    },
-  });
-  return invoices.map(({ id }) => {
-    invId: id;
-  });
-}
+// export async function generateStaticParams({
+//   params,
+// }: InvoiceDetailsPageProps) {
+//   const invoices: Invoice[] = await db.invoice.findMany({
+//     where: {
+//       Agency: {
+//         id: params.agencyId,
+//       },
+//     },
+//   });
+//   return invoices.map(({ id }) => {
+//     invId: id;
+//   });
+// }
 
 const InvoiceDetailsPage: React.FC<InvoiceDetailsPageProps> = async ({
   params,

@@ -213,41 +213,6 @@ const generateRandomUserForInvoice = (): Invoice => ({
   agencyId: "",
 });
 
-function generateRandomPhoneNumber(): string {
-  // You can implement your own logic to generate random phone numbers
-  return Math.floor(Math.random() * 10000000000).toString();
-}
-
-// const generateRandomUser = (): User => ({
-//   id: generateRandomId(),
-//   name: "fasdf",
-//   firstName: "John",
-//   lastName: "Doe",
-//   email: "exmaple@gmail.com",
-//   password: "asdd",
-//   emailVerified: new Date(),
-//   image: "",
-//   status:
-//     generateRandomNumber(5) === 1
-//       ? "Active"
-//       : generateRandomNumber(5) === 2
-//         ? "Disabled"
-//         : generateRandomNumber(5) === 3
-//           ? "Pending"
-//           : "Terminated",
-//   phoneNumber: generateRandomPhoneNumber(),
-//   agencyId: "",
-//   role: "SUBACCOUNT_USER",
-//   jobRole: "Mason",
-//   country: "Canada",
-//   street: "james hill rd",
-//   city: "Regina",
-//   state: "Sask",
-//   postalCode: "s4w 0r2",
-//   isTwoFactorEnabled: false,
-//   createdAt: new Date(),
-// });
-
 const generateRandomUsers = (count: number): User[] => {
   const users: User[] = [];
   for (let i = 0; i < count; i++) {

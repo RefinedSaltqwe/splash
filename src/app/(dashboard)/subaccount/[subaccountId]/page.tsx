@@ -25,7 +25,6 @@ import {
   type FunnelsWithFunnelPages,
   type FunnelsWithFunnelPagesAndTotalFunnelVisits,
 } from "@/types/prisma";
-import { type SubAccount } from "@prisma/client";
 import {
   HydrationBoundary,
   QueryClient,
@@ -39,14 +38,13 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 
-export async function generateStaticParams() {
-  const subAccounts: SubAccount[] = await db.subAccount.findMany();
-  return subAccounts.map(({ id }) => {
-    subaccountId: id;
-  });
-}
+// export async function generateStaticParams() {
+//   const subAccounts: SubAccount[] = await db.subAccount.findMany();
+//   return subAccounts.map(({ id }) => {
+//     subaccountId: id;
+//   });
+// }
 
 type SubaccountPageIdProps = {
   params: { subaccountId: string };

@@ -10,7 +10,7 @@ const Navigation: React.FC = async () => {
     <div className="fixed left-0 right-0 top-0 z-10 flex items-center justify-between bg-background p-4">
       <aside className="flex items-center gap-2">
         <Image
-          src={"/assets/images/plura-logo.svg"}
+          src={"/assets/images/splash-logo-750.svg"}
           width={40}
           height={40}
           alt="plur logo"

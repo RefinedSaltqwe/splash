@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
+import { env } from "@/env";
 import { stripe } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 
@@ -20,9 +21,9 @@ export async function POST(req: Request) {
       status: 400,
     });
   if (
-    !process.env.NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT ||
-    !process.env.NEXT_PUBLIC_PLATFORM_ONETIME_FEE ||
-    !process.env.NEXT_PUBLIC_PLATFORM_AGENY_PERCENT
+    !env.NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT ||
+    !env.NEXT_PUBLIC_PLATFORM_ONETIME_FEE ||
+    !env.NEXT_PUBLIC_PLATFORM_AGENY_PERCENT
   ) {
     console.log("VALUES DONT EXITS");
     return NextResponse.json({ error: "Fees do not exist" });
@@ -53,15 +54,14 @@ export async function POST(req: Request) {
           subscription_data: {
             metadata: { connectAccountSubscriptions: "true" },
             application_fee_percent:
-              +process.env.NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT,
+              +env.NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT,
           },
         }),
 
         ...(!subscriptionPriceExists && {
           payment_intent_data: {
             metadata: { connectAccountPayments: "true" },
-            application_fee_amount:
-              +process.env.NEXT_PUBLIC_PLATFORM_ONETIME_FEE * 100,
+            application_fee_amount: +env.NEXT_PUBLIC_PLATFORM_ONETIME_FEE * 100,
           },
         }),
 

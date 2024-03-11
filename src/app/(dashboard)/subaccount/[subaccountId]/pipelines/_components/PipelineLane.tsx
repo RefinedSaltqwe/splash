@@ -36,6 +36,7 @@ import React, {
 import { toast } from "sonner";
 import PipelineTicket from "./PipelineTicket";
 import LaneForm from "./form/UpsertLane";
+import ScrollableElement from "@/components/shared/ScrollableElement";
 
 const TicketForm = lazy(() => import("./form/UpsertTicket"));
 
@@ -136,7 +137,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
             className="h-full"
           >
             <DropdownMenu>
-              <div className="relative h-auto w-[300px] flex-shrink-0 overflow-visible rounded-lg border-[1px] border-border bg-card/30 px-4 pb-1 pt-2 shadow-lg shadow-muted-foreground/10 dark:shadow-none">
+              <div className="relative h-auto w-[300px] flex-shrink-0 overflow-visible rounded-lg border-[1px] border-border bg-card/30 pb-1 pl-4 pr-[2px] pt-2 shadow-lg shadow-muted-foreground/10 dark:shadow-none">
                 <div
                   {...provided.dragHandleProps}
                   className=" absolute left-0 right-0 top-0 z-10 h-14 bg-slate-200/60 backdrop-blur-lg dark:bg-background/40 "
@@ -178,7 +179,10 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                   type="ticket"
                 >
                   {(provided) => (
-                    <div className="splash-scroll max-h-[700px] pt-12">
+                    <ScrollableElement
+                      className="max-h-[700px] !bg-transparent pt-12"
+                      offsetRight="mr-1"
+                    >
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
@@ -196,7 +200,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                         ))}
                         {provided.placeholder}
                       </div>
-                    </div>
+                    </ScrollableElement>
                   )}
                 </Droppable>
 

@@ -7,7 +7,6 @@ import {
   getSubAccountTeamMembers,
   getTagsForSubaccount,
 } from "@/server/actions/fetch";
-import { db } from "@/server/db";
 import {
   HydrationBoundary,
   QueryClient,
@@ -17,14 +16,13 @@ import { redirect } from "next/navigation";
 import PipelineInfoBar from "../_components/PipelineInfoBar";
 import PipelineSettings from "../_components/PipelineSettings";
 import PipelineView from "../_components/PipelineView";
-import { type Pipeline } from "@prisma/client";
 
-export async function generateStaticParams() {
-  const pipelines: Pipeline[] = await db.pipeline.findMany();
-  return pipelines.map(({ id }) => {
-    pipelineId: id;
-  });
-}
+// export async function generateStaticParams() {
+//   const pipelines: Pipeline[] = await db.pipeline.findMany();
+//   return pipelines.map(({ id }) => {
+//     pipelineId: id;
+//   });
+// }
 
 type PipelinePageProps = {
   params: { subaccountId: string; pipelineId: string };

@@ -8,6 +8,7 @@ import { initUser, upsertAgency } from "@/server/queries";
 import { randomUUID } from "crypto";
 import { CreateAdmin } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { env } from "@/env";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   let promiseAll;
@@ -36,18 +37,21 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         },
       };
 
-      // const customerResponse = await fetch("/api/stripe/create-customer", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(bodyData),
-      // });
+      const customerResponse = await fetch(
+        `${env.NEXT_PUBLIC_URL}api/stripe/create-customer`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bodyData),
+        },
+      );
 
-      // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      // const customerData: { customerId: string } =
-      //   await customerResponse.json();
-      // custId = customerData.customerId;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const customerData: { customerId: string } =
+        await customerResponse.json();
+      custId = customerData.customerId;
     }
     await initUser({
       role: "AGENCY_OWNER",
@@ -57,7 +61,10 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       state: data.state,
       postalCode: data.zipCode,
     });
-    // if (!data?.customerId && !custId) return { data: undefined };
+
+    if (!data?.customerId && !custId) {
+      return { data: undefined };
+    }
 
     await upsertAgency({
       id: data?.id ?? randomUUID(),

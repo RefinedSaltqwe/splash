@@ -88,16 +88,16 @@ export const pricingCards = [
     duration: "month",
     highlight: "Key features",
     features: ["Rebilling", "24/7 Support team"],
-    priceId: "price_1OYxkqFj9oKEERu1KfJGWxgN",
+    priceId: "price_1OsvDQHWcDxTr9jhM8YxUGnA",
   },
   {
     title: "Basic",
     description: "For serious agency owners",
-    price: "$49",
+    price: "$99",
     duration: "month",
     highlight: "Everything in Starter, plus",
     features: ["Unlimited Sub accounts", "Unlimited Team members"],
-    priceId: "price_1OYxkqFj9oKEERu1NbKUxXxN",
+    priceId: "price_1OsvDQHWcDxTr9jhU2PS17jJ",
   },
 ];
 

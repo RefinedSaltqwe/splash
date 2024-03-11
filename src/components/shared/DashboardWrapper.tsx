@@ -1,7 +1,7 @@
 "use client";
 import { getAuthUserDetails } from "@/server/actions/fetch";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
-import { Agency, type User } from "@prisma/client";
+import { type Agency, type User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 

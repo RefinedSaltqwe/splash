@@ -65,7 +65,7 @@ export const useCurrentUserStore = create<CurrentUserStore>((set) => ({
   ticketData: undefined,
   contactData: undefined,
   plansData: {
-    defaultPriceId: "price_1OYxkqFj9oKEERu1NbKUxXxN",
+    defaultPriceId: "price_1OsvDQHWcDxTr9jhU2PS17jJ",
     plans: [],
   },
   setUserData: (user: User | undefined) =>

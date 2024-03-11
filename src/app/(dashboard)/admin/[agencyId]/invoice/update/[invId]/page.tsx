@@ -12,8 +12,6 @@ import {
 } from "@tanstack/react-query";
 import React from "react";
 import InvoiceForm from "../../_components/InvoiceForm";
-import { type Invoice } from "@prisma/client";
-import { db } from "@/server/db";
 
 type UpdateInvoiceProps = {
   params: {
@@ -22,18 +20,18 @@ type UpdateInvoiceProps = {
   };
 };
 
-export async function generateStaticParams({ params }: UpdateInvoiceProps) {
-  const invoices: Invoice[] = await db.invoice.findMany({
-    where: {
-      Agency: {
-        id: params.agencyId,
-      },
-    },
-  });
-  return invoices.map(({ id }) => {
-    invId: id;
-  });
-}
+// export async function generateStaticParams({ params }: UpdateInvoiceProps) {
+//   const invoices: Invoice[] = await db.invoice.findMany({
+//     where: {
+//       Agency: {
+//         id: params.agencyId,
+//       },
+//     },
+//   });
+//   return invoices.map(({ id }) => {
+//     invId: id;
+//   });
+// }
 
 const UpdateInvoicePage: React.FC<UpdateInvoiceProps> = async ({ params }) => {
   const queryClient = new QueryClient();

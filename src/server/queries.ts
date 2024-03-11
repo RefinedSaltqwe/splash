@@ -10,7 +10,6 @@ import {
   Prisma,
   type Agency,
   type Lane,
-  type Plan,
   type Role,
   type SubAccount,
   type Tag,
@@ -348,7 +347,7 @@ export const getNotificationAndUser = async (agencyId: string) => {
   }
 };
 
-export const upsertAgency = async (agency: Agency, price?: Plan) => {
+export const upsertAgency = async (agency: Agency) => {
   if (!agency.companyEmail) return null;
   try {
     const agencyDetails = await db.agency.upsert({

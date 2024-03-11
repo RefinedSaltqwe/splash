@@ -203,7 +203,7 @@ export const getSuppliers = cache(
 );
 
 export const getSupplierById = cache(
-  async (id: string): Promise<Supplier | []> => {
+  async (id: string): Promise<Supplier | undefined> => {
     try {
       const supplier = await db.supplier.findUnique({
         where: {

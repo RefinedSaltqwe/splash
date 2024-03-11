@@ -7,10 +7,11 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const { customerId, priceId } = await req.json();
-  if (!customerId || !priceId)
+  if (!customerId || !priceId) {
     return new NextResponse("Customer Id or price id is missing", {
       status: 400,
     });
+  }
 
   const subscriptionExists = await db.agency.findFirst({
     where: { customerId },
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
         clientSecret: subscription.latest_invoice.payment_intent.client_secret,
       });
     } else {
-      console.log("Createing a sub");
+      console.log("Creating a sub");
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [
@@ -67,7 +68,6 @@ export async function POST(req: Request) {
       });
       return NextResponse.json({
         subscriptionId: subscription.id,
-
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-expect-error
         clientSecret: subscription.latest_invoice.payment_intent.client_secret,

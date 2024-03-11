@@ -216,7 +216,7 @@ const PrimaryNavItems: React.FC<PrimaryNavItemsProps> = ({
                   >
                     <DynamicIcon
                       className={cn(
-                        item.href === pathname
+                        pathname.includes(item.href)
                           ? "text-primary"
                           : "text-muted-foreground",
                         "h-6 w-6 shrink-0",

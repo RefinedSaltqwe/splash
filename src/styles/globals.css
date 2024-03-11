@@ -155,8 +155,13 @@ html.dark .apexcharts-gridline {
   .splash-scroll {
     @apply overflow-y-scroll;
   }
+
   .splash-scroll::-webkit-scrollbar {
     @apply w-[6px];
+  }
+
+  .splash-scroll-no-width::-webkit-scrollbar {
+    @apply w-0;
   }
 
   .splash-scroll::-webkit-scrollbar-track {
