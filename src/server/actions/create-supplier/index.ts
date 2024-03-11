@@ -15,7 +15,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       error: "Unauthorized",
     };
   }
-  const { name, companyName, email, address, phoneNumber } = data;
+  const { name, companyName, email, address, phoneNumber, agencyId } = data;
   let newSupplier;
   try {
     newSupplier = await db.supplier.create({
@@ -35,7 +35,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/suppliers/create`);
+  revalidatePath(`/admin/${agencyId}/suppliers/create`);
   return { data: newSupplier };
 };
 

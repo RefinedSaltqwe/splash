@@ -32,9 +32,10 @@ const Loader = lazy(() => import("@/components/shared/Loader"));
 type InputFormProps = {
   sid?: string;
   type: "update" | "create";
+  agencyId?: string;
 };
 
-const InputForm: React.FC<InputFormProps> = ({ sid, type }) => {
+const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: supplierData } = useQuery({
@@ -119,6 +120,7 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type }) => {
         address: values.address,
         email: values.email,
         phoneNumber: values.phoneNumber,
+        agencyId: agencyId ?? "",
       });
     } else {
       void executeUpdateSupplier({

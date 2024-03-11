@@ -45,7 +45,11 @@ const UpdateSupplierPage: React.FC<UpdateSupplierPageProps> = async ({
       <Heading title="Update" subTitle="Update supplier" />
       <Card>
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <InputForm sid={params.sid} type="update" />
+          <InputForm
+            sid={params.sid}
+            type="update"
+            agencyId={params.agencyId}
+          />
         </HydrationBoundary>
       </Card>
     </section>

@@ -28,7 +28,7 @@ const SupplierPage: React.FC<SupplierPageProps> = async ({ params }) => {
         <Heading title="Suppliers" subTitle="Supplier list" />
         <ClientButtonLink
           buttonName="Create Supplier"
-          href="/admin/suppliers/create"
+          href={`/admin/${params.agencyId}/suppliers/create`}
           variant={"secondary"}
         />
       </div>

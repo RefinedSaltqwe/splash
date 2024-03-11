@@ -8,12 +8,25 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { getUserById } from "@/server/actions/fetch";
+import { db } from "@/server/db";
 
 type UpdateUserProps = {
   params: {
     uid: string;
+    agencyId: string;
   };
 };
+
+export async function generateStaticParams({ params }: UpdateUserProps) {
+  const users = await db.user.findMany({
+    where: {
+      agencyId: params.agencyId,
+    },
+  });
+  return users.map(({ id }) => {
+    uid: id;
+  });
+}
 
 const UpdateUser: React.FC<UpdateUserProps> = async ({ params }) => {
   const queryClient = new QueryClient();
