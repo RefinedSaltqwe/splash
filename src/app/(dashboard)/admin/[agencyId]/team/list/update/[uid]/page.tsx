@@ -1,14 +1,13 @@
 import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
-import React from "react";
-import InputForm from "../../_components/InputForm";
+import { getUserById } from "@/server/actions/fetch";
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
-import { getUserById } from "@/server/actions/fetch";
-import { db } from "@/server/db";
+import React from "react";
+import InputForm from "../../_components/InputForm";
 
 type UpdateUserProps = {
   params: {
@@ -17,16 +16,16 @@ type UpdateUserProps = {
   };
 };
 
-export async function generateStaticParams({ params }: UpdateUserProps) {
-  const users = await db.user.findMany({
-    where: {
-      agencyId: params.agencyId,
-    },
-  });
-  return users.map(({ id }) => {
-    uid: id;
-  });
-}
+// export async function generateStaticParams({ params }: UpdateUserProps) {
+//   const users = await db.user.findMany({
+//     where: {
+//       agencyId: params.agencyId,
+//     },
+//   });
+//   return users.map(({ id }) => {
+//     uid: id;
+//   });
+// }
 
 const UpdateUser: React.FC<UpdateUserProps> = async ({ params }) => {
   const queryClient = new QueryClient();
