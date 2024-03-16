@@ -13,20 +13,24 @@ import {
 
 import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
+import { useThemeMode } from "@/stores/useThemeMode";
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
   const storageKey = "splash-theme-mode-state";
 
   const [themeMode, setThemeMode] = useLocalStorage<string>(storageKey, "");
+  const setMode = useThemeMode((state) => state.setMode);
 
   function themeSetter(mode: string) {
     setTheme(mode);
     setThemeMode(mode);
+    setMode(mode);
   }
   // Sets the theme mode in first load
   useEffect(() => {
     setTheme(themeMode);
+    setMode(themeMode);
   }, []);
 
   return (

@@ -230,22 +230,22 @@ const AgencyPage = async ({
                 description={
                   <>
                     {sessions && (
-                      <div className="flex flex-col">
+                      <span className="flex flex-col">
                         Abandoned
-                        <div className="flex gap-2">
+                        <span className="flex gap-2">
                           <ShoppingCart className="text-rose-700" />
                           {sessions.length}
-                        </div>
-                      </div>
+                        </span>
+                      </span>
                     )}
                     {totalClosedSessions && (
-                      <div className="felx flex-col">
+                      <span className="felx flex-col">
                         Won Carts
-                        <div className="flex gap-2">
+                        <span className="flex gap-2">
                           <ShoppingCart className="text-emerald-700" />
                           {totalClosedSessions.length}
-                        </div>
-                      </div>
+                        </span>
+                      </span>
                     )}
                   </>
                 }

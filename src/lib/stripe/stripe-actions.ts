@@ -17,7 +17,6 @@ export const subscriptionCreated = async (
       where: {
         customerId,
       },
-      //! ???
       include: {
         SubAccount: true,
       },

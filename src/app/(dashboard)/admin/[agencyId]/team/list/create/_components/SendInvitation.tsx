@@ -22,7 +22,6 @@ import { cn } from "@/lib/utils";
 import { sendInvitation } from "@/server/actions/send-invitation";
 import { SendInvitation } from "@/server/actions/send-invitation/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -30,12 +29,13 @@ import { type z } from "zod";
 
 type SendInvitationComponentProps = {
   agencyId: string;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
   agencyId,
+  setIsOpen,
 }) => {
-  const router = useRouter();
   const {
     execute: executeSendEmailInvitation,
     isLoading: isLoadingSendEmailInvitation,
@@ -49,7 +49,7 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
       });
     },
     onComplete: () => {
-      router.push(`/admin/${agencyId}/team/list`);
+      setIsOpen(false);
     },
   });
 
@@ -76,7 +76,7 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
           <div className="space-y-12">
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-slate-200 pb-5 dark:border-slate-700">
               <div className="col-span-1 grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-4">
+                <div className="sm:col-span-full">
                   <div className="mt-2">
                     <FormField
                       control={form.control}
@@ -108,7 +108,7 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
                     />
                   </div>
                 </div>
-                <div className="sm:col-span-4">
+                <div className="sm:col-span-full">
                   <div className="mt-2">
                     <FormField
                       disabled={form.formState.isSubmitting}

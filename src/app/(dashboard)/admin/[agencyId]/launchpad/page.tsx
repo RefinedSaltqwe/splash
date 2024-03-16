@@ -12,6 +12,8 @@ import Link from "next/link";
 import React from "react";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/server/db";
+import { getStripeOAuthLink } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 type Props = {
   params: {
@@ -39,10 +41,10 @@ const LaunchPadPage = async ({ params, searchParams }: Props) => {
     agencyDetails.state &&
     agencyDetails.zipCode;
 
-  // const stripeOAuthLink = getStripeOAuthLink(
-  //   "agency",
-  //   `launchpad___${agencyDetails.id}`,
-  // );
+  const stripeOAuthLink = getStripeOAuthLink(
+    "admin",
+    `launchpad___${agencyDetails.id}`,
+  );
 
   let connectedStripeAccount = false;
 
@@ -58,6 +60,7 @@ const LaunchPadPage = async ({ params, searchParams }: Props) => {
           data: { connectAccountId: response.stripe_user_id },
         });
         connectedStripeAccount = true;
+        revalidatePath(`/admin/${params.agencyId}/launchpad`);
       } catch (error) {
         console.log("🔴 Could not connect stripe account");
       }
@@ -110,8 +113,7 @@ const LaunchPadPage = async ({ params, searchParams }: Props) => {
               ) : (
                 <Link
                   className="rounded-md bg-primary px-4 py-2 text-white"
-                  href={"#"}
-                  // href={stripeOAuthLink}
+                  href={stripeOAuthLink}
                 >
                   Start
                 </Link>

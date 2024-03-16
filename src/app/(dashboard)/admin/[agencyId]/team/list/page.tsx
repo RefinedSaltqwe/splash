@@ -1,4 +1,3 @@
-import ClientButtonLink from "@/app/(dashboard)/_components/ButtonLinks/ClientButtonLink";
 import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
 import { getData } from "@/lib/utils";
@@ -12,6 +11,7 @@ import {
 import React from "react";
 import { ClientData } from "./_components/ClientData";
 import { columns } from "./_components/Columns";
+import SendInvitationButton from "./_components/SendInvitationButton";
 type EmployeeListPageProps = {
   params: { agencyId: string };
 };
@@ -34,11 +34,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = async ({
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
         <Heading title="List" />
-        <ClientButtonLink
-          buttonName="Add User"
-          href={`/admin/${params.agencyId}/team/list/create`}
-          variant={"secondary"}
-        />
+        <SendInvitationButton agencyId={params.agencyId} />
       </div>
 
       <Card padding={false}>

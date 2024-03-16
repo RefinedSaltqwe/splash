@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getStripeOAuthLink(
-  accountType: "agency" | "subaccount",
+  accountType: "admin" | "subaccount",
   state: string,
 ) {
   return `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${env.NEXT_PUBLIC_STRIPE_CLIENT_ID}&scope=read_write&redirect_uri=${env.NEXT_PUBLIC_URL}${accountType}&state=${state}`;

@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { subscriptionCreated } from "@/lib/stripe/stripe-actions";
+import { env } from "@/env";
 
 const stripeWebhookEvents = new Set([
   "product.created",
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
   const sig = headers().get("Stripe-Signature");
   const webhookSecret =
-    process.env.STRIPE_WEBHOOK_SECRET_LIVE ?? process.env.STRIPE_WEBHOOK_SECRET;
+    process.env.STRIPE_WEBHOOK_SECRET_LIVE ?? env.STRIPE_WEBHOOK_SECRET;
   try {
     if (!sig || !webhookSecret) {
       console.log(
@@ -43,6 +44,8 @@ export async function POST(req: NextRequest) {
   //
   try {
     if (stripeWebhookEvents.has(stripeEvent.type)) {
+      // In Production there are 2 endpoints
+      // One endpoint for connectedAccountPayments and another endpoint for connectAccountSubscriptions
       const subscription = stripeEvent.data.object as Stripe.Subscription;
       if (
         !subscription.metadata.connectAccountPayments &&
