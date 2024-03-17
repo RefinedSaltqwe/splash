@@ -570,30 +570,6 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
   return response;
 };
 
-export const getFunnels = async (subacountId: string) => {
-  const funnels = await db.funnel.findMany({
-    where: { subAccountId: subacountId },
-    include: { FunnelPages: true },
-  });
-
-  return funnels;
-};
-
-export const getFunnel = async (funnelId: string) => {
-  const funnel = await db.funnel.findUnique({
-    where: { id: funnelId },
-    include: {
-      FunnelPages: {
-        orderBy: {
-          order: "asc",
-        },
-      },
-    },
-  });
-
-  return funnel;
-};
-
 export const _getTicketsWithAllRelations = async (laneId: string) => {
   const response = await db.ticket.findMany({
     where: { laneId: laneId },
@@ -840,11 +816,51 @@ export const updateFunnelProducts = async (
   return data;
 };
 
+export const upsertFunnelPages = async (
+  subaccountId: string,
+  funnelPage: UpsertFunnelPage[],
+  funnelId: string,
+) => {
+  if (!subaccountId || !funnelId) return;
+  const funnelPages = funnelPage.map((page) =>
+    db.funnelPage.upsert({
+      where: { id: page.id ?? "" },
+      update: { ...page },
+      create: {
+        ...page,
+        content: page.content
+          ? page.content
+          : JSON.stringify([
+              {
+                content: [],
+                id: "__body",
+                name: "Body",
+                styles: { backgroundColor: "white" },
+                type: "__body",
+              },
+            ]),
+        funnelId,
+      },
+    }),
+  );
+
+  const response = await db.$transaction(funnelPages);
+
+  if (!response) {
+    throw new Error("Error: Failed to create or update funnel page.");
+  }
+
+  return response;
+};
+
 export const upsertFunnelPage = async (
   subaccountId: string,
   funnelPage: UpsertFunnelPage,
   funnelId: string,
 ) => {
+  if (!funnelPage.id) {
+    funnelPage.id = randomUUID();
+  }
   if (!subaccountId || !funnelId) return;
   const response = await db.funnelPage.upsert({
     where: { id: funnelPage.id ?? "" },
@@ -866,22 +882,14 @@ export const upsertFunnelPage = async (
     },
   });
 
-  revalidatePath(`/subaccount/${subaccountId}/funnels/${funnelId}`, "page");
+  if (!response) {
+    throw new Error("Error: Failed to create or update funnel page.");
+  }
   return response;
 };
 
 export const deleteFunnelePage = async (funnelPageId: string) => {
   const response = await db.funnelPage.delete({ where: { id: funnelPageId } });
-
-  return response;
-};
-
-export const getFunnelPageDetails = async (funnelPageId: string) => {
-  const response = await db.funnelPage.findUnique({
-    where: {
-      id: funnelPageId,
-    },
-  });
 
   return response;
 };

@@ -100,6 +100,10 @@ export type FunnelsWithFunnelPages =
     })
   | null;
 
+export type FunnelsWithFunnelPagesNoNull = Funnel & {
+  FunnelPages: FunnelPage[];
+};
+
 export type TotalFunnelVisits = number | undefined;
 
 export type FunnelsWithFunnelPagesAndTotalFunnelVisits =

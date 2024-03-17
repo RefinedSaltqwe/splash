@@ -10,7 +10,6 @@ import {
 } from "@prisma/client";
 import {
   type _getTicketsWithAllRelations,
-  type getFunnels,
   type getUserPermissions,
 } from "@/server/queries";
 import { z } from "zod";
@@ -22,6 +21,7 @@ import {
   type getAuthUserDetails,
   type getPipelineDetails,
   type getTicketsWithTags,
+  type getFunnels,
 } from "@/server/actions/fetch";
 
 export type NotificationWithUser =

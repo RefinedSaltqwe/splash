@@ -2,20 +2,12 @@ import { updateLanesOrder, updateTicketsOrder } from "@/server/queries";
 import { type LaneDetail } from "@/types/stripe";
 import { type Dispatch, type SetStateAction } from "react";
 import { type DropResult } from "@hello-pangea/dnd";
+import { reorder } from "@/lib/utils";
 
 const useDragAndDrop = (
   allLanes: LaneDetail[] | [],
   setAllLanes: Dispatch<SetStateAction<LaneDetail[] | []>>,
 ) => {
-  // Reorder by index
-  function reorder<T>(list: T[], startIndex: number, endIndex: number) {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed!);
-
-    return result;
-  }
-
   const onDragEnd = async (dropResult: DropResult) => {
     const { destination, source, type } = dropResult;
     if (

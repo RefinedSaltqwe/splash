@@ -116,18 +116,18 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
     >
       {(provided, snapshot) => {
         if (snapshot.isDragging) {
-          //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //   const offset = { x: 300, y: 0 };
-          //   //@ts-expect-error
-          //   const x = provided.draggableProps.style?.left - offset.x;
-          //   //@ts-expect-error
-          //   const y = provided.draggableProps.style?.top - offset.y;
-          //   //@ts-expect-error
-          //   provided.draggableProps.style = {
-          //     ...provided.draggableProps.style,
-          //     top: y,
-          //     left: x,
-          //   };
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          const offset = { x: 0, y: 0 };
+          //@ts-expect-error
+          const x = provided.draggableProps.style?.left - offset.x;
+          //@ts-expect-error
+          const y = provided.draggableProps.style?.top - offset.y;
+          //@ts-expect-error
+          provided.draggableProps.style = {
+            ...provided.draggableProps.style,
+            top: y,
+            left: x,
+          };
         }
         return (
           <div

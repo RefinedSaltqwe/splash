@@ -1,5 +1,6 @@
 "use server";
 import {
+  FunnelsWithFunnelPages,
   type AgencyWithSubAccounts,
   type GetAllUsersInAgency,
   type GetAuthUserDetails,
@@ -9,6 +10,7 @@ import {
   type InvoiceWithService,
   type PipelineWithLanesAndTickets,
   type TimesheetWithInputTimes,
+  FunnelsWithFunnelPagesNoNull,
 } from "@/types/prisma";
 import {
   type LaneDetail,
@@ -774,5 +776,43 @@ export const searchContacts = cache(
 
 export const getContacts = cache(async (): Promise<Contact[] | null> => {
   const response = await db.contact.findMany();
+  return response;
+});
+
+export const getFunnels = cache(
+  async (subacountId: string): Promise<FunnelsWithFunnelPagesNoNull[]> => {
+    const funnels = await db.funnel.findMany({
+      where: { subAccountId: subacountId },
+      include: { FunnelPages: true },
+    });
+
+    return funnels;
+  },
+);
+
+export const getFunnel = cache(
+  async (funnelId: string): Promise<FunnelsWithFunnelPages> => {
+    const funnel = await db.funnel.findUnique({
+      where: { id: funnelId },
+      include: {
+        FunnelPages: {
+          orderBy: {
+            order: "asc",
+          },
+        },
+      },
+    });
+
+    return funnel;
+  },
+);
+
+export const getFunnelPageDetails = cache(async (funnelPageId: string) => {
+  const response = await db.funnelPage.findUnique({
+    where: {
+      id: funnelPageId,
+    },
+  });
+
   return response;
 });

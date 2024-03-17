@@ -88,17 +88,17 @@ const PipelineTicket = ({
     <Draggable draggableId={ticket.id.toString()} index={index}>
       {(provided, snapshot) => {
         if (snapshot.isDragging) {
-          //   const offset = { x: 300, y: 20 };
-          //   //@ts-expect-error
-          //   const x = provided.draggableProps.style?.left - offset.x;
-          //   //@ts-expect-error
-          //   const y = provided.draggableProps.style?.top - offset.y;
-          //   //@ts-expect-error
-          //   provided.draggableProps.style = {
-          //     ...provided.draggableProps.style,
-          //     top: y,
-          //     left: x,
-          //   };
+          const offset = { x: 0, y: 20 };
+          //@ts-expect-error
+          const x = provided.draggableProps.style?.left - offset.x;
+          //@ts-expect-error
+          const y = provided.draggableProps.style?.top - offset.y;
+          //@ts-expect-error
+          provided.draggableProps.style = {
+            ...provided.draggableProps.style,
+            top: y,
+            left: x,
+          };
         }
         return (
           <div
@@ -107,7 +107,7 @@ const PipelineTicket = ({
             ref={provided.innerRef}
           >
             <DropdownMenu>
-              <Card className="splash-border-color my-4 bg-card shadow-none transition-all">
+              <Card className="splash-border-color my-4 rounded-lg bg-card shadow-none transition-all">
                 <CardHeader className="p-[12px]">
                   <CardTitle className="flex items-center justify-between">
                     <HoverCard>
