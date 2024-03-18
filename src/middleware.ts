@@ -43,7 +43,10 @@ export default authMiddleware({
       url,
     );
 
-    if (customSubDomain1) {
+    if (
+      customSubDomain1 &&
+      !customSubDomain1.includes("splashinnovations.ca")
+    ) {
       console.log("in1: ", `/${customSubDomain1}${pathWithSearchParams}`);
       return NextResponse.rewrite(
         new URL(`/${customSubDomain1}${pathWithSearchParams}`, req.url),
