@@ -34,7 +34,13 @@ export default authMiddleware({
 
     console.log(
       "=============================================",
-      customSubDomain1 + " = " + customSubDomain2,
+      customSubDomain1,
+      " = ",
+      customSubDomain2,
+      " = ",
+      hostname.get("host"),
+      " = ",
+      url,
     );
 
     if (customSubDomain1) {
