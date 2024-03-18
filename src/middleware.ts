@@ -34,16 +34,16 @@ export default authMiddleware({
 
     console.log(
       "=============================================",
-      "subby.splashinnovations.ca"
-        .split(`${"splashinnovations.ca"}`)
-        .filter(Boolean)[0],
+      customSubDomain1 + " = " + customSubDomain2,
     );
 
     if (customSubDomain1) {
+      console.log("in1: ", `/${customSubDomain1}${pathWithSearchParams}`);
       return NextResponse.rewrite(
         new URL(`/${customSubDomain1}${pathWithSearchParams}`, req.url),
       );
     } else if (customSubDomain2 && !customSubDomain2.includes("www.")) {
+      console.log("in2: ", `/${customSubDomain2}${pathWithSearchParams}`);
       return NextResponse.rewrite(
         new URL(`/${customSubDomain2}${pathWithSearchParams}`, req.url),
       );
