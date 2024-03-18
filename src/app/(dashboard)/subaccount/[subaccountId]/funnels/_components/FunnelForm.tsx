@@ -24,6 +24,7 @@ import { CreateFunnel } from "@/server/actions/create-funnel/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface CreateFunnelProps {
   defaultData?: Funnel;
@@ -108,7 +109,14 @@ const FunnelForm: React.FC<CreateFunnelProps> = ({
                 <FormItem>
                   <FormLabel>Funnel Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name" {...field} />
+                    <Input
+                      placeholder="Name"
+                      {...field}
+                      className={cn(
+                        "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                        "splash-base-input splash-inputs",
+                      )}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -123,6 +131,10 @@ const FunnelForm: React.FC<CreateFunnelProps> = ({
                     <Textarea
                       placeholder="Tell us a little bit more about this funnel."
                       {...field}
+                      className={cn(
+                        "block w-full rounded-md shadow-sm ring-offset-card placeholder:text-gray-400 focus:ring-2 sm:text-sm sm:leading-6 dark:placeholder:text-gray-600",
+                        "splash-base-input splash-inputs",
+                      )}
                     />
                   </FormControl>
                 </FormItem>
@@ -135,7 +147,14 @@ const FunnelForm: React.FC<CreateFunnelProps> = ({
                 <FormItem>
                   <FormLabel>Sub domain</FormLabel>
                   <FormControl>
-                    <Input placeholder="Sub domain for funnel" {...field} />
+                    <Input
+                      placeholder="Sub domain for funnel"
+                      {...field}
+                      className={cn(
+                        "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                        "splash-base-input splash-inputs",
+                      )}
+                    />
                   </FormControl>
                 </FormItem>
               )}

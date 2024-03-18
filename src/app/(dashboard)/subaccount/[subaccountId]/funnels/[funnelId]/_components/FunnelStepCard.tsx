@@ -46,7 +46,7 @@ const FunnelStepCard = ({ activePage, funnelPage, index }: Props) => {
               {funnelPage.name}
             </CardContent>
             {activePage && (
-              <div className="absolute right-2 top-2 h-2 w-2 rounded-full bg-emerald-500" />
+              <div className="absolute right-2 top-2 h-3 w-3 rounded-full bg-primary" />
             )}
           </Card>
         );

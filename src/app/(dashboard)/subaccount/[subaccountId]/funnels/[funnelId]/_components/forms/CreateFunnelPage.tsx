@@ -1,4 +1,5 @@
 "use client";
+import GlobalModal from "@/components/drawer/GlobalModal";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAction } from "@/hooks/useAction";
+import { cn } from "@/lib/utils";
 import { createFunnelPage } from "@/server/actions/create-funnel-page";
 import { CreateFunnelPage } from "@/server/actions/create-funnel-page/schema";
 import { getFunnels } from "@/server/actions/fetch";
@@ -29,7 +31,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FunnelPage } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CopyPlusIcon, Trash } from "lucide-react";
+import { CopyPlusIcon, Trash2 } from "lucide-react";
 import React, {
   useEffect,
   useState,
@@ -62,6 +64,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
   pagesState,
 }) => {
   const [isDuplicating, setIsDuplicating] = useState<boolean>(false);
+  const [isOpenDeleteFunnel, setIsOpenDeleteFunnel] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { data: funnels } = useQuery({
     queryKey: ["funnels", subaccountId],
@@ -91,7 +94,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
       toast.success("Success", {
         description: "Funnel page deleted.",
       });
-
+      setIsOpenDeleteFunnel(false);
       setPagesState((prev) => [...prev.filter((page) => page.id !== data.id)]);
       setClickedPage(pagesState[pagesState.length - 2]);
       void queryClient.invalidateQueries({
@@ -161,10 +164,10 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
   };
 
   return (
-    <Card>
+    <Card className="splash-border-color border-[1px] shadow-none">
       <CardHeader>
         <CardTitle>Funnel Page</CardTitle>
-        <CardDescription>
+        <CardDescription className="font-normal">
           Funnel pages are flow in the order they are created by default. You
           can move them around to change their order.
         </CardDescription>
@@ -182,7 +185,14 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                 <FormItem className="flex-1">
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name" {...field} />
+                    <Input
+                      placeholder="Name"
+                      {...field}
+                      className={cn(
+                        "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                        "splash-base-input splash-inputs",
+                      )}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -200,13 +210,17 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                       placeholder="Path for the page"
                       {...field}
                       value={field.value?.toLowerCase()}
+                      className={cn(
+                        "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                        "splash-base-input splash-inputs",
+                      )}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center justify-between">
               <Button
                 className="w-22 self-end"
                 disabled={creatingFunnelPage}
@@ -219,90 +233,123 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                 )}
               </Button>
 
-              {defaultData?.id && (
-                <Button
-                  variant={"outline"}
-                  className="w-22 self-end border-destructive text-destructive hover:bg-destructive"
-                  disabled={deletingFunnelPage}
-                  type="button"
-                  onClick={async () => {
-                    try {
-                      await deleteFunnelPageMutation(defaultData.id);
-                    } catch (err: unknown) {
-                      if (err instanceof Error) {
-                        toast.error(err.message);
-                      }
-                    }
-                  }}
-                >
-                  {deletingFunnelPage ? (
-                    <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
-                  ) : (
-                    <Trash />
-                  )}
-                </Button>
-              )}
-              {defaultData?.id && (
-                <Button
-                  variant={"outline"}
-                  size={"icon"}
-                  disabled={form.formState.isSubmitting}
-                  type="button"
-                  onClick={async () => {
-                    setIsDuplicating(true);
-                    const lastFunnelPage = funnels?.find(
-                      (funnel) => funnel.id === funnelId,
-                    )?.FunnelPages.length;
-                    try {
-                      const response = await upsertFunnelPage(
-                        subaccountId,
-                        {
-                          ...defaultData,
-                          id: undefined,
-                          order: lastFunnelPage ? lastFunnelPage : 0,
-                          visits: 0,
-                          name: `${defaultData.name} Copy`,
-                          pathName: `${defaultData.pathName}copy`,
-                          content: defaultData.content,
-                        },
-                        funnelId,
-                      );
-                      if (response) {
-                        toast.success("Success", {
-                          description: "Funnel page duplicated.",
-                        });
+              <div className="flex flex-row">
+                {defaultData?.id && (
+                  <Button
+                    variant={"ghost"}
+                    className="rounded-full hover:bg-muted-foreground/5"
+                    size={"icon"}
+                    disabled={form.formState.isSubmitting}
+                    type="button"
+                    onClick={async () => {
+                      setIsDuplicating(true);
+                      const lastFunnelPage = funnels?.find(
+                        (funnel) => funnel.id === funnelId,
+                      )?.FunnelPages.length;
+                      try {
+                        const response = await upsertFunnelPage(
+                          subaccountId,
+                          {
+                            ...defaultData,
+                            id: undefined,
+                            order: lastFunnelPage ? lastFunnelPage : 0,
+                            visits: 0,
+                            name: `${defaultData.name} Copy`,
+                            pathName: `${defaultData.pathName}copy`,
+                            content: defaultData.content,
+                          },
+                          funnelId,
+                        );
+                        if (response) {
+                          toast.success("Success", {
+                            description: "Funnel page duplicated.",
+                          });
 
-                        setPagesState((prev) => [...prev, response]);
-                        setClickedPage(response);
-                        void queryClient.invalidateQueries({
-                          queryKey: ["funnel", funnelId],
-                        });
-                        await saveActivityLogsNotification({
-                          agencyId: undefined,
-                          description: `Duplicated a funnel page | ${response?.name}`,
-                          subaccountId: subaccountId,
-                        });
+                          setPagesState((prev) => [...prev, response]);
+                          setClickedPage(response);
+                          void queryClient.invalidateQueries({
+                            queryKey: ["funnel", funnelId],
+                          });
+                          await saveActivityLogsNotification({
+                            agencyId: undefined,
+                            description: `Duplicated a funnel page | ${response?.name}`,
+                            subaccountId: subaccountId,
+                          });
+                        }
+                        setIsDuplicating(false);
+                      } catch (error) {
+                        if (error instanceof Error) {
+                          toast.error(error.message);
+                        }
+                        setIsDuplicating(false);
                       }
-                      setIsDuplicating(false);
-                    } catch (error) {
-                      if (error instanceof Error) {
-                        toast.error(error.message);
-                      }
-                      setIsDuplicating(false);
-                    }
-                  }}
-                >
-                  {isDuplicating ? (
-                    <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
-                  ) : (
-                    <CopyPlusIcon />
-                  )}
-                </Button>
-              )}
+                    }}
+                  >
+                    {isDuplicating ? (
+                      <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                    ) : (
+                      <CopyPlusIcon size={20} />
+                    )}
+                  </Button>
+                )}
+                {defaultData?.id && (
+                  <Button
+                    variant="ghost"
+                    size={"icon"}
+                    disabled={deletingFunnelPage}
+                    className="rounded-full hover:!bg-destructive/20"
+                    type="button"
+                    onClick={() => setIsOpenDeleteFunnel(true)}
+                  >
+                    {deletingFunnelPage ? (
+                      <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                    ) : (
+                      <Trash2 className="text-destructive" size={20} />
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           </form>
         </Form>
       </CardContent>
+
+      <GlobalModal
+        isOpen={isOpenDeleteFunnel}
+        setIsOpen={setIsOpenDeleteFunnel}
+        title="Are you absolutely sure?"
+        description="Are you sure you want to delete this funnel page? This action cannot be undone!"
+      >
+        <div className="flex w-full justify-end gap-x-4">
+          <Button
+            type="button"
+            variant={"ghost"}
+            onClick={() => setIsOpenDeleteFunnel(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant={"destructive"}
+            onClick={async () => {
+              try {
+                await deleteFunnelPageMutation(defaultData!.id);
+              } catch (err: unknown) {
+                if (err instanceof Error) {
+                  toast.error(err.message);
+                }
+              }
+            }}
+          >
+            <span className="sr-only">Delete</span>
+            {deletingFunnelPage ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Delete"
+            )}
+          </Button>
+        </div>
+      </GlobalModal>
     </Card>
   );
 };

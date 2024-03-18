@@ -42,9 +42,9 @@ const FunnelSteps = ({
     setPagesState,
   );
   return (
-    <section className="flex w-full flex-col">
-      <div className="flex flex-col border-[1px] lg:!flex-row ">
-        <aside className="flex flex-[0.3] flex-col  justify-between bg-background p-6 ">
+    <section className="flex w-full flex-col rounded-xl">
+      <div className="splash-border-color flex flex-col rounded-xl border-[1px] lg:!flex-row">
+        <aside className="flex flex-[0.3] flex-col  justify-between rounded-l-xl bg-background/75 p-6">
           <ScrollArea className="h-full ">
             <div className="flex items-center gap-4">
               <Check />
@@ -88,15 +88,15 @@ const FunnelSteps = ({
             Create New Steps
           </Button>
         </aside>
-        <aside className="flex-[0.7] bg-muted p-4 ">
+        <aside className="flex-[0.7] rounded-r-xl bg-background/20 p-4">
           {!!pagesState.length ? (
-            <Card className="flex h-full flex-col justify-between">
+            <Card className="flex h-full flex-col justify-between shadow-none">
               <CardHeader>
                 <p className="text-sm text-muted-foreground">Page name</p>
                 <CardTitle>{clickedPage?.name}</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
-                <div className="w-full overflow-clip rounded-lg border-2  sm:w-80">
+                <div className="splash-border-color w-full overflow-clip rounded-lg border-[1px] sm:w-80">
                   <Link
                     href={`/subaccount/${subaccountId}/funnels/${funnelId}/editor/${clickedPage?.id}`}
                     className="group relative"

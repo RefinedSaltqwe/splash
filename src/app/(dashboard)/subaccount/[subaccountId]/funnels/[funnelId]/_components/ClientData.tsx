@@ -7,6 +7,8 @@ import { redirect } from "next/navigation";
 import React from "react";
 import FunnelSteps from "./FunnelSteps";
 import FunnelSettings from "./FunnelSettings";
+import Heading from "@/components/shared/Heading";
+import { Separator } from "@/components/ui/separator";
 
 type ClientDataProps = {
   subaccountId: string;
@@ -30,11 +32,21 @@ const ClientData: React.FC<ClientDataProps> = ({ subaccountId, funnelId }) => {
       >
         Back
       </Link>
-      <h1 className="mb-8 text-3xl">{funnelPages.name}</h1>
+      <Heading title={funnelPages.name} />
       <Tabs defaultValue="steps" className="w-full">
-        <TabsList className="grid  w-[50%] grid-cols-2 bg-transparent ">
-          <TabsTrigger value="steps">Steps</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-background/20">
+          <TabsTrigger
+            value="steps"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white"
+          >
+            Steps
+          </TabsTrigger>
+          <TabsTrigger
+            value="settings"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white"
+          >
+            Settings
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="steps">
           <FunnelSteps

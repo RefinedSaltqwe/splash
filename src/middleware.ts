@@ -32,27 +32,14 @@ export default authMiddleware({
       ?.split(`${env.NEXT_PUBLIC_DOMAIN_NO_WWW}`) // splashinnovations.ca
       .filter(Boolean)[0];
 
-    console.log(
-      "=============================================",
-      customSubDomain1,
-      " = ",
-      customSubDomain2,
-      " = ",
-      hostname.get("host"),
-      " = ",
-      url,
-    );
-
     if (
       customSubDomain1 &&
       !customSubDomain1.includes("splashinnovations.ca")
     ) {
-      console.log("in1: ", `/${customSubDomain1}${pathWithSearchParams}`);
       return NextResponse.rewrite(
         new URL(`/${customSubDomain1}${pathWithSearchParams}`, req.url),
       );
     } else if (customSubDomain2 && !customSubDomain2.includes("www.")) {
-      console.log("in2: ", `/${customSubDomain2}${pathWithSearchParams}`);
       return NextResponse.rewrite(
         new URL(`/${customSubDomain2}${pathWithSearchParams}`, req.url),
       );

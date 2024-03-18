@@ -11,9 +11,8 @@ import { Input } from "@/components/ui/input";
 import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
 import { createService } from "@/server/actions/create-services";
-import { CreateService } from "@/server/actions/create-services/schema";
 import { updateService } from "@/server/actions/update-services";
-import { type UpdateService } from "@/server/actions/update-services/schema";
+import { UpdateService } from "@/server/actions/update-services/schema";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { useServiceModal } from "@/stores/useServiceModal";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -76,7 +75,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ className }) => {
     },
   );
   const form = useForm<z.infer<typeof UpdateService>>({
-    resolver: zodResolver(CreateService),
+    resolver: zodResolver(UpdateService),
     defaultValues:
       id.length > 0
         ? {
