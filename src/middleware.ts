@@ -22,24 +22,31 @@ export default authMiddleware({
     }`;
 
     //if subdomain exists
-    const customSubDomain = hostname
+    const customSubDomain1 = hostname
       .get("host")
-      ?.split(`${env.NEXT_PUBLIC_DOMAIN}`)
+      ?.split(`${env.NEXT_PUBLIC_DOMAIN}`) // wwww.splashinnovations.ca
       .filter(Boolean)[0];
 
-    if (customSubDomain) {
-      if (customSubDomain.includes("https://")) {
-        return NextResponse.rewrite(
-          new URL(
-            `/${customSubDomain?.split("https://")[1]}${pathWithSearchParams}`,
-            req.url,
-          ),
-        );
-      } else {
-        return NextResponse.rewrite(
-          new URL(`/${customSubDomain}${pathWithSearchParams}`, req.url),
-        );
-      }
+    const customSubDomain2 = hostname
+      .get("host")
+      ?.split(`${env.NEXT_PUBLIC_DOMAIN_NO_WWW}`) // splashinnovations.ca
+      .filter(Boolean)[0];
+
+    console.log(
+      "=============================================",
+      "subby.splashinnovations.ca"
+        .split(`${"splashinnovations.ca"}`)
+        .filter(Boolean)[0],
+    );
+
+    if (customSubDomain1) {
+      return NextResponse.rewrite(
+        new URL(`/${customSubDomain1}${pathWithSearchParams}`, req.url),
+      );
+    } else if (customSubDomain2 && !customSubDomain2.includes("www.")) {
+      return NextResponse.rewrite(
+        new URL(`/${customSubDomain2}${pathWithSearchParams}`, req.url),
+      );
     }
 
     if (url.pathname === "/sign-in" || url.pathname === "/sign-up") {

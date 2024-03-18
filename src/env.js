@@ -57,6 +57,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string(),
     NEXT_PUBLIC_URL: z.string(),
     NEXT_PUBLIC_DOMAIN: z.string(),
+    NEXT_PUBLIC_DOMAIN_NO_WWW: z.string(),
     NEXT_PUBLIC_SCHEME: z.string(),
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
     NEXT_PUBLIC_STRIPE_CLIENT_ID: z.string(),
@@ -95,6 +96,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+    NEXT_PUBLIC_DOMAIN_NO_WWW: process.env.NEXT_PUBLIC_DOMAIN_NO_WWW,
     NEXT_PUBLIC_SCHEME: process.env.NEXT_PUBLIC_SCHEME,
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,

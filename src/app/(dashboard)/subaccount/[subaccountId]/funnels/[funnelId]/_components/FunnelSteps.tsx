@@ -11,6 +11,7 @@ import Link from "next/link";
 
 import GlobalModal from "@/components/drawer/GlobalModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { env } from "@/env";
 import useDragAndDropFunnels from "@/hooks/useDragAndDropFunnels";
 import { type FunnelsForSubAccount } from "@/types/stripe";
 import FunnelStepCard from "./FunnelStepCard";
@@ -111,13 +112,13 @@ const FunnelSteps = ({
 
                   <Link
                     target="_blank"
-                    href={`${process.env.NEXT_PUBLIC_SCHEME}${funnel.subDomainName}.${process.env.NEXT_PUBLIC_DOMAIN}/${clickedPage?.pathName}`}
+                    href={`${env.NEXT_PUBLIC_SCHEME}${funnel.subDomainName}.${env.NEXT_PUBLIC_DOMAIN_NO_WWW}/${clickedPage?.pathName}`}
                     className="group flex items-center justify-start gap-2 p-2 transition-colors duration-200 hover:text-primary"
                   >
                     <ExternalLink size={15} />
                     <div className="w-64 overflow-hidden overflow-ellipsis font-normal text-muted-foreground">
-                      {process.env.NEXT_PUBLIC_SCHEME}
-                      {funnel.subDomainName}.{process.env.NEXT_PUBLIC_DOMAIN}/
+                      {env.NEXT_PUBLIC_SCHEME}
+                      {funnel.subDomainName}.{env.NEXT_PUBLIC_DOMAIN_NO_WWW}/
                       {clickedPage?.pathName}
                     </div>
                   </Link>
