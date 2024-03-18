@@ -21,7 +21,7 @@ const Page = async ({
   }
 
   if (!pageData || !domainData) return notFound();
-
+  console.log("Path:", funnelPageDetails);
   return (
     <EditorProvider
       subaccountId={domainData.subAccountId}

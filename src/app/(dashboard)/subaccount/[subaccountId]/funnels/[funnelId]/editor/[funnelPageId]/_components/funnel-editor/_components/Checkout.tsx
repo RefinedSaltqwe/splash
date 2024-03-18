@@ -5,12 +5,11 @@
 "use client";
 
 import {
-  type EditorElement,
   useEditor,
+  type EditorElement,
 } from "@/components/providers/editor/EditorProvider";
 import Loading from "@/components/shared/Loading";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "@/components/ui/use-toast";
 import { type EditorBtns } from "@/constants/defaultsValues";
 import { env } from "@/env";
 import { getStripe } from "@/lib/stripe/stripe-client";
@@ -25,6 +24,7 @@ import clsx from "clsx";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 type Props = {
   element: EditorElement;
@@ -56,13 +56,13 @@ const Checkout = (props: Props) => {
       if (!subaccountDetails.connectAccountId) return;
       setSubAccountConnectAccId(subaccountDetails.connectAccountId);
     }
-  }, [subaccountId]);
+  }, [subaccountDetails?.connectAccountId, subaccountId]);
 
   useEffect(() => {
-    if (funnelId) {
+    if (funnelData?.liveProducts) {
       setLivePrices(JSON.parse(funnelData?.liveProducts ?? "[]"));
     }
-  }, [funnelId]);
+  }, [funnelData?.liveProducts, funnelId]);
 
   useEffect(() => {
     if (livePrices.length && subaccountId && subAccountConnectAccId) {
@@ -82,7 +82,6 @@ const Checkout = (props: Props) => {
             },
           );
           const responseJson = await response.json();
-          console.log(responseJson);
           if (!responseJson) throw new Error("somethign went wrong");
           if (responseJson.error) {
             throw new Error(responseJson.error);
@@ -91,14 +90,8 @@ const Checkout = (props: Props) => {
             setClientSecret(responseJson.clientSecret);
           }
         } catch (error) {
-          toast({
-            open: true,
-            className: "z-[100000]",
-            variant: "destructive",
-            title: "Oppse!",
-            //@ts-expect-error
-            description: error.message,
-          });
+          if (error instanceof Error)
+            toast.error("Opps!", { description: error.message });
         }
       };
       void getClientSercet();
