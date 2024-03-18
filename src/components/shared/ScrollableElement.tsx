@@ -6,18 +6,20 @@ type ScrollableElementProps = {
   children: React.ReactNode;
   className?: string;
   offsetRight?: string;
+  paddingRight?: boolean;
 };
 
 const ScrollableElement: React.FC<ScrollableElementProps> = ({
   children,
   className,
   offsetRight,
+  paddingRight = true,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 
   return (
     <div
-      className="flex h-full pr-1"
+      className={cn("flex h-full", paddingRight && "pr-1")}
       onMouseOver={() => {
         if (!isFocus) {
           setIsFocus(true);

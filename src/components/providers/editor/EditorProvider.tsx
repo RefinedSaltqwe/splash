@@ -414,7 +414,9 @@ const EditorProvider = (props: EditorProps) => {
         pageDetails: props.pageDetails,
       }}
     >
-      {props.children}
+      <section className="flex h-full w-full flex-col">
+        {props.children}
+      </section>
     </EditorContext.Provider>
   );
 };

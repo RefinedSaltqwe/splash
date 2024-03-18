@@ -1,11 +1,13 @@
 "use client";
 import EditorProvider from "@/components/providers/editor/EditorProvider";
 import { getFunnelPageDetails } from "@/server/actions/fetch";
+import { type FunnelPage } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import React, { useState } from "react";
 import FunnelEditorNavigation from "./FunnelEditorNavigation";
-import { FunnelPage } from "@prisma/client";
+import FunnelEditor from "./funnel-editor";
+import FunnelEditorSidebar from "./funnel-editor-sidebar";
 
 type ClientDataProps = {
   subaccountId: string;
@@ -41,11 +43,18 @@ const ClientData: React.FC<ClientDataProps> = ({
           subaccountId={subaccountId}
           setFunnelPage={setFunnelPage}
         />
-        {/* <div className="flex h-full justify-center">
-          <FunnelEditor funnelPageId={funnelPageId} />
-        </div>
+        <div className="flex h-full w-full flex-row">
+          <div className="flex h-full grow justify-center">
+            <FunnelEditor
+              funnelPageId={funnelPageId}
+              funnelPageDetails={funnelPageDetails}
+            />
+          </div>
 
-        <FunnelEditorSidebar subaccountId={subaccountId} /> */}
+          <div className="z-[50] flex flex-col">
+            <FunnelEditorSidebar subaccountId={subaccountId} />
+          </div>
+        </div>
       </EditorProvider>
     </>
   );

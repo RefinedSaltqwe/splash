@@ -58,10 +58,12 @@ const MediaCard = ({ file, subaccountId }: MediaCardProps) => {
           </div>
           <p className="h-0 w-0 opacity-0">{file.name}</p>
           <div className="relative p-4">
-            <p className="text-muted-foreground">
+            <p className="overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground">
               {file.createdAt.toDateString()}
             </p>
-            <p>{file.name}</p>
+            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {file.name}
+            </p>
             <div className="absolute right-4 top-4 cursor-pointer p-[1px] ">
               <DropdownMenuTrigger asChild>
                 <Button

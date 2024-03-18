@@ -1,4 +1,5 @@
-import { getFunnelPageDetails } from "@/server/actions/fetch";
+import { getFunnel, getFunnelPageDetails } from "@/server/actions/fetch";
+import { getSubaccountDetails } from "@/server/queries";
 import {
   HydrationBoundary,
   QueryClient,
@@ -20,9 +21,17 @@ const Page = async ({ params }: Props) => {
     queryKey: ["funnelPage", params.funnelPageId],
     queryFn: () => getFunnelPageDetails(params.funnelPageId),
   });
+  await queryClient.prefetchQuery({
+    queryKey: ["subaccount", params.subaccountId],
+    queryFn: () => getSubaccountDetails(params.subaccountId),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["funnel", params.funnelId],
+    queryFn: () => getFunnel(params.funnelId),
+  });
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-[100] overflow-hidden bg-background">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-[50] overflow-hidden bg-background">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ClientData
           subaccountId={params.subaccountId}

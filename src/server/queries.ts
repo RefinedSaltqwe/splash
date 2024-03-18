@@ -794,7 +794,7 @@ export const deleteTagQuery = async (tagId: string) => {
   return response;
 };
 
-export const upsertContact = async (
+export const upsertContactQuery = async (
   contact: Prisma.ContactUncheckedCreateInput,
 ) => {
   const response = await db.contact.upsert({

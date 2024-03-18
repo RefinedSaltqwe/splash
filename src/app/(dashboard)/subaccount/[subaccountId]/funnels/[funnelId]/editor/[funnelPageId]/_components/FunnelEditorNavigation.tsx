@@ -33,7 +33,7 @@ import {
   Undo2,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, type FocusEventHandler } from "react";
+import { useEffect, type FocusEventHandler, useState } from "react";
 import { toast } from "sonner";
 
 type Props = {
@@ -51,6 +51,7 @@ const FunnelEditorNavigation = ({
 }: Props) => {
   const queryClient = useQueryClient();
   const { state, dispatch } = useEditor();
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const {
     execute: updateFunnelPageTitle,
@@ -111,6 +112,7 @@ const FunnelEditorNavigation = ({
   };
 
   const handleOnSave = async () => {
+    setSaveLoading(true);
     const content = JSON.stringify(state.editor.elements);
     try {
       const response = await upsertFunnelPage(
@@ -126,13 +128,17 @@ const FunnelEditorNavigation = ({
         description: `Updated a funnel page | ${response?.name}`,
         subaccountId: subaccountId,
       });
-      toast("Success", {
-        description: "Saved Editor",
-      });
+      if (response) {
+        toast.success("Success", {
+          description: `Updated a funnel page | ${response?.name}`,
+        });
+      }
+      setSaveLoading(false);
     } catch (error) {
-      toast("Oppse!", {
+      toast.error("Oppse!", {
         description: "Could not save editor",
       });
+      setSaveLoading(false);
     }
   };
 
@@ -140,7 +146,7 @@ const FunnelEditorNavigation = ({
     <TooltipProvider>
       <nav
         className={clsx(
-          "flex items-center justify-between gap-2 border-b-[1px] p-6 transition-all",
+          "splash-border-color flex items-center justify-between gap-2 border-b-[1px] bg-card p-6 transition-all",
           { "!h-0 !overflow-hidden !p-0": state.editor.previewMode },
         )}
       >
@@ -154,7 +160,7 @@ const FunnelEditorNavigation = ({
             ) : (
               <Input
                 defaultValue={funnelPageDetails.name}
-                className="m-0 h-5 border-none p-0 text-lg"
+                className="m-0 h-5 border-none bg-card p-0 text-lg"
                 onBlur={handleOnBlurTitleChange}
               />
             )}
@@ -178,10 +184,11 @@ const FunnelEditorNavigation = ({
           >
             <TabsList className="grid h-fit w-full grid-cols-3 bg-transparent">
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <TabsTrigger
                     value="Desktop"
-                    className="h-10 w-10 p-0 data-[state=active]:bg-muted"
+                    className="h-10 w-10 p-1.5 data-[state=active]:bg-muted-foreground/5"
+                    asChild
                   >
                     <Laptop />
                   </TabsTrigger>
@@ -191,10 +198,11 @@ const FunnelEditorNavigation = ({
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <TabsTrigger
                     value="Tablet"
-                    className="h-10 w-10 p-0 data-[state=active]:bg-muted"
+                    className="h-10 w-10 p-1.5 data-[state=active]:bg-muted-foreground/5"
+                    asChild
                   >
                     <Tablet />
                   </TabsTrigger>
@@ -204,10 +212,11 @@ const FunnelEditorNavigation = ({
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <TabsTrigger
                     value="Mobile"
-                    className="h-10 w-10 p-0 data-[state=active]:bg-muted"
+                    className="h-10 w-10 p-1.5 data-[state=active]:bg-muted-foreground/5"
+                    asChild
                   >
                     <Smartphone />
                   </TabsTrigger>
@@ -223,7 +232,7 @@ const FunnelEditorNavigation = ({
           <Button
             variant={"ghost"}
             size={"icon"}
-            className="hover:bg-slate-800"
+            className="hover:bg-muted-foreground/5"
             onClick={handlePreviewClick}
           >
             <EyeIcon />
@@ -233,7 +242,7 @@ const FunnelEditorNavigation = ({
             onClick={handleUndo}
             variant={"ghost"}
             size={"icon"}
-            className="hover:bg-slate-800"
+            className="hover:bg-muted-foreground/5"
           >
             <Undo2 />
           </Button>
@@ -244,7 +253,7 @@ const FunnelEditorNavigation = ({
             onClick={handleRedo}
             variant={"ghost"}
             size={"icon"}
-            className="mr-4 hover:bg-slate-800"
+            className="mr-4 hover:bg-muted-foreground/5"
           >
             <Redo2 />
           </Button>
@@ -258,7 +267,13 @@ const FunnelEditorNavigation = ({
               Last updated {funnelPageDetails.updatedAt.toLocaleDateString()}
             </span>
           </div>
-          <Button onClick={handleOnSave}>Save</Button>
+          <Button onClick={handleOnSave}>
+            {saveLoading ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            ) : (
+              "Save"
+            )}
+          </Button>
         </aside>
       </nav>
     </TooltipProvider>

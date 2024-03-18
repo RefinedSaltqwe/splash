@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { type User, type Invoice } from "@prisma/client";
+import { type Invoice, type User } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 
 import { twMerge } from "tailwind-merge";

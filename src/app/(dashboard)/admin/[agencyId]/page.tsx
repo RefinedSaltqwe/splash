@@ -12,8 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/server/db";
-import { currentUser } from "@clerk/nextjs";
-import { type SubAccount, type Agency } from "@prisma/client";
+import { type Agency, type SubAccount } from "@prisma/client";
 import { AreaChart } from "@tremor/react";
 import {
   ClipboardIcon,
@@ -23,7 +22,6 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 
 // export async function generateStaticParams() {
 //   const agencies: Agency[] = await db.agency.findMany();
@@ -45,8 +43,6 @@ const AgencyPage = async ({
   let net = 0;
   let potentialIncome = 0;
   let closingRate = 0;
-  const user = await currentUser();
-  console.log("sas: ", user);
   const currentYear: number = new Date().getFullYear();
   const startDate: number =
     new Date(`${currentYear}-01-01T00:00:00Z`).getTime() / 1000;

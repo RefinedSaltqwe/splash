@@ -99,6 +99,10 @@ html.dark .apexcharts-gridline {
     --ring: 217.2 91.2% 59.8%;
   }
 }
+.use-automation-zoom-in {
+  animation: automation-zoom-in 0.5s;
+}
+
 @layer utilities {
   .wrapper {
     @apply w-full max-w-7xl py-5 lg:mx-auto;
@@ -124,15 +128,16 @@ html.dark .apexcharts-gridline {
   }
   /* Dropdown */
   .bg-drop-downmenu {
-    @apply border-transparent bg-card/75 backdrop-blur dark:dark:bg-muted/75;
+    @apply z-[71] border-transparent bg-card/75 backdrop-blur dark:dark:bg-muted/75;
   }
   div[role="dialog"] {
-    @apply !border-transparent !bg-card !backdrop-blur dark:!bg-muted/75;
+    @apply z-[71] !border-transparent !bg-card !backdrop-blur dark:!bg-muted/75;
   }
+
   .bg-drop-downmenu div[role="menuitem"],
   div[role="option"],
   div[role="menuitemcheckbox"] {
-    @apply mt-1 cursor-pointer hover:bg-muted-foreground/5 data-[state=open]:bg-muted-foreground/5;
+    @apply z-[71] mt-1 cursor-pointer hover:bg-muted-foreground/5 data-[state=open]:bg-muted-foreground/5;
   }
   div[role="separator"] {
     @apply bg-slate-200 dark:bg-slate-700;
