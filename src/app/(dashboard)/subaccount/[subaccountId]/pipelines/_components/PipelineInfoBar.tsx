@@ -110,7 +110,7 @@ const PipelineInfoBar = ({ pipelineId, subAccountId }: Props) => {
       <GlobalModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        title="Create A Pipeline"
+        title="Create a pipeline"
         description="Pipelines allows you to group tickets into lanes and track your business processes all in one place."
       >
         <CreatePipelineForm subAccountId={subAccountId} setIsOpen={setIsOpen} />

@@ -239,16 +239,18 @@ const PipelineTicket = ({
               title={`Are you sure you want to delete "${ticket.name}"?`}
               description="This action cannot be undone. This will permanently delete your data from our servers."
             >
-              <div className="flex w-full justify-end gap-x-4">
+              <div className="flex w-full flex-col justify-end gap-3 md:flex-row">
                 <Button
                   type="button"
-                  variant={"ghost"}
+                  className="w-full"
+                  variant={"just_outline"}
                   onClick={() => setIsOpenDeleteTicketModal(false)}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
+                  className="w-full"
                   variant={"destructive"}
                   onClick={() =>
                     void executeDeleteTicket({

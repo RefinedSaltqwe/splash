@@ -130,14 +130,11 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ className }) => {
 
         <div
           className={cn(
-            "mt-4 flex items-center justify-end gap-x-4",
+            "mt-3 flex w-full flex-col justify-end gap-3 md:flex-row",
             className,
           )}
         >
-          <Button type="button" variant={"ghost"} onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" variant={"default"}>
+          <Button type="submit" variant={"default"} className="w-full">
             <span className="sr-only">Save</span>
             {updateLoading || createLoading ? (
               <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />

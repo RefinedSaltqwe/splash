@@ -16,8 +16,10 @@ import {
   DrawerTitle,
 } from "../ui/drawer";
 import { ScrollArea } from "../ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 type GlobalModalProps = {
+  className?: string;
   children: React.ReactNode;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -31,6 +33,7 @@ const GlobalModal: React.FC<GlobalModalProps> = ({
   setIsOpen,
   title,
   description,
+  className,
 }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   if (isDesktop) {
@@ -41,7 +44,9 @@ const GlobalModal: React.FC<GlobalModalProps> = ({
           setIsOpen(open);
         }}
       >
-        <DialogContent className="max-h-[90vh] gap-6 overflow-y-auto">
+        <DialogContent
+          className={cn("max-h-[90vh] gap-6 overflow-y-auto", className)}
+        >
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
@@ -59,7 +64,7 @@ const GlobalModal: React.FC<GlobalModalProps> = ({
         setIsOpen(open);
       }}
     >
-      <DrawerContent className="max-h-[90vh] gap-6">
+      <DrawerContent className={cn("max-h-[90vh] gap-6", className)}>
         <ScrollArea
           aria-orientation="vertical"
           className="overflow-y-auto break-all p-4"

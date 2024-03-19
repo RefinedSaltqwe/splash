@@ -103,19 +103,20 @@ const MediaCard = ({ file, subaccountId }: MediaCardProps) => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         title="Are you absolutely sure?"
-        description="Are you sure you want to delete this file? All subaccount using this
-            file will no longer have access to it!"
+        description="Are you sure you want to delete this funnel page? This action cannot be undone!"
       >
-        <div className="flex w-full justify-end gap-x-4">
+        <div className="flex w-full flex-col justify-end gap-3 md:flex-row">
           <Button
             type="button"
-            variant={"ghost"}
+            className="w-full"
+            variant={"just_outline"}
             onClick={() => setIsOpen(false)}
           >
             Cancel
           </Button>
           <Button
             type="submit"
+            className="w-full"
             variant={"destructive"}
             onClick={() =>
               void executeDeleteMedia({ id: file.id, subaccountId })

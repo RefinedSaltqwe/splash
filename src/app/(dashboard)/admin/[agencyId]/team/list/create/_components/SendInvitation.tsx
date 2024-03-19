@@ -166,8 +166,12 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
             </div>
           </div>
 
-          <div className="sm:col-span-3">
-            <Button disabled={isLoadingSendEmailInvitation} type="submit">
+          <div className="flex w-full">
+            <Button
+              disabled={isLoadingSendEmailInvitation}
+              type="submit"
+              className="w-full"
+            >
               {isLoadingSendEmailInvitation ? (
                 <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
               ) : (

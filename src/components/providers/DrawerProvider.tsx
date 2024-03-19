@@ -1,4 +1,5 @@
-import { getUsers } from "@/server/actions/fetch";
+import { getUserById, getUsers } from "@/server/actions/fetch";
+import { currentUser } from "@clerk/nextjs";
 import {
   HydrationBoundary,
   QueryClient,
@@ -11,10 +12,12 @@ const GenerateTimesheetDrawer = lazy(
 );
 
 const DrawerProvider: React.FC = async () => {
+  const user = await currentUser();
+  const getUser = await getUserById(user?.id ?? "");
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["users"],
-    queryFn: () => getUsers(),
+    queryFn: () => getUsers(getUser?.agencyId ?? ""),
   });
   return (
     <>

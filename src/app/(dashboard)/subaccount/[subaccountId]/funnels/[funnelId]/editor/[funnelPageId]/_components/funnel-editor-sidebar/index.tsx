@@ -61,6 +61,7 @@ const FunnelEditorSidebar = ({ subaccountId }: Props) => {
             </TabsContent>
             <TabsContent value="Media">
               <MediaBucketTab
+                overflowEnabled={false}
                 subaccountId={subaccountId}
                 className={"grid-cols-1 sm:grid-cols-1 lg:grid-cols-1"}
               />

@@ -20,6 +20,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         card_outline:
           "border border-input border-slate-200 dark:border-slate-700 bg-card hover:bg-accent hover:text-accent-foreground",
+        just_outline:
+          "border border-input border-slate-200 dark:border-slate-700 bg-transparent hover:bg-accent hover:text-accent-foreground",
       },
       size: {
         default: "h-10 px-4 py-2",

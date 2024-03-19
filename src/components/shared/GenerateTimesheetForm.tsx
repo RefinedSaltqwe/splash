@@ -57,7 +57,7 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
       },
       onError: (error) => {
         if (error.includes("Foreign key constraint failed")) {
-          toast.warning(`Timesheets for were already created.`);
+          toast.warning(`Timesheets were already created.`);
           return;
         }
         toast.error(error, {
@@ -92,14 +92,24 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div
           className={cn(
-            "mt-4 flex items-center justify-end gap-x-4",
+            "mt-4 flex w-full flex-col justify-end gap-3 md:flex-row",
             className,
           )}
         >
-          <Button type="button" variant={"ghost"} onClick={onClose}>
+          <Button
+            type="button"
+            onClick={onClose}
+            className="w-full"
+            variant={"just_outline"}
+          >
             Close
           </Button>
-          <Button type="submit" variant={"default"} disabled={createLoading}>
+          <Button
+            type="submit"
+            variant={"default"}
+            disabled={createLoading}
+            className="w-full"
+          >
             <span className="sr-only">Submit</span>
             {createLoading ? (
               <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />

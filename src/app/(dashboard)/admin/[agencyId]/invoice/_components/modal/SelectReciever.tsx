@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { getCustomers } from "@/server/actions/fetch";
 import { useAddInvoiceReceiverModal } from "@/stores/useAddInvoiceReceiverModal";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { type Customer } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRightIcon } from "lucide-react";
@@ -23,10 +24,11 @@ const SelectRecieverModal: React.FC<SelectRecieverModalProps> = ({
   addReceiver,
   receiver,
 }) => {
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
   const isOpen = useAddInvoiceReceiverModal((state) => state.isOpen);
   const onClose = useAddInvoiceReceiverModal((state) => state.onClose);
   const { data: customersData } = useQuery({
-    queryFn: () => getCustomers(),
+    queryFn: () => getCustomers(agencyId ?? ""),
     queryKey: ["customers"],
   });
 

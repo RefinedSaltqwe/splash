@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,13 +20,11 @@ import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import React, { lazy } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { type z } from "zod";
-
-const Loader = lazy(() => import("@/components/shared/Loader"));
 
 const CreateForm: React.FC = () => {
   const router = useRouter();

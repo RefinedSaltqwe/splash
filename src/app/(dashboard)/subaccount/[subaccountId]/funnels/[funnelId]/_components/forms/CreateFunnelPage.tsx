@@ -43,6 +43,7 @@ import { toast } from "sonner";
 import { type z } from "zod";
 
 interface CreateFunnelPageFormProps {
+  modal?: boolean;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
   defaultData?: FunnelPage;
   funnelId: string;
@@ -62,6 +63,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
   setPagesState,
   setClickedPage,
   pagesState,
+  modal = false,
 }) => {
   const [isDuplicating, setIsDuplicating] = useState<boolean>(false);
   const [isOpenDeleteFunnel, setIsOpenDeleteFunnel] = useState<boolean>(false);
@@ -164,15 +166,20 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
   };
 
   return (
-    <Card className="splash-border-color border-[1px] shadow-none">
-      <CardHeader>
-        <CardTitle>Funnel Page</CardTitle>
+    <Card
+      className={cn(
+        "splash-border-color border-[1px] shadow-none",
+        modal && "border-0 bg-transparent ",
+      )}
+    >
+      <CardHeader className={cn(modal && "px-0 pb-6 pt-0")}>
+        <CardTitle>Funnel page</CardTitle>
         <CardDescription className="font-normal">
           Funnel pages are flow in the order they are created by default. You
           can move them around to change their order.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className={cn(modal && "px-0 pb-0")}>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -222,7 +229,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
             />
             <div className="flex w-full items-center justify-between">
               <Button
-                className="w-22 self-end"
+                className={cn("w-22 self-end", modal && "w-full")}
                 disabled={creatingFunnelPage}
                 type="submit"
               >
@@ -320,16 +327,18 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
         title="Are you absolutely sure?"
         description="Are you sure you want to delete this funnel page? This action cannot be undone!"
       >
-        <div className="flex w-full justify-end gap-x-4">
+        <div className="flex w-full flex-col justify-end gap-3 md:flex-row">
           <Button
             type="button"
-            variant={"ghost"}
+            className="w-full"
+            variant={"just_outline"}
             onClick={() => setIsOpenDeleteFunnel(false)}
           >
             Cancel
           </Button>
           <Button
             type="submit"
+            className="w-full"
             variant={"destructive"}
             onClick={async () => {
               try {

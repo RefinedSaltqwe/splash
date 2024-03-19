@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 interface CreateFunnelProps {
+  modal?: boolean;
   defaultData?: Funnel;
   subAccountId: string;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
@@ -38,6 +39,7 @@ const FunnelForm: React.FC<CreateFunnelProps> = ({
   defaultData,
   subAccountId,
   setIsOpen,
+  modal = false,
 }) => {
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof CreateFunnel>>({
@@ -91,12 +93,18 @@ const FunnelForm: React.FC<CreateFunnelProps> = ({
       defaultLiveProducts: defaultData?.liveProducts,
     });
   };
+
   return (
-    <Card className="splash-border-color flex-1 border-[1px] shadow-none">
-      <CardHeader>
+    <Card
+      className={cn(
+        "splash-border-color flex-1 border-[1px] shadow-none",
+        modal && "border-0 bg-transparent ",
+      )}
+    >
+      <CardHeader className={cn(modal && "px-0 pb-6 pt-0")}>
         <CardTitle>Funnel Details</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className={cn(modal && "px-0 pb-0")}>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -177,7 +185,7 @@ const FunnelForm: React.FC<CreateFunnelProps> = ({
               )}
             />
             <Button
-              className="mt-4 w-20 justify-self-end"
+              className="w-full justify-self-end"
               disabled={isLoading}
               type="submit"
             >

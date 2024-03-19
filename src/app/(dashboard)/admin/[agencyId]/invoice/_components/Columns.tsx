@@ -86,6 +86,7 @@ export const columns: ColumnDef<Invoice>[] = [
         person[0]?.companyName !== "N/A"
           ? person[0]?.companyName
           : person[0]?.name;
+
       return (
         <div className="max-[120px] flex flex-col">
           <Link
@@ -218,7 +219,7 @@ export const columns: ColumnDef<Invoice>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <Link
-                href={`/admin/invoice/update/${invoice.id}`}
+                href={`/admin/${invoice.agencyId}/invoice/update/${invoice.id}`}
                 className="text-left hover:cursor-pointer"
               >
                 <DropdownMenuItem>Update</DropdownMenuItem>

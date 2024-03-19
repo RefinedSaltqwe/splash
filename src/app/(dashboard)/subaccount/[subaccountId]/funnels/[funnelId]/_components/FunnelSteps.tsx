@@ -144,10 +144,10 @@ const FunnelSteps = ({
       <GlobalModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        title="Manage Your Plan"
-        description="You can change your plan at any time from the billings settings"
+        title="Create a funnel page"
       >
         <CreateFunnelPage
+          modal={true}
           pagesState={pagesState}
           setClickedPage={setClickedPage}
           setPagesState={setPagesState}

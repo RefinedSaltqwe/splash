@@ -132,14 +132,15 @@ const DeleteInvoicePrompt: React.FC = () => {
           />
         </div>
 
-        <DialogFooter className="space-y-4 space-y-reverse sm:justify-end sm:space-x-4 sm:space-y-0">
+        <DialogFooter className="flex w-full flex-col justify-end gap-3 md:flex-row">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button type="button" className="w-full" variant={"just_outline"}>
               Cancel
             </Button>
           </DialogClose>
           <Button
             type="button"
+            className="w-full"
             variant={"destructive"}
             onClick={() => {
               onIsProceed(true);

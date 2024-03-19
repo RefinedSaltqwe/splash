@@ -158,6 +158,7 @@ export function FunnelsDataTable<TData, TValue>({
         isOpen={isOpen}
       >
         <FunnelForm
+          modal={true}
           subAccountId={subaccountId}
           setIsOpen={setIsOpen}
         ></FunnelForm>

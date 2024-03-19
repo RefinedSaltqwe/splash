@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -49,7 +50,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { lazy, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -57,8 +58,6 @@ import FinalDetails from "./form/FinalDetails";
 import PriceInputs from "./form/PriceInputs";
 import Receiver from "./form/Receiver";
 import ServiceInputs from "./form/ServiceInputs";
-
-const Loader = lazy(() => import("@/components/shared/Loader"));
 
 type InvoiceFormProps = {
   type: "create" | "update";
@@ -198,17 +197,21 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
 
   const { execute: executeCreateInvoice, isLoading: isLoadingCreate } =
     useAction(createInvoice, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success(
           `New invoice for ${
             receiver?.companyName !== "N/A"
               ? receiver?.companyName
               : receiver?.name
           } has been created.`,
+          {
+            duration: 2000,
+          },
         );
         void queryClient.invalidateQueries({
           queryKey: ["invoices"],
         });
+        router.push(`/admin/${data.agencyId}/invoice`);
       },
       onError: (error) => {
         toast.error(error, {
@@ -216,7 +219,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
         });
       },
       onComplete: () => {
-        router.push("/admin/invoice");
+        toast.loading("Redirecting", {
+          duration: 10000,
+        });
       },
     });
 
@@ -229,7 +234,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
               ? receiver?.companyName
               : receiver?.name
           } has been updated successfully.`,
-          duration: 5000,
+          duration: 2000,
         });
         void queryClient.invalidateQueries({
           queryKey: ["invoice", invId],
@@ -237,6 +242,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
         void queryClient.invalidateQueries({
           queryKey: ["invoices"],
         });
+        router.push(`/admin/${data.agencyId}/invoice`);
       },
       onError: (error) => {
         toast.error(error, {
@@ -244,7 +250,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
         });
       },
       onComplete: () => {
-        router.push("/admin/invoice");
+        toast.loading("Redirecting", {
+          duration: 10000,
+        });
       },
     });
 
