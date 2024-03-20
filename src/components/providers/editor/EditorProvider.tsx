@@ -12,8 +12,8 @@ export type EditorElement = {
   name: string;
   type: EditorBtns;
   content:
-    | EditorElement[]
-    | { href?: string; innerText?: string; src?: string };
+    | EditorElement[] // ? Recursice Components
+    | { href?: string; innerText?: string; src?: string }; // ? Static components
 };
 
 export type Editor = {
@@ -69,25 +69,32 @@ const initialState: EditorState = {
 };
 
 const addAnElement = (
-  editorArray: EditorElement[],
-  action: EditorAction,
+  editorArray: EditorElement[], // ? current stack
+  action: EditorAction, // ? type of action & the payload
 ): EditorElement[] => {
   if (action.type !== "ADD_ELEMENT")
     throw Error(
       "You sent the wrong action type to the Add Element editor State",
     );
   return editorArray.map((item) => {
+    //? Check container ID where the new element was dropped
+    //? And check if content is in array
     if (item.id === action.payload.containerId && Array.isArray(item.content)) {
       return {
         ...item,
         content: [...item.content, action.payload.elementDetails],
       };
-    } else if (item.content && Array.isArray(item.content)) {
+    }
+    // ? If container id not found, loop back, but go to current container's content if it is an array
+    // ? And search for the container id inside.
+    // ? Keep looping until the last content
+    else if (item.content && Array.isArray(item.content)) {
       return {
         ...item,
         content: addAnElement(item.content, action),
       };
     }
+    // ? If container id not found until the last child, then return item(element)
     return item;
   });
 };
@@ -131,8 +138,8 @@ const deleteAnElement = (
 };
 
 const editorReducer = (
-  state: EditorState = initialState,
-  action: EditorAction,
+  state: EditorState = initialState, // ? the whole state
+  action: EditorAction, // ? type of action & the payload
 ): EditorState => {
   switch (action.type) {
     case "ADD_ELEMENT":

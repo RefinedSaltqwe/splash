@@ -205,7 +205,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
               : receiver?.name
           } has been created.`,
           {
-            duration: 2000,
+            duration: 5000,
           },
         );
         void queryClient.invalidateQueries({
@@ -216,11 +216,6 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
       onError: (error) => {
         toast.error(error, {
           duration: 5000,
-        });
-      },
-      onComplete: () => {
-        toast.loading("Redirecting", {
-          duration: 10000,
         });
       },
     });
@@ -234,7 +229,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
               ? receiver?.companyName
               : receiver?.name
           } has been updated successfully.`,
-          duration: 2000,
+          duration: 5000,
         });
         void queryClient.invalidateQueries({
           queryKey: ["invoice", invId],
@@ -247,11 +242,6 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
       onError: (error) => {
         toast.error(error, {
           duration: 5000,
-        });
-      },
-      onComplete: () => {
-        toast.loading("Redirecting", {
-          duration: 10000,
         });
       },
     });

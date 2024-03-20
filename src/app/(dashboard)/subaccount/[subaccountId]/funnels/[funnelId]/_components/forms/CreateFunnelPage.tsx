@@ -322,6 +322,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
       </CardContent>
 
       <GlobalModal
+        withInput={false}
         isOpen={isOpenDeleteFunnel}
         setIsOpen={setIsOpenDeleteFunnel}
         title="Are you absolutely sure?"

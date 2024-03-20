@@ -25,6 +25,7 @@ type GlobalModalProps = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   title: string;
   description?: string;
+  withInput?: boolean;
 };
 
 const GlobalModal: React.FC<GlobalModalProps> = ({
@@ -34,9 +35,10 @@ const GlobalModal: React.FC<GlobalModalProps> = ({
   title,
   description,
   className,
+  withInput = true,
 }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  if (isDesktop) {
+  if (isDesktop || withInput) {
     return (
       <Dialog
         open={isOpen}
@@ -56,7 +58,6 @@ const GlobalModal: React.FC<GlobalModalProps> = ({
       </Dialog>
     );
   }
-
   return (
     <Drawer
       open={isOpen}

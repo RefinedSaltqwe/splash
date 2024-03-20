@@ -74,6 +74,7 @@ const LinkComponent = (props: Props) => {
         )}
       {!state.editor.previewMode && !state.editor.liveMode && (
         <span
+          suppressContentEditableWarning={true}
           contentEditable={!state.editor.liveMode}
           onBlur={(e) => {
             const spanElement = e.target as HTMLSpanElement;
