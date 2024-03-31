@@ -40,6 +40,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
   const newTimesheet = activeTimesheet;
   const newTimeInput = timeInput;
   const agencyId = useCurrentUserStore((state) => state.agencyId);
+
   const getFieldValue = timeInput
     ? timeInput[field]
       ? new Date(timeInput[field])
@@ -56,15 +57,14 @@ const TimeInput: React.FC<TimeInputProps> = ({
   const get24hrFormatHour = getFieldValue
     ? getFieldValue.toString().split(" ")[4]!.split(":")[0]
     : "0";
-  const finalIsPm = useRef<boolean>(false);
+  const isPmInitialValue = dbTimeArray
+    ? parseInt(get24hrFormatHour ? get24hrFormatHour : "0") >= 12
+      ? true
+      : false
+    : false;
+  const finalIsPm = useRef<boolean>(isPmInitialValue);
   const firstRender = useRef<boolean>(false);
-  const [isPm, setIsPm] = useState<boolean>(
-    dbTimeArray
-      ? parseInt(get24hrFormatHour ? get24hrFormatHour : "0") > 12
-        ? true
-        : false
-      : false,
-  );
+  const [isPm, setIsPm] = useState<boolean>(isPmInitialValue);
   const [value, setValue] = useState<string>(initialTimeValue);
   const [finalTime, setFinalTime] = useState<string>(value);
 
@@ -78,9 +78,11 @@ const TimeInput: React.FC<TimeInputProps> = ({
     const _12hrFormat = hr - sub;
     if (_12hrFormat < 10) {
       return `0${_12hrFormat}:${min}`;
-    } else if (_12hrFormat === 12) {
-      return `11:59`;
-    } else {
+    }
+    //! else if (_12hrFormat === 12) {
+    //   return `11:59`;
+    // }
+    else {
       return `${_12hrFormat}:${min}`;
     }
   };
@@ -103,16 +105,16 @@ const TimeInput: React.FC<TimeInputProps> = ({
         setValue(`${intHour}:${intMinute}`);
         if (intHour === 12 && finalIsPm.current == true && intMinute > 59) {
           console.log("in2.1", intHour);
-          setValue(`11:59`);
-          setFinalTime(`11:59`);
+          setValue(`12:${conditionedMinute}`);
+          setFinalTime(`12:${conditionedMinute}`);
           setIsPm(true);
           finalIsPm.current = true;
           return;
         } else {
           console.log("in2.3", intHour);
           if (intHour === 12 && finalIsPm.current) {
-            setValue(`11:${conditionedMinute}`);
-            setFinalTime(`11:${conditionedMinute}`);
+            setValue(`12:${conditionedMinute}`);
+            setFinalTime(`12:${conditionedMinute}`);
             setIsPm(true);
             finalIsPm.current = true;
           } else {
@@ -122,8 +124,12 @@ const TimeInput: React.FC<TimeInputProps> = ({
         }
       } else if (intHour === 12 && finalIsPm.current) {
         console.log("in3", intHour);
-        setValue(`11:59`);
-        setFinalTime(`11:59`);
+        setValue(`12:${conditionedMinute}`);
+        setFinalTime(`12:${conditionedMinute}`);
+      } else {
+        console.log("in4", intHour);
+        setValue(`${hour}:${conditionedMinute}`);
+        setFinalTime(`${hour}:${conditionedMinute}`);
       }
     } else if (!Number.isNaN(intHour)) {
       //If user inputs more than 24hrs
@@ -163,6 +169,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
     console.log(intHour + " === " + intMinute + " == " + finalIsPm.current);
     let conditionedMinute;
     if (intMinute == 0) {
+      console.log("sud1f");
       conditionedMinute = "00";
     } else if (
       intHour !== 12 &&
@@ -176,6 +183,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
       intMinute > 0 &&
       intMinute < 10
     ) {
+      console.log("sud11");
       conditionedMinute = `0${intMinute}`;
     } else if (
       intHour !== 12 &&
@@ -189,16 +197,20 @@ const TimeInput: React.FC<TimeInputProps> = ({
       intMinute >= 10 &&
       intMinute < 60
     ) {
+      console.log("sud12");
       conditionedMinute = `${intMinute}`;
-    } else if (intHour == 12 && intMinute >= 0 && finalIsPm.current) {
-      conditionedMinute = "59";
-    } else if (intHour == 12 && intMinute < 60 && !finalIsPm.current) {
+    } else if (intHour == 12 && intMinute > 0 && intMinute <= 10) {
+      conditionedMinute = `0${intMinute}`;
+    } else if (intHour == 12 && intMinute < 60) {
       conditionedMinute = `${intMinute}`;
-    } else if (intHour == 12 && intMinute > 59 && !finalIsPm.current) {
+    } else if (intMinute > 59) {
+      console.log("sud1");
       conditionedMinute = `59`;
     } else {
+      console.log("sud2");
       conditionedMinute = "00";
     }
+    console.log("wasud");
     // Dash Occurence.
     switch (countDashOccurence) {
       //If user inputs: ##:#- => 1 dash occurence
@@ -256,7 +268,6 @@ const TimeInput: React.FC<TimeInputProps> = ({
         }
         setIsPm(false);
         finalIsPm.current = false;
-        12;
         break;
       //If user inputs: --:-- or empty => 4 dash occurence
       case 4:
@@ -268,10 +279,10 @@ const TimeInput: React.FC<TimeInputProps> = ({
       //If user inputs: 12:30 => no dashes
       default:
         if (intHour === 0 && minute.startsWith("0") && minute.endsWith("0")) {
-          setValue("11:59");
-          setFinalTime("11:59");
-          setIsPm(true);
-          finalIsPm.current = true;
+          setValue("12:00");
+          setFinalTime("12:00");
+          setIsPm(false);
+          finalIsPm.current = false;
         } else {
           console.log("agi");
           _12HourConverter(intHour, conditionedMinute, intMinute);
@@ -303,10 +314,25 @@ const TimeInput: React.FC<TimeInputProps> = ({
                 } ${
                   //The time is 12 hour format so if PM then time + 12 to convert it back into 24hr format
                   finalIsPm.current
-                    ? `${parseInt(time[0]!) + 12}:${time[1]}`
-                    : finalTime
+                    ? parseInt(time[0]!) === 12 && // e.g 24:30 then convert to 00:30
+                      parseInt(time[1] ?? "0") >= 0
+                      ? `12:${time[1]}`
+                      : `${parseInt(time[0]!) + 12}:${time[1]}`
+                    : parseInt(time[0]!) + 12 === 24 && // e.g 24:30 then convert to 00:30
+                        parseInt(time[1] ?? "0") >= 0
+                      ? `00:${time[1]}`
+                      : finalTime
                 }:00`,
               ).toString();
+
+          console.log(
+            "TIme: ",
+            newDateTime,
+            " = ",
+            finalIsPm.current,
+            " = ",
+            finalTime,
+          );
           // Field Total
           //Get and Set all the dates from different rows eg. Time-in(mon), Break-in(mon), Break-out(mon), Time-out(mon)
           rowKeys.forEach((key) => {
@@ -344,7 +370,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
             : 0;
 
           // Formula for converting time to 100ths => 8.50
-          const timeTotalHour =
+          let timeTotalHour =
             breakOutHour_NullToZero -
             timeInHour_NullToZero +
             (timeOutHour_NullToZero - breakInHour_NullToZero);
@@ -355,6 +381,25 @@ const TimeInput: React.FC<TimeInputProps> = ({
               (timeOutMinute_NullToZero - breakInMinute_NullToZero)) /
             60;
 
+          // If the Total Hours is Negative( - ) it means timesheet is night shift
+          // e.g 4:00PM(time-in) 7:00PM(break-out) 7:30PM(break-in) 2:30AM(time-out)
+          if (timeTotalHour < 0) {
+            //19:30 - 12: 00 = 7:30
+            //12 - 7:30 = 4:30 HRS
+            //4:30 + 2:30 = <7:00>
+            const breakIn_TimeOut_New_Value =
+              12 - (breakInHour_NullToZero - 12) + timeOutHour_NullToZero;
+
+            //19:00 - 16:00 = <3:00>
+            const breakOut_TimeIn_New_Value =
+              breakOutHour_NullToZero - timeInHour_NullToZero;
+
+            // 7:00 + 3:00 = <<10.00 Hours>>
+            timeTotalHour =
+              breakIn_TimeOut_New_Value + breakOut_TimeIn_New_Value;
+          }
+
+          //Total
           const fieldTimeTotal = timeTotalHour + timeTotalMinute;
 
           //Set values to newTimesheet
@@ -398,6 +443,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
         id="time-in-monday"
         type="text"
         autoComplete="time-in-monday"
+        disabled={activeTimesheet?.status === "submit"}
         className={cn(
           "flex h-10 w-full rounded-md border-0 border-input bg-background text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:font-semibold placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50",
           "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
@@ -408,16 +454,24 @@ const TimeInput: React.FC<TimeInputProps> = ({
       <div className="flex flex-row items-center justify-center">
         <Switch
           checked={isPm}
-          disabled={countDashOccurence == 4 || value == ""}
+          disabled={
+            countDashOccurence == 4 ||
+            value == "" ||
+            activeTimesheet?.status === "submit"
+          }
           onChange={(value) => {
             setIsPm(value);
             finalIsPm.current = value;
             onInputBlur();
           }}
           className={cn(
-            isPm
-              ? "bg-sky-600"
-              : "bg-amber-500 disabled:bg-slate-200/30 disabled:dark:bg-slate-700/40",
+            countDashOccurence == 4 || value == ""
+              ? isPm
+                ? "bg-sky-600 disabled:bg-slate-200/30 disabled:dark:bg-slate-700/40"
+                : "bg-amber-500 disabled:bg-slate-200/30 disabled:dark:bg-slate-700/40"
+              : isPm
+                ? "bg-sky-600 disabled:bg-sky-600/50"
+                : "bg-amber-500 disabled:bg-amber-500/50",
             "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-md border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
           )}
         >
@@ -442,7 +496,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
                   "text-[9px] font-bold ",
                   countDashOccurence == 4 || value == ""
                     ? "text-muted-foreground"
-                    : "text-amber-500 ",
+                    : "text-amber-500",
                 )}
               >
                 AM
@@ -457,7 +511,9 @@ const TimeInput: React.FC<TimeInputProps> = ({
               )}
               aria-hidden="true"
             >
-              <span className="text-[9px] font-bold text-sky-600">PM</span>
+              <span className={cn("text-[9px] font-bold text-sky-600")}>
+                PM
+              </span>
             </span>
           </span>
         </Switch>

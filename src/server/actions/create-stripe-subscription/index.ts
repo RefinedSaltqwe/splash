@@ -34,6 +34,9 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     );
     const subscriptionResponseData = await subscriptionResponse.json();
 
+    if (!subscriptionResponseData) {
+      throw new Error("client secret error");
+    }
     subscriptionResponseResult = {
       clientSecret: subscriptionResponseData.clientSecret,
       subscriptionId: subscriptionResponseData.subscriptionId,

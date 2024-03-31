@@ -1,12 +1,10 @@
-import React from "react";
-import TextComponent from "./Text";
-import Container from "./Container";
-import VideoComponent from "./Video";
-import LinkComponent from "./LinkComponent";
-import Checkout from "./Checkout";
 import { type EditorElement } from "@/components/providers/editor/EditorProvider";
+import Checkout from "./Checkout";
 import ContactFormComponent from "./ContactFormComponent";
-import TwoColumns from "./TwoColumns";
+import Container from "./Container";
+import LinkComponent from "./LinkComponent";
+import TextComponent from "./Text";
+import VideoComponent from "./Video";
 
 type Props = {
   element: EditorElement;
@@ -25,7 +23,7 @@ const Recursive = ({ element }: Props) => {
     case "paymentForm":
       return <Checkout element={element} />;
     case "2Col":
-      return <TwoColumns element={element} />;
+      return <Container element={element} />;
     case "__body":
       return <Container element={element} />;
 

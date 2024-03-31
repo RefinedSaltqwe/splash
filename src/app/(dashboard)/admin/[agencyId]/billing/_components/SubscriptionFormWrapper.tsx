@@ -8,10 +8,10 @@ import { createStripeSecret } from "@/server/actions/create-stripe-subscription"
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { useThemeMode } from "@/stores/useThemeMode";
 import { RadioGroup } from "@headlessui/react";
-import { type Plan } from "@prisma/client";
+import { type $Enums, type Plan } from "@prisma/client";
 import { Elements } from "@stripe/react-stripe-js";
 import { type StripeElementsOptions } from "@stripe/stripe-js";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useEffect,
   useMemo,
@@ -26,26 +26,31 @@ type SubscriptionFormWrapperProps = {
   customerId: string;
   planExists: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  currentPlanTitle: string;
+  setIsLoading?: Dispatch<SetStateAction<boolean>>;
 };
 
 const SubscriptionFormWrapper = ({
+  currentPlanTitle,
   customerId,
   planExists,
   setIsOpen,
+  setIsLoading,
 }: SubscriptionFormWrapperProps) => {
-  const plans = useCurrentUserStore((state) => state.plansData);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const plan: $Enums.Plan | undefined = searchParams.get("plan") as Plan;
   const plansData = useCurrentUserStore((state) => state.plansData);
+  const setPlansData = useCurrentUserStore((state) => state.setPlansData);
   const agencyId = useCurrentUserStore((state) => state.agencyId);
   const [selectedPriceId, setSelectedPriceId] = useState<Plan | "">(
-    plans?.defaultPriceId ?? "",
+    plansData?.defaultPriceId ?? "",
   );
   const mode = useThemeMode((state) => state.mode);
   const [subscription, setSubscription] = useState<{
     subscriptionId: string;
     clientSecret: string;
   }>({ subscriptionId: "", clientSecret: "" });
-
   const options: StripeElementsOptions = useMemo(
     () => ({
       clientSecret: subscription?.clientSecret,
@@ -84,11 +89,30 @@ const SubscriptionFormWrapper = ({
     },
     onError: (error) => {
       toast.error(error);
+      console.log(error);
+      if (setIsLoading) {
+        setIsLoading(false);
+      }
+    },
+    onComplete: () => {
+      if (plan) {
+        setPlansData(null, plansData?.plans ?? []);
+        router.push(`/admin/${agencyId}/billing`);
+        return;
+      }
+      router.refresh();
     },
   });
 
   useEffect(() => {
     if (!selectedPriceId) return;
+    if (plansData?.defaultPriceId) {
+      setPlansData(null, plansData?.plans ?? []);
+      return;
+    }
+    if (setIsLoading) {
+      setIsLoading(true);
+    }
     void executeCreateSecret({
       customerId,
       selectedPriceId,
@@ -96,11 +120,7 @@ const SubscriptionFormWrapper = ({
     });
 
     if (planExists) {
-      toast.success("Success", {
-        description: "Your plan has been successfully upgraded!",
-      });
       setIsOpen(false);
-      router.refresh();
     }
   }, [plansData, selectedPriceId, customerId]);
 
@@ -109,67 +129,80 @@ const SubscriptionFormWrapper = ({
       <div className="flex flex-col gap-4">
         <RadioGroup
           value={selectedPriceId}
-          onChange={(value) => setSelectedPriceId(value as Plan)}
+          onChange={(value) => {
+            if (currentPlanTitle !== value.split("?+?")[1]) {
+              setSelectedPriceId(value.split("?+?")[0] as Plan);
+            } else {
+              toast.warning("Cannot proceed", {
+                description: "Please choose a different plan.",
+              });
+            }
+          }}
         >
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="space-y-4">
-            {plans?.plans.map((price) => (
-              <RadioGroup.Option
-                key={price.id}
-                value={price.id}
-                className={cn(
-                  selectedPriceId === price.id
-                    ? "border-primary ring-2 ring-primary"
-                    : "border-gray-300",
-                  "splash-border-color relative block cursor-pointer rounded-lg border bg-card px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between",
-                )}
-              >
-                {({ active, checked }) => (
-                  <>
-                    <span className="flex items-center">
-                      <span className="flex flex-col text-sm">
-                        <RadioGroup.Label
-                          as="span"
-                          className="font-medium text-foreground"
-                        >
-                          {price.nickname}
-                        </RadioGroup.Label>
-                        <RadioGroup.Description
-                          as="span"
-                          className="text-muted-foreground"
-                        >
-                          <span className="block sm:inline">
-                            {
-                              pricingCards.find((p) => p.priceId === price.id)
-                                ?.description
-                            }
-                          </span>
-                        </RadioGroup.Description>
+            {plansData?.plans.map((price) => {
+              if (price.nickname !== "")
+                if (price.nickname === "Starter" && !planExists) return;
+              return (
+                <RadioGroup.Option
+                  key={price.id}
+                  value={`${price.id}?+?${price.nickname}`}
+                  className={cn(
+                    selectedPriceId === price.id ||
+                      currentPlanTitle === price.nickname
+                      ? "border-primary ring-2 ring-primary"
+                      : "border-gray-300",
+                    "splash-border-color relative block cursor-pointer rounded-lg border bg-card px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between",
+                  )}
+                >
+                  {({ active, checked }) => (
+                    <>
+                      <span className="flex items-center">
+                        <span className="flex flex-col text-sm">
+                          <RadioGroup.Label
+                            as="span"
+                            className="font-medium text-foreground"
+                          >
+                            {price.nickname}
+                          </RadioGroup.Label>
+                          <RadioGroup.Description
+                            as="span"
+                            className="text-muted-foreground"
+                          >
+                            <span className="block sm:inline">
+                              {
+                                pricingCards.find((p) => p.priceId === price.id)
+                                  ?.description
+                              }
+                            </span>
+                          </RadioGroup.Description>
+                        </span>
                       </span>
-                    </span>
-                    <RadioGroup.Description
-                      as="span"
-                      className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right"
-                    >
-                      <span className="font-medium text-foreground">
-                        ${price.unit_amount ? price.unit_amount / 100 : "0"}
-                      </span>
-                      <span className="ml-1 text-muted-foreground sm:ml-0">
-                        /mo
-                      </span>
-                    </RadioGroup.Description>
-                    <span
-                      className={cn(
-                        active ? "border" : "border-2",
-                        checked ? "border-primary" : "border-transparent",
-                        "pointer-events-none absolute -inset-px rounded-lg",
-                      )}
-                      aria-hidden="true"
-                    />
-                  </>
-                )}
-              </RadioGroup.Option>
-            ))}
+                      <RadioGroup.Description
+                        as="span"
+                        className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right"
+                      >
+                        <span className="font-medium text-foreground">
+                          ${price.unit_amount ? price.unit_amount / 100 : "0"}
+                        </span>
+                        <span className="ml-1 text-muted-foreground sm:ml-0">
+                          /mo
+                        </span>
+                      </RadioGroup.Description>
+                      <span
+                        className={cn(
+                          active ? "border" : "border-2",
+                          checked ? "border-primary" : "border-transparent",
+                          "pointer-events-none absolute -inset-px rounded-lg",
+                        )}
+                        aria-hidden="true"
+                      />
+                    </>
+                  )}
+                </RadioGroup.Option>
+              );
+            })}
 
             {options.clientSecret && !planExists && (
               <>

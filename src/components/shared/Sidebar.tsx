@@ -226,7 +226,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
                 agencySideOptions={agencySideOptions}
                 subaccountSideOptions={subaccountSideOptions}
               />
-              <li>
+              {/* <li>
                 <div className="text-xs font-semibold leading-6 text-slate-400">
                   Sub-accounts
                 </div>
@@ -257,7 +257,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
                     </li>
                   ))}
                 </ul>
-              </li>
+              </li> */}
               <li className="mt-auto">
                 <Link
                   href={

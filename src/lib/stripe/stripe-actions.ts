@@ -7,6 +7,7 @@ import { stripe } from ".";
 import { db } from "@/server/db";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
+import pusher from "../pusher/listener";
 
 export const subscriptionCreated = async (
   subscription: Stripe.Subscription,
@@ -50,7 +51,13 @@ export const subscriptionCreated = async (
         status: 500,
       });
     }
-    console.log(`🟢 Created Subscription for ${subscription.id}`);
+
+    void pusher.trigger(`upsert-subscription-${agency.id}`, "upsert", {
+      ...res,
+    });
+    console.log(
+      `🟢 Created Subscription for ============================================== ${subscription.id}`,
+    );
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientInitializationError ||

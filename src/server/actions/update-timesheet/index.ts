@@ -93,6 +93,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       ]);
     if (timesheet) {
       promiseAll = {
+        status,
         count: timesheet.count,
         dateFr: timesheets[0]!.dateFr,
         dateTo: timesheets[0]!.dateTo,
@@ -111,7 +112,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/employees/time-sheet`);
+  revalidatePath(`/admin/${timesheets[0]?.agencyId}/team/time-sheet`);
   return { data: promiseAll };
 };
 

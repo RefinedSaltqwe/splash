@@ -30,7 +30,7 @@ const FunnelEditorSidebar = ({ subaccountId }: Props) => {
           showX={false}
           side="right"
           className={clsx(
-            "z-[52] mt-[97px] w-16 overflow-hidden p-0 shadow-none transition-all focus:border-none",
+            "z-[52] mt-[97px] w-16 overflow-hidden bg-background p-0 shadow-none transition-all focus:border-none dark:bg-card",
             { hidden: state.editor.previewMode },
           )}
         >
@@ -40,7 +40,7 @@ const FunnelEditorSidebar = ({ subaccountId }: Props) => {
           showX={false}
           side="right"
           className={clsx(
-            "z-[51] mr-16 mt-[97px] h-full w-80 overflow-hidden  bg-card p-0 shadow-none transition-all",
+            "z-[51] mr-16 mt-[97px] h-full w-80 overflow-hidden bg-background p-0 shadow-none transition-all dark:bg-card",
             { hidden: state.editor.previewMode },
           )}
         >

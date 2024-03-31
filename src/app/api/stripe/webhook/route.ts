@@ -5,6 +5,8 @@ import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { subscriptionCreated } from "@/lib/stripe/stripe-actions";
 import { env } from "@/env";
+import { revalidatePath } from "next/cache";
+import { db } from "@/server/db";
 
 const stripeWebhookEvents = new Set([
   "product.created",
@@ -59,6 +61,15 @@ export async function POST(req: NextRequest) {
                 subscription,
                 subscription.customer as string,
               );
+              const agency = await db.agency.findFirst({
+                where: {
+                  customerId: subscription.customer as string,
+                },
+                include: {
+                  SubAccount: true,
+                },
+              });
+              revalidatePath(`/admin/${agency?.id}/billing`, "page");
               console.log("CREATED FROM WEBHOOK 💳", subscription);
             } else {
               console.log(

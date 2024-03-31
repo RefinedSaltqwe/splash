@@ -1,9 +1,9 @@
+import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
-import { getTimesheets, getUsers } from "@/server/actions/fetch";
+import { formatDateTime, getFirstAndLastDatesNextWeek } from "@/lib/utils";
+import { getLatestTimeSheets, getUsers } from "@/server/actions/fetch";
 import React from "react";
 import ClientData from "./_components/ClientData";
-import { formatDateTime } from "@/lib/utils";
-import Card from "@/app/(dashboard)/_components/containers/Card";
 
 type TimeSheetPagePops = {
   params: {
@@ -12,22 +12,29 @@ type TimeSheetPagePops = {
 };
 
 const TimeSheetPage: React.FC<TimeSheetPagePops> = async ({ params }) => {
-  const timesheets = getTimesheets(params.agencyId);
+  const timesheets = getLatestTimeSheets(params.agencyId);
   const users = getUsers(params.agencyId);
 
   const [usersData, timesheetsData] = await Promise.all([users, timesheets]);
+
   return (
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
         <Heading
-          title="Enter Time Sheet"
+          title={
+            timesheetsData?.length === 0 ? "Loading..." : "Enter Time Sheet"
+          }
           subTitle={`Time In/Time Out for ${
             timesheetsData
-              ? formatDateTime(timesheetsData[0]!.dateFr).dateOnly
+              ? formatDateTime(
+                  timesheetsData[0]?.dateFr ?? getFirstAndLastDatesNextWeek(1),
+                ).dateOnly
               : ""
           } to ${
             timesheetsData
-              ? formatDateTime(timesheetsData[0]!.dateTo).dateOnly
+              ? formatDateTime(
+                  timesheetsData[0]?.dateTo ?? getFirstAndLastDatesNextWeek(7),
+                ).dateOnly
               : ""
           }`}
         />

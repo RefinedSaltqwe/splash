@@ -1,17 +1,20 @@
 "use client";
-import { cn, formatDateTime } from "@/lib/utils";
-import { type TimesheetWithInputTimes } from "@/types/prisma";
-import { type User } from "@prisma/client";
-import { ChevronUp } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import TimeSheetTable from "./TimeSheetTable";
-import FloatingBottomContainer from "@/components/shared/FloatingBottomContainer";
 import Card from "@/app/(dashboard)/_components/containers/Card";
+import FloatingBottomContainer from "@/components/shared/FloatingBottomContainer";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { useAction } from "@/hooks/useAction";
+import { cn, formatDateTime, getFirstAndLastDatesNextWeek } from "@/lib/utils";
+import { createTimesheet } from "@/server/actions/create-timesheet";
 import { updateTimesheets } from "@/server/actions/update-timesheet";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
+import { type TimesheetWithInputTimes } from "@/types/prisma";
+import { type User } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { ChevronUp } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import Loader from "@/components/shared/Loader";
+import TimeSheetTable from "./TimeSheetTable";
 
 type ClientDataProps = {
   timesheetsData: TimesheetWithInputTimes[];
@@ -22,12 +25,59 @@ const ClientData: React.FC<ClientDataProps> = ({
   timesheetsData,
   usersData,
 }) => {
+  const queryClient = useQueryClient();
+
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
+  const dateTimeLocalNow = new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60_000,
+  )
+    .toISOString()
+    .slice(0, 16);
+
+  console.log("Date Now: ", dateTimeLocalNow);
   const [timesheets, setTimesheets] = useState<TimesheetWithInputTimes[]>([]);
   const [isContentHidden, setIsContentHidden] = useState<string[]>([]);
+
+  const { execute: executeCreateTimesheet, isLoading: creatingTimesheet } =
+    useAction(createTimesheet, {
+      onSuccess: (data) => {
+        if (data.count > 0) {
+          toast.loading(
+            `${data.count > 1 ? "Timesheets" : "Timesheet"} for ${data.count} ${
+              data.count > 1 ? "employees have" : "employee has"
+            } been created.`,
+            {
+              description: `${formatDateTime(data.dateFr).dateOnly} to ${
+                formatDateTime(data.dateTo).dateOnly
+              }`,
+            },
+          );
+          void queryClient.invalidateQueries({
+            queryKey: ["timesheets"],
+          });
+        }
+      },
+      onError: (error) => {
+        if (error.includes("Foreign key constraint failed")) {
+          toast.warning(`Timesheets were already created.`);
+          return;
+        }
+        toast.error(error, {
+          duration: 5000,
+        });
+      },
+    });
 
   const { execute: updateTimesheetsData, isLoading: isLoadingUpdate } =
     useAction(updateTimesheets, {
       onSuccess: (data) => {
+        setTimesheets((prev) => [
+          ...prev.map((timesheet) => {
+            const newTimesheet = timesheet;
+            newTimesheet!.status = data.status;
+            return newTimesheet;
+          }),
+        ]);
         toast.success(
           `${data.count > 1 ? "Timesheets" : "Timesheet"} for ${data.count} ${
             data.count > 1 ? "employees have" : "employee has"
@@ -46,6 +96,19 @@ const ClientData: React.FC<ClientDataProps> = ({
       },
     });
 
+  useEffect(() => {
+    if (timesheetsData.length === 0) {
+      const time = setTimeout(() => {
+        void executeCreateTimesheet({
+          dateFr: getFirstAndLastDatesNextWeek(1),
+          dateTo: getFirstAndLastDatesNextWeek(7),
+          agencyId: agencyId!,
+        });
+      }, 1000);
+
+      return () => clearTimeout(time);
+    }
+  }, [timesheetsData]);
   // console.log("Client Data Timesheets: ", timesheets);
   useEffect(() => {
     setTimesheets(timesheetsData ? timesheetsData : []);
@@ -60,6 +123,14 @@ const ClientData: React.FC<ClientDataProps> = ({
   if (timesheets.length === 0) {
     return (
       <div className="flex w-full flex-col">
+        {creatingTimesheet && (
+          <div className="flex w-full flex-row items-center px-2 pt-4 ">
+            <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
+            <h2 className="ml-2 font-normal text-muted-foreground">
+              Creating timesheet. Please wait...
+            </h2>
+          </div>
+        )}
         <TimeSheetTable.Skeleton />
         <TimeSheetTable.Skeleton />
         <TimeSheetTable.Skeleton />
@@ -124,20 +195,24 @@ const ClientData: React.FC<ClientDataProps> = ({
           <div className="flex w-full flex-row items-center justify-end gap-3">
             {timesheets[0]!.status === "draft" ? (
               <>
-                <Button
-                  variant={"card_outline"}
-                  onClick={() => onSubmit("draft")}
-                >
-                  Draft
-                </Button>
-                <Button onClick={() => onSubmit("submit")}>
-                  {isLoadingUpdate ? (
-                    <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
-                  ) : (
-                    "Submit"
-                  )}
-                </Button>
+                {isLoadingUpdate ? (
+                  <Button variant={"card_outline"} disabled>
+                    <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant={"card_outline"}
+                      onClick={() => onSubmit("draft")}
+                    >
+                      Save as draft
+                    </Button>
+                    <Button onClick={() => onSubmit("submit")}>Submit</Button>
+                  </>
+                )}
               </>
+            ) : timesheets[0]!.status === "approved" ? (
+              <span className="">Approved</span>
             ) : (
               <>
                 <span className="">Submitted</span>
@@ -145,7 +220,11 @@ const ClientData: React.FC<ClientDataProps> = ({
                   variant={"card_outline"}
                   onClick={() => onSubmit("draft")}
                 >
-                  Edit
+                  {isLoadingUpdate ? (
+                    <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
+                  ) : (
+                    "Edit"
+                  )}
                 </Button>
               </>
             )}

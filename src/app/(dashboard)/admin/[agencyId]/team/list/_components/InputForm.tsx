@@ -114,7 +114,7 @@ const InputForm: React.FC<InputFormProps> = ({ uid }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-slate-200 px-6 py-10 pb-12 md:grid-cols-3 dark:border-slate-700">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 pb-12 md:grid-cols-3">
           <div>
             <h2 className="text-base font-semibold leading-7 text-foreground">
               Personal Information
@@ -490,6 +490,26 @@ const InputForm: React.FC<InputFormProps> = ({ uid }) => {
                 )}
               />
             </div>
+
+            <div className="sm:col-span-full">
+              <div className="mt-6 flex items-center justify-end gap-x-4">
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  onClick={() => router.push(`/admin/${agencyId}/team/list`)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" variant={"default"}>
+                  {isLoading ? (
+                    <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
+                  ) : (
+                    "Save details"
+                  )}
+                </Button>
+              </div>
+            </div>
+
             <div className="sm:col-span-full">
               {myRole === "AGENCY_OWNER" && (
                 <Permission
@@ -503,22 +523,6 @@ const InputForm: React.FC<InputFormProps> = ({ uid }) => {
               )}
             </div>
           </div>
-        </div>
-        <div className="mt-6 flex items-center justify-end gap-x-4">
-          <Button
-            type="button"
-            variant={"ghost"}
-            onClick={() => router.push(`/admin/${agencyId}/team/list`)}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" variant={"default"}>
-            {isLoading ? (
-              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
-            ) : (
-              "Update"
-            )}
-          </Button>
         </div>
       </form>
     </Form>

@@ -32,7 +32,7 @@ type CurrentUserStore = {
   contactData?: Contact | undefined;
   plansData?:
     | {
-        defaultPriceId: Plan;
+        defaultPriceId: Plan | null;
         plans: PricesList["data"];
       }
     | undefined;
@@ -40,7 +40,10 @@ type CurrentUserStore = {
   setAgencyData: (agency: Agency | undefined) => void;
   setTicketData: (ticket: TicketWithTags[0] | undefined) => void;
   setContactData: (contact: Contact | undefined) => void;
-  setPlansData: (defaultPriceId: Plan, plans: PricesList["data"]) => void;
+  setPlansData: (
+    defaultPriceId: Plan | null,
+    plans: PricesList["data"],
+  ) => void;
   setUser: (
     id: string | null | undefined,
     agencyId: string | null | undefined,
@@ -84,7 +87,7 @@ export const useCurrentUserStore = create<CurrentUserStore>((set) => ({
     set(() => ({
       contactData: contact,
     })),
-  setPlansData: (defaultPriceId: Plan, plans: PricesList["data"]) =>
+  setPlansData: (defaultPriceId: Plan | null, plans: PricesList["data"]) =>
     set(() => ({
       plansData: {
         defaultPriceId,

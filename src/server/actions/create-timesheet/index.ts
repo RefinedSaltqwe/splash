@@ -23,14 +23,22 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     const getUsers = await db.user.findMany({
       where: {
         agencyId,
-        role: {
-          not: "SUPER_ADMIN" || "AGENCY_OWNER",
+        NOT: {
+          OR: [
+            {
+              role: "SUPER_ADMIN",
+            },
+            {
+              role: "AGENCY_OWNER",
+            },
+          ],
         },
       },
       select: {
         id: true,
       },
     });
+
     if (getUsers) {
       const constructedDataForTimesheet: {
         id: string;
@@ -104,7 +112,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/employees/time-sheet`);
+  revalidatePath(`/admin/${agencyId}/team/time-sheet`);
   return { data: promiseAll };
 };
 

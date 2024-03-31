@@ -234,7 +234,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                 type="submit"
               >
                 {creatingFunnelPage ? (
-                  <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                  <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
                 ) : (
                   "Save Page"
                 )}
@@ -293,7 +293,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                     }}
                   >
                     {isDuplicating ? (
-                      <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                      <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
                     ) : (
                       <CopyPlusIcon size={20} />
                     )}
@@ -309,7 +309,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                     onClick={() => setIsOpenDeleteFunnel(true)}
                   >
                     {deletingFunnelPage ? (
-                      <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                      <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
                     ) : (
                       <Trash2 className="text-destructive" size={20} />
                     )}
@@ -353,7 +353,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
           >
             <span className="sr-only">Delete</span>
             {deletingFunnelPage ? (
-              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+              <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
             ) : (
               "Delete"
             )}

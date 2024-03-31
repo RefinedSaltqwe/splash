@@ -47,7 +47,10 @@ const GlobalModal: React.FC<GlobalModalProps> = ({
         }}
       >
         <DialogContent
-          className={cn("max-h-[90vh] gap-6 overflow-y-auto", className)}
+          className={cn(
+            "light:bg-white max-h-[90vh] gap-6 overflow-y-auto",
+            className,
+          )}
         >
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>

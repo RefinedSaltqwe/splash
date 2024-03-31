@@ -66,7 +66,10 @@ const AdminRegistrationForm: React.FC<AdminRegistrationFormProps> = ({
   const { execute: executeCreateAdmin, isLoading: createAdminIsLoading } =
     useAction(createAdmin, {
       onSuccess: (data) => {
-        toast.success("Agency created");
+        console.log(data);
+        toast.success("Success", {
+          description: "Agency details saved.",
+        });
         if (data?.id) {
           router.refresh();
         }
@@ -86,6 +89,9 @@ const AdminRegistrationForm: React.FC<AdminRegistrationFormProps> = ({
       },
       onError: (error) => {
         toast.error(error);
+      },
+      onComplete: () => {
+        console.log("completed");
       },
     });
 
@@ -459,9 +465,13 @@ const AdminRegistrationForm: React.FC<AdminRegistrationFormProps> = ({
               </div>
 
               <div className="mt-6 flex items-center justify-end">
-                <Button type="submit" disabled={createAdminIsLoading}>
+                <Button
+                  type="submit"
+                  disabled={createAdminIsLoading}
+                  className="w-full"
+                >
                   {createAdminIsLoading ? (
-                    <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                    <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
                   ) : (
                     "Save Agency Information"
                   )}

@@ -70,6 +70,7 @@ const Verification: React.FC<VerificationProps> = ({
     void execute({
       email: values.email,
     });
+    emailVerification.reset();
   }
 
   return (
@@ -128,7 +129,7 @@ const Verification: React.FC<VerificationProps> = ({
           </Button>
           <Button type="submit" variant={"default"}>
             {isLoading ? (
-              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+              <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
             ) : (
               "Verify"
             )}

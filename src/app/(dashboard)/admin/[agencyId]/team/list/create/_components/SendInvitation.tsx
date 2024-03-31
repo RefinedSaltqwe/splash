@@ -64,6 +64,7 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
 
   const onSubmit = async (values: z.infer<typeof SendInvitation>) => {
     void executeSendEmailInvitation(values);
+    form.reset();
   };
 
   return (
@@ -133,7 +134,7 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
                             </FormControl>
                             <SelectContent
                               className={cn(
-                                "border-[1px] border-slate-200 bg-card font-normal placeholder:text-gray-400 dark:border-slate-700 dark:placeholder:text-gray-600",
+                                "z-[75] border-[1px] border-slate-200 bg-card font-normal placeholder:text-gray-400 dark:border-slate-700 dark:placeholder:text-gray-600",
                               )}
                             >
                               <SelectItem
@@ -173,7 +174,7 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
               className="w-full"
             >
               {isLoadingSendEmailInvitation ? (
-                <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
               ) : (
                 "Send Invitation"
               )}

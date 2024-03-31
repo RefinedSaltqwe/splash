@@ -388,7 +388,7 @@ const TicketForm = ({
           <div className="flex w-full flex-row justify-end">
             <Button className="w-full" disabled={isLoading} type="submit">
               {isLoading ? (
-                <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
               ) : (
                 "Save"
               )}

@@ -107,7 +107,7 @@ const PipelineTicket = ({
             ref={provided.innerRef}
           >
             <DropdownMenu>
-              <Card className="splash-border-color my-4 rounded-lg bg-card shadow-none transition-all">
+              <Card className="splash-border-color my-4 rounded-lg border-[1px] bg-card shadow-none transition-all">
                 <CardHeader className="p-[12px]">
                   <CardTitle className="flex items-center justify-between">
                     <HoverCard>
@@ -262,7 +262,7 @@ const PipelineTicket = ({
                 >
                   <span className="sr-only">Delete</span>
                   {deletingTicket ? (
-                    <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                    <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
                   ) : (
                     "Delete"
                   )}

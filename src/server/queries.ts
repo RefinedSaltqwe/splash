@@ -349,143 +349,141 @@ export const getNotificationAndUser = async (agencyId: string) => {
 
 export const upsertAgency = async (agency: Agency) => {
   if (!agency.companyEmail) return null;
-  try {
-    const agencyDetails = await db.agency.upsert({
-      where: {
-        id: agency.id,
+  console.log("in1");
+  const agencyDetails = await db.agency.upsert({
+    where: {
+      id: agency.id,
+    },
+    update: agency,
+    create: {
+      users: {
+        connect: { email: agency.companyEmail },
       },
-      update: agency,
-      create: {
-        users: {
-          connect: { email: agency.companyEmail },
-        },
-        ...agency,
-        SidebarOption: {
-          create: [
-            {
-              name: "Dashboard",
-              icon: "dashboard",
-              href: `/admin/${agency.id}`,
-              order: 1,
+      ...agency,
+      SidebarOption: {
+        create: [
+          {
+            name: "Dashboard",
+            icon: "dashboard",
+            href: `/admin/${agency.id}`,
+            order: 1,
+          },
+          {
+            name: "Analytics",
+            href: `/admin/${agency.id}/analytics`,
+            icon: "analytics",
+            order: 2,
+          },
+          {
+            name: "Services",
+            href: `/admin/${agency.id}/services`,
+            icon: "services",
+            order: 3,
+          },
+          {
+            name: "Expense",
+            href: `/admin/${agency.id}/expense`,
+            icon: "expense",
+            order: 4,
+            Children: {
+              create: [
+                {
+                  name: "Overview",
+                  href: `/admin/${agency.id}/expense/overview`,
+                  order: 1,
+                },
+                {
+                  name: "Transactions",
+                  href: `/admin/${agency.id}/expense/transactions`,
+                  order: 2,
+                },
+                {
+                  name: "Bills",
+                  href: `/admin/${agency.id}/expense/bills`,
+                  order: 3,
+                },
+                {
+                  name: "Suppliers",
+                  href: `/admin/${agency.id}/expense/suppliers`,
+                  order: 4,
+                },
+              ],
             },
-            {
-              name: "Analytics",
-              href: `/admin/${agency.id}/analytics`,
-              icon: "analytics",
-              order: 2,
+          },
+          {
+            name: "Team",
+            href: `/admin/${agency.id}/team`,
+            icon: "shield",
+            order: 5,
+            Children: {
+              create: [
+                {
+                  name: "List",
+                  href: `/admin/${agency.id}/team/list`,
+                  order: 1,
+                },
+                {
+                  name: "Time Sheet",
+                  href: `/admin/${agency.id}/team/time-sheet`,
+                  order: 2,
+                },
+                {
+                  name: "Labor Tracking",
+                  href: `/admin/${agency.id}/team/labor-tracking`,
+                  order: 3,
+                },
+              ],
             },
-            {
-              name: "Services",
-              href: `/admin/${agency.id}/services`,
-              icon: "services",
-              order: 3,
-            },
-            {
-              name: "Expense",
-              href: `/admin/${agency.id}/expense`,
-              icon: "expense",
-              order: 4,
-              Children: {
-                create: [
-                  {
-                    name: "Overview",
-                    href: `/admin/${agency.id}/expense/overview`,
-                    order: 1,
-                  },
-                  {
-                    name: "Transactions",
-                    href: `/admin/${agency.id}/expense/transactions`,
-                    order: 2,
-                  },
-                  {
-                    name: "Bills",
-                    href: `/admin/${agency.id}/expense/bills`,
-                    order: 3,
-                  },
-                  {
-                    name: "Suppliers",
-                    href: `/admin/${agency.id}/expense/suppliers`,
-                    order: 4,
-                  },
-                ],
-              },
-            },
-            {
-              name: "Team",
-              href: `/admin/${agency.id}/team`,
-              icon: "shield",
-              order: 5,
-              Children: {
-                create: [
-                  {
-                    name: "List",
-                    href: `/admin/${agency.id}/team/list`,
-                    order: 1,
-                  },
-                  {
-                    name: "Time Sheet",
-                    href: `/admin/${agency.id}/team/time-sheet`,
-                    order: 2,
-                  },
-                  {
-                    name: "Labor Tracking",
-                    href: `/admin/${agency.id}/team/labor-tracking`,
-                    order: 3,
-                  },
-                ],
-              },
-            },
-            {
-              name: "Inventory",
-              href: `/admin/${agency.id}/inventory`,
-              icon: "inventory",
-              order: 6,
-            },
-            {
-              name: "Customers",
-              href: `/admin/${agency.id}/customers`,
-              icon: "customers",
-              order: 7,
-            },
-            {
-              name: "Suppliers",
-              href: `/admin/${agency.id}/suppliers`,
-              icon: "suppliers",
+          },
+          {
+            name: "Inventory",
+            href: `/admin/${agency.id}/inventory`,
+            icon: "inventory",
+            order: 6,
+          },
+          {
+            name: "Customers",
+            href: `/admin/${agency.id}/customers`,
+            icon: "customers",
+            order: 7,
+          },
+          {
+            name: "Suppliers",
+            href: `/admin/${agency.id}/suppliers`,
+            icon: "suppliers",
 
-              order: 8,
-            },
-            {
-              name: "Invoice",
-              href: `/admin/${agency.id}/invoice`,
-              icon: "invoice",
-              order: 9,
-            },
-            {
-              name: "Launchpad",
-              icon: "clipboardIcon",
-              href: `/admin/${agency.id}/launchpad`,
-              order: 10,
-            },
-            {
-              name: "Billing",
-              icon: "payment",
-              href: `/admin/${agency.id}/billing`,
-              order: 11,
-            },
-            {
-              name: "Sub Accounts",
-              icon: "person",
-              href: `/admin/${agency.id}/all-subaccounts`,
-              order: 12,
-            },
-          ],
-        },
+            order: 8,
+          },
+          {
+            name: "Invoice",
+            href: `/admin/${agency.id}/invoice`,
+            icon: "invoice",
+            order: 9,
+          },
+          {
+            name: "Launchpad",
+            icon: "clipboardIcon",
+            href: `/admin/${agency.id}/launchpad`,
+            order: 10,
+          },
+          {
+            name: "Billing",
+            icon: "payment",
+            href: `/admin/${agency.id}/billing`,
+            order: 11,
+          },
+          {
+            name: "Sub Accounts",
+            icon: "person",
+            href: `/admin/${agency.id}/all-subaccounts`,
+            order: 12,
+          },
+        ],
       },
-    });
-    return agencyDetails;
-  } catch (error) {
-    console.log(error);
-  }
+    },
+  });
+
+  return agencyDetails;
 };
 
 export const upsertSubAccount = async (subAccount: SubAccount) => {

@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         }),
 
         mode: subscriptionPriceExists ? "subscription" : "payment",
-        ui_mode: "embedded",
+        ui_mode: "embedded", // embedded means it will not take you to a different page. Hosted is otherwise.
         redirect_on_completion: "never",
       },
       { stripeAccount: subAccountConnectAccId },

@@ -1,14 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
+import { env } from "@/env";
 import { createSafeAction } from "@/lib/create-safe-actions";
-
 import { initUser, upsertAgency } from "@/server/queries";
 import { randomUUID } from "crypto";
 import { CreateAdmin } from "./schema";
 import { type InputType, type ReturnType } from "./types";
-import { env } from "@/env";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   let promiseAll;
@@ -66,7 +63,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       return { data: undefined };
     }
 
-    await upsertAgency({
+    const agencyResult = await upsertAgency({
       id: data?.id ?? randomUUID(),
       customerId: data?.customerId ?? custId ?? "",
       address: data.address,
@@ -84,6 +81,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       connectAccountId: "",
       goal: 5,
     });
+
+    promiseAll = agencyResult;
   } catch (err: unknown) {
     if (err instanceof Error) {
       return {
@@ -91,7 +90,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       };
     }
   }
-  revalidatePath(`/admin`);
+
   return { data: promiseAll };
 };
 

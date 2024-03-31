@@ -122,6 +122,7 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
         phoneNumber: values.phoneNumber,
         agencyId: agencyId ?? "",
       });
+      form.reset();
     } else {
       void executeUpdateSupplier({
         id: sid,
@@ -336,12 +337,12 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
           >
             {type == "create" ? (
               isLoadingCreate ? (
-                <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+                <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
               ) : (
                 "Create"
               )
             ) : isLoadingUpdate ? (
-              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+              <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
             ) : (
               "Update"
             )}

@@ -70,14 +70,16 @@ const page = async ({ params }: Props) => {
   return (
     <section className="flex w-full flex-col">
       <SubscriptionHelper
+        currentPlanTitle={currentPlanDetails?.title ?? ""}
         prices={pricesResult.data}
         customerId={agencySubscriptionResult?.customerId ?? ""}
         planExists={agencySubscriptionResult?.Subscription?.active === true}
       />
       <Heading title="Billing" />
-      <h2 className="p-4 text-2xl">Current Plan</h2>
+      <h1 className="mb-5 text-2xl font-bold text-foreground">Current Plan</h1>
       <div className="flex flex-col justify-between gap-8 lg:!flex-row">
         <PricingCard
+          agencyId={params.agencyId}
           planExists={agencySubscriptionResult?.Subscription?.active === true}
           prices={pricesResult.data}
           customerId={agencySubscriptionResult?.customerId ?? ""}
@@ -108,14 +110,16 @@ const page = async ({ params }: Props) => {
                   ?.features ??
                 []
           }
+          currentPlanTitle={currentPlanDetails?.title ?? ""}
           title={
             agencySubscriptionResult?.Subscription?.active === true
               ? currentPlanDetails?.title ?? "Starter"
               : "Starter"
           }
         />
-        {addOnsResult.data.map((addOn) => (
+        {/* {addOnsResult.data.map((addOn) => (
           <PricingCard
+            currentPlanTitle={currentPlanDetails?.title ?? ""}
             planExists={agencySubscriptionResult?.Subscription?.active === true}
             prices={pricesResult.data}
             customerId={agencySubscriptionResult?.customerId ?? ""}
@@ -135,7 +139,7 @@ const page = async ({ params }: Props) => {
             highlightTitle="Get support now!"
             highlightDescription="Get priority support and skip the long long with the click of a button."
           />
-        ))}
+        ))} */}
       </div>
       <Heading title="Payment History" />
       <Card padding={false}>

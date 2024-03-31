@@ -272,6 +272,16 @@ const UserDetails: React.FC<UserDetailsProps> = ({
             </div>
           </div>
         </div>
+
+        <div className="mt-6 flex items-center justify-end gap-x-4">
+          <Button type="submit" disabled={updatingUser}>
+            {updatingUser ? (
+              <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
+            ) : (
+              "Save User Information"
+            )}
+          </Button>
+        </div>
         {authUserData?.role === "AGENCY_OWNER" && (
           <Permission
             userData={userData}
@@ -282,15 +292,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
             page="settings"
           />
         )}
-        <div className="mt-6 flex items-center justify-end gap-x-4">
-          <Button type="submit" disabled={updatingUser}>
-            {updatingUser ? (
-              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
-            ) : (
-              "Save User Information"
-            )}
-          </Button>
-        </div>
       </form>
     </Form>
   );

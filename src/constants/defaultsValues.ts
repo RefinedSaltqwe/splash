@@ -74,15 +74,15 @@ export const rowName = {
 export const pricingCards = [
   {
     title: "Starter",
-    description: "Perfect for trying out plura",
+    description: "Perfect for trying out splash",
     price: "Free",
     duration: "",
     highlight: "Key features",
     features: ["3 Sub accounts", "2 Team members", "Unlimited pipelines"],
-    priceId: "",
+    priceId: "price_1Oy4C7HWcDxTr9jhGjBTZTnl",
   },
   {
-    title: "Unlimited Saas",
+    title: "Unlimited",
     description: "The ultimate agency kit",
     price: "$199",
     duration: "month",

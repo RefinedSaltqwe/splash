@@ -169,7 +169,7 @@ const TagCreator = ({
             onValueChange={setValue}
           />
           {creatingTag ? (
-            <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+            <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
           ) : (
             <PlusCircleIcon
               onClick={handleAddTag}
@@ -232,7 +232,7 @@ const TagCreator = ({
           >
             <span className="sr-only">Delete</span>
             {deletingTag ? (
-              <Loader classNames="h-4 w-4 border-2 border-slate-200/40 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 border-r-transparent" />
+              <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
             ) : (
               "Delete"
             )}

@@ -42,6 +42,8 @@ export const env = createEnv({
     STRIPE_SECRET_KEY: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
     NEXT_SPLASH_PRODUCT_ID: z.string(),
+    PUSHER_APP_ID: z.string(),
+    PUSHER_SECRET: z.string(),
   },
 
   /**
@@ -64,6 +66,9 @@ export const env = createEnv({
     NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT: z.string(),
     NEXT_PUBLIC_PLATFORM_ONETIME_FEE: z.string(),
     NEXT_PUBLIC_PLATFORM_AGENY_PERCENT: z.string(),
+    NEXT_PUBLIC_SUPABASE_URL: z.string(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
+    NEXT_PUBLIC_PUSHER_KEY: z.string(),
   },
 
   /**
@@ -110,6 +115,11 @@ export const env = createEnv({
     NEXT_PUBLIC_PLATFORM_AGENY_PERCENT:
       process.env.NEXT_PUBLIC_PLATFORM_AGENY_PERCENT,
     NEXT_SPLASH_PRODUCT_ID: process.env.NEXT_SPLASH_PRODUCT_ID,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+    NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
+    PUSHER_SECRET: process.env.PUSHER_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -649,12 +649,63 @@ export const getUserById = cache(
 
 export const getTimesheets = cache(
   async (agencyId: string): Promise<TimesheetWithInputTimes[] | undefined> => {
+    //! WIP: Only get this week's timesheet
     try {
-      const timesheets = db.timesheet.findMany({
+      const timesheets = await db.timesheet.findMany({
         where: {
           Agency: {
             id: agencyId,
           },
+        },
+        orderBy: { id: "asc" },
+        include: {
+          timeIn: true,
+          timeOut: true,
+          breakIn: true,
+          breakOut: true,
+          timeTotal: true,
+        },
+      });
+      return timesheets;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error(
+          "System error. There is an error fetching invoice and services.",
+        );
+      }
+      throw error;
+    }
+  },
+);
+
+export const getLatestTimeSheets = cache(
+  async (agencyId: string): Promise<TimesheetWithInputTimes[] | undefined> => {
+    //! WIP: Only get this week's timesheet
+    try {
+      const getLatestTimesheet = await db.timesheet.findFirst({
+        where: {
+          Agency: {
+            id: agencyId,
+          },
+        },
+        orderBy: {
+          dateFr: "desc",
+        },
+      });
+      const timesheets = await db.timesheet.findMany({
+        where: {
+          Agency: {
+            id: agencyId,
+          },
+          user: {
+            role: {
+              not: "AGENCY_OWNER",
+            },
+          },
+          dateFr: getLatestTimesheet?.dateFr,
         },
         orderBy: { id: "asc" },
         include: {

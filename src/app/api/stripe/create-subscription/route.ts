@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { stripe } from "@/lib/stripe";
 import { db } from "@/server/db";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
           "Could not find the subscription Id to update the subscription.",
         );
       }
-      console.log("Updating the subscription");
+
       const currentSubscriptionDetails = await stripe.subscriptions.retrieve(
         subscriptionExists.Subscription.subscritiptionId,
       );
@@ -47,11 +49,20 @@ export async function POST(req: Request) {
           expand: ["latest_invoice.payment_intent"],
         },
       );
+      const csToken = subscription.latest_invoice
+        ? //@ts-expect-error
+          subscription.latest_invoice.payment_intent
+          ? //@ts-expect-error
+            subscription.latest_invoice.payment_intent.client_secret ?? ""
+          : ""
+        : "";
+      revalidatePath(
+        `/admin/${subscriptionExists.Subscription.agencyId}/billing`,
+        "page",
+      );
       return NextResponse.json({
         subscriptionId: subscription.id,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-expect-error
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+        clientSecret: csToken,
       });
     } else {
       console.log("Creating a sub");
@@ -66,11 +77,18 @@ export async function POST(req: Request) {
         payment_settings: { save_default_payment_method: "on_subscription" },
         expand: ["latest_invoice.payment_intent"],
       });
+
+      const csToken = subscription.latest_invoice
+        ? //@ts-expect-error
+          subscription.latest_invoice.payment_intent
+          ? //@ts-expect-error
+            subscription.latest_invoice.payment_intent.client_secret ?? ""
+          : ""
+        : "";
+
       return NextResponse.json({
         subscriptionId: subscription.id,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-expect-error
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+        clientSecret: csToken,
       });
     }
   } catch (error) {

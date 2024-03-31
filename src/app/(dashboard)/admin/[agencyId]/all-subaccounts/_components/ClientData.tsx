@@ -93,7 +93,7 @@ const ClientData: React.FC<ClienDataProps> = ({ agencyId }) => {
                         Delete
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="border-none border-transparent bg-background">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-left">
                           Are your absolutely sure

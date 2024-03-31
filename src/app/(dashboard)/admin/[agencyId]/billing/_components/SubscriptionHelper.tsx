@@ -11,9 +11,15 @@ type Props = {
   prices: PricesList["data"];
   customerId: string;
   planExists: boolean;
+  currentPlanTitle: string;
 };
 
-const SubscriptionHelper = ({ customerId, planExists, prices }: Props) => {
+const SubscriptionHelper = ({
+  customerId,
+  planExists,
+  prices,
+  currentPlanTitle,
+}: Props) => {
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan") as Plan;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -35,6 +41,7 @@ const SubscriptionHelper = ({ customerId, planExists, prices }: Props) => {
         description="Get started today to get access to premium features"
       >
         <SubscriptionFormWrapper
+          currentPlanTitle={currentPlanTitle}
           planExists={planExists}
           customerId={customerId}
           setIsOpen={setIsOpen}
