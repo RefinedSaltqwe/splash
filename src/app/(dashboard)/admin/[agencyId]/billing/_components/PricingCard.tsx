@@ -61,43 +61,43 @@ const PricingCard = ({
   });
 
   useEffect(() => {
-    if (initialRender.current) {
-      const channel = pusher.subscribe(`upsert-subscription-${agencyId}`);
-      channel.bind("upsert", function (data: Subscription) {
-        if (data) {
-          const newPlanDetails = pricingCards.find(
-            (c) => c.priceId === data.priceId,
-          );
-          setCurrentPlan({
-            title: newPlanDetails?.title ?? "Starter",
-            description:
-              newPlanDetails?.description ?? "Perfect for trying out Splash",
-            duration: newPlanDetails?.duration ?? "month",
-            features: newPlanDetails?.features ?? [],
-            amt: newPlanDetails?.price ?? "",
-            currentPlanTitle: newPlanDetails?.price ?? "Starter",
-          });
-          setIsLoading(false);
+    // if (initialRender.current) {
+    const channel = pusher.subscribe(`upsert-subscription-${agencyId}`);
+    channel.bind("upsert", function (data: Subscription) {
+      if (data) {
+        const newPlanDetails = pricingCards.find(
+          (c) => c.priceId === data.priceId,
+        );
+        setCurrentPlan({
+          title: newPlanDetails?.title ?? "Starter",
+          description:
+            newPlanDetails?.description ?? "Perfect for trying out Splash",
+          duration: newPlanDetails?.duration ?? "month",
+          features: newPlanDetails?.features ?? [],
+          amt: newPlanDetails?.price ?? "",
+          currentPlanTitle: newPlanDetails?.price ?? "Starter",
+        });
+        setIsLoading(false);
 
-          toast.success(
-            `Plan successfully updated to "${newPlanDetails?.title}"`,
-            {
-              description: `You will be charged ${newPlanDetails?.price} on your next bill.`,
-            },
-          );
-          console.log(newPlanDetails);
-        } else {
-          toast.error("Error: Please try again", {
-            description: "If error persists contact admin.",
-          });
-        }
-      });
+        toast.success(
+          `Plan successfully updated to "${newPlanDetails?.title}"`,
+          {
+            description: `You will be charged ${newPlanDetails?.price} on your next bill.`,
+          },
+        );
+        console.log(newPlanDetails);
+      } else {
+        toast.error("Error: Please try again", {
+          description: "If error persists contact admin.",
+        });
+      }
+    });
 
-      return () => {
-        pusher.unsubscribe(`upsert-subscription-${agencyId}`);
-      };
-    }
-    initialRender.current = true;
+    return () => {
+      pusher.unsubscribe(`upsert-subscription-${agencyId}`);
+    };
+    // }
+    // initialRender.current = true;
   }, []);
 
   const handleManagePlan = () => {
