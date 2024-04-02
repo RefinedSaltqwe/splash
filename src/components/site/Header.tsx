@@ -10,7 +10,6 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Image from "next/image";
 import { ModeToggle } from "../themeModeToggle";
 import { Button } from "../ui/button";
-import { redirect } from "next/navigation";
 
 function MobileNavLink({
   href,
@@ -168,10 +167,12 @@ export function Header() {
               >
                 <Link href="/admin">Sign in</Link>
               </Button>
-              <Button onClick={() => redirect("/admin")} color="blue">
-                <span>
-                  Get started <span className="hidden lg:inline">today</span>
-                </span>
+              <Button color="blue" asChild>
+                <Link href="/admin">
+                  <span>
+                    Get started <span className="hidden lg:inline">today</span>
+                  </span>
+                </Link>
               </Button>
             </SignedOut>
 

@@ -93,6 +93,7 @@ export async function POST(req: NextRequest) {
     console.log(error);
     return new NextResponse("🔴 Webhook Error", { status: 400 });
   }
+  // this block is to let Stripe know that we have successfully processed the reponse from their end
   return NextResponse.json(
     {
       webhookActionReceived: true,
