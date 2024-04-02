@@ -1,25 +1,27 @@
 "use server";
+import TotalCard from "@/components/analytics/TotalCard";
 import CircleProgress from "@/components/shared/CircleProgress";
+import GridColumn from "@/components/shared/GridColumn";
+import GridWrapper from "@/components/shared/GridWrapper";
+import Heading from "@/components/shared/Heading";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/server/db";
+import { currentUser } from "@clerk/nextjs";
 import { type Agency, type SubAccount } from "@prisma/client";
 import { AreaChart } from "@tremor/react";
 import {
+  CircleDollarSign,
   ClipboardIcon,
-  Contact2,
-  DollarSign,
-  Goal,
   ShoppingCart,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,6 +40,7 @@ const AgencyPage = async ({
 }) => {
   let currency = "USD";
   let sessions;
+  const session = await currentUser();
   let totalClosedSessions;
   let totalPendingSessions;
   let net = 0;
@@ -127,66 +130,51 @@ const AgencyPage = async ({
           </Card>
         </div>
       )}
-      <h1 className="text-4xl">Dashboard</h1>
-      <Separator className=" my-6" />
+      <Heading
+        title={`Hi ${session?.firstName}, welcome back!`}
+        subTitle="Dashboard"
+      />
       <div className="flex flex-col gap-4 pb-6">
-        <div className="flex flex-col gap-4 xl:!flex-row">
-          <Card className="relative flex-1">
-            <CardHeader>
-              <CardDescription>Income</CardDescription>
-              <CardTitle className="text-4xl">
-                {net ? `${currency} ${net.toFixed(2)}` : `$0.00`}
-              </CardTitle>
-              <small className="text-xs text-muted-foreground">
-                For the year {currentYear}
-              </small>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              Total revenue generated as reflected in your stripe dashboard.
-            </CardContent>
-            <DollarSign className="absolute right-4 top-4 text-muted-foreground" />
-          </Card>
-          <Card className="relative flex-1">
-            <CardHeader>
-              <CardDescription>Potential Income</CardDescription>
-              <CardTitle className="text-4xl">
-                {potentialIncome
+        <GridWrapper>
+          <GridColumn colSpan="lg:col-span-3" syncHeight={true}>
+            <TotalCard
+              title={`Income (${currentYear})`}
+              Icon={CircleDollarSign}
+              value={net ? `${currency} ${net.toFixed(2)}` : `$0.00`}
+              description="Total revenue generated as reflected in your stripe dashboard."
+            />
+          </GridColumn>
+          <GridColumn colSpan="lg:col-span-3" syncHeight={true}>
+            <TotalCard
+              title={`Potential Income (${currentYear})`}
+              Icon={CircleDollarSign}
+              value={
+                potentialIncome
                   ? `${currency} ${potentialIncome.toFixed(2)}`
-                  : `$0.00`}
-              </CardTitle>
-              <small className="text-xs text-muted-foreground">
-                For the year {currentYear}
-              </small>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              This is how much you can close.
-            </CardContent>
-            <DollarSign className="absolute right-4 top-4 text-muted-foreground" />
-          </Card>
-          <Card className="relative flex-1">
-            <CardHeader>
-              <CardDescription>Active Clients</CardDescription>
-              <CardTitle className="text-4xl">{subaccounts.length}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              Reflects the number of sub accounts you own and manage.
-            </CardContent>
-            <Contact2 className="absolute right-4 top-4 text-muted-foreground" />
-          </Card>
-          <Card className="relative flex-1">
-            <CardHeader>
-              <CardTitle>Agency Goal</CardTitle>
-              <CardDescription>
-                Reflects the number of sub accounts you want to own and manage.
-              </CardDescription>
-            </CardHeader>
-            <CardFooter>
+                  : `$0.00`
+              }
+              description="This is how much you can close."
+            />
+          </GridColumn>
+          <GridColumn colSpan="lg:col-span-3" syncHeight={true}>
+            <TotalCard
+              title={`Active Clients`}
+              Icon={Users}
+              value={subaccounts.length.toString()}
+              description="Reflects the number of sub accounts you own and manage."
+            />
+          </GridColumn>
+          <GridColumn colSpan="lg:col-span-3" syncHeight={true}>
+            <TotalCard
+              title={`Agency Goal`}
+              description="Reflects the number of sub accounts you own and manage."
+            >
               <div className="flex w-full flex-col">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm font-normal text-muted-foreground">
                     Current: {subaccounts.length}
                   </span>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm font-normal text-muted-foreground">
                     Goal: {agencyDetails.goal}
                   </span>
                 </div>
@@ -194,10 +182,10 @@ const AgencyPage = async ({
                   value={(subaccounts.length / agencyDetails.goal) * 100}
                 />
               </div>
-            </CardFooter>
-            <Goal className="absolute right-4 top-4 text-muted-foreground" />
-          </Card>
-        </div>
+            </TotalCard>
+          </GridColumn>
+        </GridWrapper>
+
         <div className="flex flex-col gap-4 xl:!flex-row">
           <Card className="flex-1 p-4">
             <CardHeader>

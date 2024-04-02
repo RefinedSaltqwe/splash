@@ -7,6 +7,7 @@ type CardProps = {
   glass?: boolean;
   rounded?: boolean;
   overflowHidden?: boolean;
+  heightFull?: boolean;
 };
 
 const Card: React.FC<CardProps> = ({
@@ -15,6 +16,7 @@ const Card: React.FC<CardProps> = ({
   glass = false,
   rounded = true,
   overflowHidden = true,
+  heightFull = false,
 }) => {
   return (
     <div
@@ -24,6 +26,7 @@ const Card: React.FC<CardProps> = ({
         glass && "bg-card/80 px-5 py-3 backdrop-blur",
         rounded && "rounded-2xl",
         overflowHidden && "overflow-hidden",
+        heightFull && "h-full",
       )}
     >
       {children}

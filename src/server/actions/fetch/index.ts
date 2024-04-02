@@ -11,6 +11,7 @@ import {
   type PipelineWithLanesAndTickets,
   type TimesheetWithInputTimes,
   FunnelsWithFunnelPagesNoNull,
+  SubAccountWithContacts,
 } from "@/types/prisma";
 import {
   type LaneDetail,
@@ -864,6 +865,31 @@ export const getFunnelPageDetails = cache(async (funnelPageId: string) => {
       id: funnelPageId,
     },
   });
+
+  return response;
+});
+
+export const getSubAccountWithContacts = cache(async (subaccountId: string) => {
+  const response = (await db.subAccount.findUnique({
+    where: {
+      id: subaccountId,
+    },
+
+    include: {
+      Contact: {
+        include: {
+          Ticket: {
+            select: {
+              value: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+    },
+  })) as SubAccountWithContacts;
 
   return response;
 });

@@ -4,15 +4,15 @@ import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { pricingCards } from "@/constants/defaultsValues";
+import { pusher } from "@/lib/pusher/client";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { type PricesList } from "@/types/stripe";
 import { type Plan, type Subscription } from "@prisma/client";
 import { CheckIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import SubscriptionFormWrapper from "./SubscriptionFormWrapper";
-import { pusher } from "@/lib/pusher/client";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import SubscriptionFormWrapper from "./SubscriptionFormWrapper";
 
 type Props = {
   agencyId: string;
@@ -46,7 +46,6 @@ const PricingCard = ({
   agencyId,
 }: Props) => {
   const searchParams = useSearchParams();
-  const initialRender = useRef<boolean>(false);
   const plan = searchParams.get("plan") as Plan;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -61,7 +60,6 @@ const PricingCard = ({
   });
 
   useEffect(() => {
-    // if (initialRender.current) {
     const channel = pusher.subscribe(`upsert-subscription-${agencyId}`);
     channel.bind("upsert", function (data: Subscription) {
       if (data) {
@@ -96,8 +94,6 @@ const PricingCard = ({
     return () => {
       pusher.unsubscribe(`upsert-subscription-${agencyId}`);
     };
-    // }
-    // initialRender.current = true;
   }, []);
 
   const handleManagePlan = () => {

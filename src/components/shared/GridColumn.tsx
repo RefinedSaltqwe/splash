@@ -20,7 +20,9 @@ const GridColumn: React.FC<GridColumnProps> = ({
       <div
         className={cn("w-full text-muted-foreground", syncHeight && "h-full")}
       >
-        <Card padding={padding}>{children}</Card>
+        <Card padding={padding} heightFull={syncHeight}>
+          {children}
+        </Card>
       </div>
     </div>
   );

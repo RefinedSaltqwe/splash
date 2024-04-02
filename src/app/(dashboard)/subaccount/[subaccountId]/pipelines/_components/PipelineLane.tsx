@@ -3,6 +3,7 @@
 
 import GlobalModal from "@/components/drawer/GlobalModal";
 import Loader from "@/components/shared/Loader";
+import ScrollableElement from "@/components/shared/ScrollableElement";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +27,6 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { useQueryClient } from "@tanstack/react-query";
 import { Edit, MoreVertical, PlusCircleIcon, Trash } from "lucide-react";
 import React, {
-  lazy,
   useEffect,
   useMemo,
   useState,
@@ -36,7 +36,6 @@ import React, {
 import { toast } from "sonner";
 import PipelineTicket from "./PipelineTicket";
 import LaneForm from "./form/UpsertLane";
-import ScrollableElement from "@/components/shared/ScrollableElement";
 import TicketForm from "./form/UpsertTicket";
 
 interface PipelaneLaneProps {
@@ -260,7 +259,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                 >
                   <span className="sr-only">Delete</span>
                   {deletingLane ? (
-                    <Loader classNames="h-4 w-4 border-2 border-slate-400/80 dark:border-slate-500/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
+                    <Loader classNames="h-4 w-4 border-2 border-white/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
                   ) : (
                     "Delete"
                   )}

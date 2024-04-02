@@ -150,3 +150,8 @@ export type GetLanesWithTicketAndTags =
 export type GetTagsForSubaccount = {
   Tags: Tag[];
 } | null;
+
+//============================SubAccountWithContacts
+export type SubAccountWithContacts = SubAccount & {
+  Contact: (Contact & { Ticket: Ticket[] })[];
+};

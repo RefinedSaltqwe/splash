@@ -53,6 +53,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         const generatedId = `${user.id}${dateFr
           .toLocaleDateString()
           .split("-")
+          .join("")
+          .split("/")
           .join("")}`;
         constructedDataForTimesheet.push({
           id: generatedId,

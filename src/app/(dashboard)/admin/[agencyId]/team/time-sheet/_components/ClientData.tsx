@@ -100,7 +100,7 @@ const ClientData: React.FC<ClientDataProps> = ({
     if (timesheetsData.length === 0) {
       const time = setTimeout(() => {
         void executeCreateTimesheet({
-          dateFr: getFirstAndLastDatesNextWeek(1),
+          dateFr: getFirstAndLastDatesNextWeek(1), // get the next week from lastest timesheet dateTo instead
           dateTo: getFirstAndLastDatesNextWeek(7),
           agencyId: agencyId!,
         });
