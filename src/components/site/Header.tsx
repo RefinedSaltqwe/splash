@@ -168,7 +168,7 @@ export function Header() {
                 <Link href="/admin">Sign in</Link>
               </Button>
               <Button color="blue" asChild>
-                <Link href="/admin">
+                <Link href="/admin/sign-up">
                   <span>
                     Get started <span className="hidden lg:inline">today</span>
                   </span>
