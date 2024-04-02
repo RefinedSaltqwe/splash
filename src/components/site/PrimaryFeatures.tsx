@@ -15,16 +15,16 @@ import { motion } from "framer-motion";
 
 const features = [
   {
-    title: "Time Tracking",
-    description:
-      "Whether you need detailed reports on work hours or streamlined holiday tracking with calendar integration, Splash Innovations offers a comprehensive solution for managing employee time, leave, and absences with ease.",
-    image: screenshotPayroll,
-  },
-  {
     title: "Invoice",
     description:
       "All of your invoice organized into one place, as long as you don't mind typing in the data by hand.",
     image: screenshotExpenses,
+  },
+  {
+    title: "Time Tracking",
+    description:
+      "Whether you need detailed reports on work hours or streamlined holiday tracking with calendar integration, Splash Innovations offers a comprehensive solution for managing employee time, leave, and absences with ease.",
+    image: screenshotPayroll,
   },
   {
     title: "Funnel",
