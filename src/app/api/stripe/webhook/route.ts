@@ -83,6 +83,19 @@ export async function POST(req: NextRequest) {
             console.log("👉🏻 Unhandled relevant event!", stripeEvent.type);
         }
       } else {
+        //? When subscription is from a connected account.
+        // const response = await stripe.accounts.retrieve({
+        //   stripeAccount: agencyDetails.connectAccountId,
+        // });
+
+        // currency = response.default_currency?.toUpperCase() ?? "USD";
+        // const checkoutSessions = await stripe.checkout.sessions.list(
+        //   {
+        //     created: { gte: startDate, lte: endDate },
+        //     limit: 100,
+        //   },
+        //   { stripeAccount: agencyDetails.connectAccountId },
+        // );
         console.log(
           "SKIPPED FROM WEBHOOK 💳 because subscription was from a connected account not for the application",
           subscription,

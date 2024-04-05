@@ -90,35 +90,35 @@ model Session {
 }
 
 model User {
-    id            String @id @default(cuid())
-    name          String @default("")
-    firstName     String @default("")
-    lastName      String @default("")
-    email         String @unique
-    password      Boolean @default(false)
-    emailVerified DateTime? 
-    image         String @db.Text @default("") 
-    status        String @default("Pending")
-    phoneNumber   String @default("")
-    role          Role   @default(SUBACCOUNT_USER)
-    country       String @default("")
-    street        String @default("")
-    city          String @default("")
-    state         String @default("")
-    postalCode    String @default("")
-    jobRole       String @default("")
-    isTwoFactorEnabled Boolean @default(false)
-    twoFactorConfirmation TwoFactorConfirmation? 
-    createdAt     DateTime @default(now())
-    updatedAt    DateTime       @updatedAt
-    agencyId     String?
-    Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-    Permissions  Permissions[]
-    Ticket       Ticket[]
-    Notification Notification[]
-    accounts      Account[]
-    sessions      Session[]
-    timesheets    Timesheet[]
+    id                      String @id @default(cuid())
+    name                    String @default("")
+    firstName               String @default("")
+    lastName                String @default("")
+    email                   String @unique
+    password                Boolean @default(false)
+    emailVerified           DateTime? 
+    image                   String @db.Text @default("") 
+    status                  String @default("Pending")
+    phoneNumber             String @default("")
+    role                    Role   @default(SUBACCOUNT_USER)
+    country                 String @default("")
+    street                  String @default("")
+    city                    String @default("")
+    state                   String @default("")
+    postalCode              String @default("")
+    jobRole                 String @default("")
+    isTwoFactorEnabled      Boolean @default(false)
+    twoFactorConfirmation   TwoFactorConfirmation? 
+    createdAt               DateTime @default(now())
+    updatedAt               DateTime       @updatedAt
+    agencyId                String?
+    Agency                  Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    Permissions             Permissions[]
+    Ticket                  Ticket[]
+    Notification            Notification[]
+    accounts                Account[]
+    sessions                Session[]
+    timesheets              Timesheet[]
 }
 
 model Permissions {
@@ -157,12 +157,13 @@ model Agency {
   Notification     Notification[]
   Subscription     Subscription?
   AddOns           AddOns[]
-  Customers         Customer[]
-  Suppliers          Supplier[]
-  Services          Service[]
-  ServiceTypes      ServiceType[]
-  Invoices          Invoice[]
-  Timesheets        Timesheet[]
+  Customers        Customer[]
+  Suppliers        Supplier[]
+  Services         Service[]
+  ServiceTypes     ServiceType[]
+  Invoices         Invoice[]
+  Timesheets       Timesheet[]
+  Inventory        Inventory[]
 }
 
 model SubAccount {
@@ -192,20 +193,21 @@ model SubAccount {
   Pipeline         Pipeline[]
   Tags             Tag[]
   Notification     Notification[]
+  Inventory        Inventory[]
 
   @@index([agencyId])
 }
 
 model Tag {
-  id           String   @id @default(uuid())
-  name         String
-  color        String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  subAccountId String
+  id            String   @id @default(uuid())
+  name          String
+  color         String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  subAccountId  String
 
-  SubAccount SubAccount @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
-  Ticket     Ticket[]
+  SubAccount    SubAccount @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
+  Ticket        Ticket[]
 
   @@index([subAccountId])
 }
@@ -235,23 +237,39 @@ model Lane {
   @@index([pipelineId])
 }
 
+model MaterialsUsed {
+  id          String @id @default(uuid())
+  quantity    Int
+
+  inventoryId String
+  Inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  
+  ticketId  String
+  Ticket    Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@unique([id])
+}
+
 model Ticket {
-  id          String   @id @default(uuid())
-  name        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  laneId      String
-  order       Int      @default(0)
-  Lane        Lane     @relation(fields: [laneId], references: [id], onDelete: Cascade)
-  value       Decimal?
-  description String?
-  Tags        Tag[]
+  id              String   @id @default(uuid())
+  name            String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deadline        DateTime
+  priority        Boolean @default(false)
+  laneId          String
+  order           Int      @default(0)
+  Lane            Lane     @relation(fields: [laneId], references: [id], onDelete: Cascade)
+  value           Decimal?
+  description     String?
+  Tags            Tag[]
+  MaterialsUsed   MaterialsUsed[]
 
-  customerId String?
-  Customer   Contact? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerId      String?
+  Customer        Contact? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
-  assignedUserId String?
-  Assigned       User?   @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
+  assignedUserId  String?
+  Assigned        User?   @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
 
   @@index([laneId])
   @@index([customerId])
@@ -322,15 +340,15 @@ model Action {
 }
 
 model Contact {
-  id           String   @id @default(uuid())
-  name         String
-  email        String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  subAccountId String
+  id            String   @id @default(uuid())
+  name          String
+  email         String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  subAccountId  String
 
-  Subaccount SubAccount @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
-  Ticket     Ticket[]
+  Subaccount    SubAccount @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
+  Ticket        Ticket[]
 
   @@index([subAccountId])
 }
@@ -396,18 +414,18 @@ model FunnelPage {
 }
 
 model AgencySidebarOption {
-  id        String   @id @default(uuid())
-  name      String   @default("Menu")
-  href      String   @default("#")
-  icon      Icon     @default(info)
-  order     Int      @default(0)
+  id          String   @id @default(uuid())
+  name        String   @default("Menu")
+  href        String   @default("#")
+  icon        Icon     @default(info)
+  order       Int      @default(0)
 
-  agencyId  String
-  Agency    Agency?  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId    String
+  Agency      Agency?  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
-  Children SidebarOptionChildren[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  Children    SidebarOptionChildren[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([agencyId])
 }
@@ -421,20 +439,20 @@ model SubAccountSidebarOption {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
-  SubAccount   SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
-  subAccountId String?
+  SubAccount    SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
+  subAccountId  String?
 
   @@index([subAccountId])
 }
 
 model SidebarOptionChildren {
-  id    String @id @default(uuid())
-  name  String @default("Menu")
-  href  String @default("#")
-  order Int    @default(0)
+  id                String @id @default(uuid())
+  name              String @default("Menu")
+  href              String @default("#")
+  order             Int    @default(0)
 
-  agencySidebarId String
-  agencySideBar AgencySidebarOption @relation(fields: [agencySidebarId], references: [id], onDelete: Cascade)
+  agencySidebarId   String
+  agencySideBar     AgencySidebarOption @relation(fields: [agencySidebarId], references: [id], onDelete: Cascade)
   
 }
 
@@ -456,18 +474,18 @@ model Invitation {
 }
 
 model Notification {
-  id           String  @id @default(uuid())
-  notification String
-  agencyId     String
-  subAccountId String?
-  userId       String
+  id            String  @id @default(uuid())
+  notification  String
+  agencyId      String
+  subAccountId  String?
+  userId        String
 
-  User       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Agency     Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  SubAccount SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
+  User          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Agency        Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  SubAccount    SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([agencyId])
   @@index([subAccountId])
@@ -489,13 +507,13 @@ model Subscription {
   price     String?
   active    Boolean  @default(false)
 
-  priceId              String
-  customerId           String
-  currentPeriodEndDate DateTime
-  subscritiptionId     String   @unique
+  priceId               String
+  customerId            String
+  currentPeriodEndDate  DateTime
+  subscritiptionId      String   @unique
 
-  agencyId String? @unique
-  Agency   Agency? @relation(fields: [agencyId], references: [id])
+  agencyId              String? @unique
+  Agency                Agency? @relation(fields: [agencyId], references: [id])
 
   @@index([customerId])
 }
@@ -514,19 +532,19 @@ model AddOns {
 }
 
 model TwoFactorToken {
-    id String @id @default(cuid())
-    email String
-    token String @unique
-    expires DateTime
+    id        String @id @default(cuid())
+    email     String
+    token     String @unique
+    expires   DateTime
 
     @@unique([email, token])
 }
 
 model TwoFactorConfirmation {
-    id String @id @default(cuid())
+    id        String @id @default(cuid())
 
-    userId String
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String
+    user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([userId])
 }
@@ -547,43 +565,45 @@ model VerificationToken {
 }
 
 model Customer {
-    id          String @id @default(cuid())
-    name        String
-    companyName String
-    address     String
-    email       String @unique
-    phoneNumber String
+    id            String @id @default(cuid())
+    name          String
+    companyName   String
+    address       String
+    email         String @unique
+    phoneNumber   String
 
-    agencyId     String
-    Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    agencyId      String
+    Agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
-    invoice     Invoice[]
+    invoice       Invoice[]
 
-    createdAt   DateTime @default(now())
+    createdAt     DateTime @default(now())
 }
 
 model Supplier {
-    id          String @id @default(cuid())
-    name        String
-    companyName String
-    address     String
-    email       String @unique
-    phoneNumber String
+    id            String @id @default(cuid())
+    name          String
+    companyName   String
+    address       String
+    email         String @unique
+    phoneNumber   String
 
-    agencyId     String
-    Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    agencyId      String
+    Agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
-    createdAt   DateTime @default(now())
+    Inventory     Inventory[]
+
+    createdAt     DateTime @default(now())
 }
 
 model ServiceType {
-    id          String @id @default(cuid())
-    name        String
+    id            String @id @default(cuid())
+    name          String
 
-    agencyId     String
-    Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    agencyId      String
+    Agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
-    service     Service[]
+    service       Service[]
 }
 
 model Service {
@@ -594,33 +614,54 @@ model Service {
     invoiceId       String 
     invoice         Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
-    agencyId     String
-    Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    agencyId        String
+    Agency          Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
     serviceTypeId   String
     serviceType     ServiceType @relation(fields: [serviceTypeId], references: [id], onDelete: Cascade)
 }
 
+model Inventory {
+    id            String      @id @default(cuid()) 
+    name          String
+    cost          Int
+    quantity      Int
+    description   String      @default("")
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @default(now())
+
+    supplierId    String 
+    Supplier      Supplier    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+    agencyId      String
+    Agency        Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+    subaccountId  String?
+    Subaccount    SubAccount? @relation(fields: [subaccountId], references: [id], onDelete: Cascade)
+
+    MaterialsUsed MaterialsUsed[]
+}
+
 model Invoice {
-    id          String @id 
-    status      String
-    payment     Float @default(0)
-    total       Float
-    shipping    Float
-    tax         Int
-    subTotal    Float
-    discount    Float
+    id            String @id 
+    status        String
+    payment       Float @default(0)
+    total         Float
+    shipping      Float
+    tax           Int
+    subTotal      Float
+    discount      Float
 
-    customerId  String
-    customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+    customerId      String
+    customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-    agencyId     String
-    Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    agencyId        String
+    Agency          Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
     
-    services    Service[]
+    services        Service[]
 
-    createdAt   DateTime  @default(now())
-    dueDate     DateTime
+    createdAt       DateTime  @default(now())
+    dueDate         DateTime
 }
 
 model Timesheet {
@@ -632,8 +673,8 @@ model Timesheet {
     userId          String 
     user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    agencyId     String
-    Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    agencyId        String
+    Agency          Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
     timeIn          TimeIn?
     timeOut         TimeOut?

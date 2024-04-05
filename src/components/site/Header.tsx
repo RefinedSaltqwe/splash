@@ -6,7 +6,7 @@ import { siteConfig } from "config/site";
 import Link from "next/link";
 import { Fragment } from "react";
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import { ModeToggle } from "../themeModeToggle";
 import { Button } from "../ui/button";
@@ -157,6 +157,7 @@ export function Header() {
               >
                 Dashboard
               </Link>
+              <UserButton afterSignOutUrl="/" />
             </SignedIn>
             <SignedOut>
               <Button
@@ -165,7 +166,7 @@ export function Header() {
                 size={"default"}
                 asChild
               >
-                <Link href="/admin">Sign in</Link>
+                <Link href="/admin/sign-in">Sign in</Link>
               </Button>
               <Button color="blue" asChild>
                 <Link href="/admin/sign-up">

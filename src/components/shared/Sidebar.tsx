@@ -1,7 +1,8 @@
 "use client";
 import CreateSubaccountButton from "@/app/(dashboard)/admin/[agencyId]/all-subaccounts/_components/CreateSubAccountButton";
-import { cn } from "@/lib/utils";
 import { getAuthUserDetails } from "@/server/actions/fetch";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
+import { type $Enums } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronsUpDown, Compass, Menu } from "lucide-react";
 import Image from "next/image";
@@ -20,7 +21,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import PrimaryNavItems from "./PrimaryNavItems";
 import ScrollableElement from "./ScrollableElement";
-import { useCurrentUserStore } from "@/stores/useCurrentUser";
+import { type SideMenuLinks } from "@/types";
 
 type SidebarProps = {
   defaultOpen?: boolean;
@@ -65,11 +66,174 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
     }
   }
 
-  const subaccountSideOptions =
-    user.Agency.SubAccount.find((subaccount) => subaccount?.id === id)
-      ?.SidebarOption ?? [];
+  const agencySideOptions: SideMenuLinks[] = [
+    {
+      name: "Dashboard",
+      icon: "dashboard",
+      href: `/admin/${id}`,
+      order: 1,
+      children: null,
+    },
+    {
+      name: "Analytics",
+      href: `/admin/${id}/analytics`,
+      icon: "analytics",
+      order: 2,
+      children: null,
+    },
+    {
+      name: "Services",
+      href: `/admin/${id}/services`,
+      icon: "services",
+      order: 3,
+      children: null,
+    },
+    {
+      name: "Expense",
+      href: `/admin/${id}/expense`,
+      icon: "expense",
+      order: 4,
+      children: [
+        {
+          name: "Overview",
+          href: `/admin/${id}/expense/overview`,
+          order: 1,
+        },
+        {
+          name: "Transactions",
+          href: `/admin/${id}/expense/transactions`,
+          order: 2,
+        },
+        {
+          name: "Bills",
+          href: `/admin/${id}/expense/bills`,
+          order: 3,
+        },
+        {
+          name: "Suppliers",
+          href: `/admin/${id}/expense/suppliers`,
+          order: 4,
+        },
+      ],
+    },
+    {
+      name: "Team",
+      href: `/admin/${id}/team`,
+      icon: "shield",
+      order: 5,
+      children: [
+        {
+          name: "List",
+          href: `/admin/${id}/team/list`,
+          order: 1,
+        },
+        {
+          name: "Time Sheet",
+          href: `/admin/${id}/team/time-sheet`,
+          order: 2,
+        },
+        {
+          name: "Labor Tracking",
+          href: `/admin/${id}/team/labor-tracking`,
+          order: 3,
+        },
+      ],
+    },
+    {
+      name: "Inventory",
+      href: `/admin/${id}/inventory`,
+      icon: "inventory",
+      order: 6,
+      children: null,
+    },
+    {
+      name: "Customers",
+      href: `/admin/${id}/customers`,
+      icon: "customers",
+      order: 7,
+      children: null,
+    },
+    {
+      name: "Suppliers",
+      href: `/admin/${id}/suppliers`,
+      icon: "suppliers",
+      order: 8,
+      children: null,
+    },
+    {
+      name: "Invoice",
+      href: `/admin/${id}/invoice`,
+      icon: "invoice",
+      order: 9,
+      children: null,
+    },
+    {
+      name: "Launchpad",
+      icon: "clipboardIcon",
+      href: `/admin/${id}/launchpad`,
+      order: 10,
+      children: null,
+    },
+    {
+      name: "Billing",
+      icon: "payment",
+      href: `/admin/${id}/billing`,
+      order: 11,
+      children: null,
+    },
+    {
+      name: "Sub Accounts",
+      icon: "person",
+      href: `/admin/${id}/all-subaccounts`,
+      order: 12,
+      children: null,
+    },
+  ];
 
-  const agencySideOptions = user.Agency.SidebarOption || [];
+  const subaccountSidebarOptions = [
+    {
+      name: "Dashboard",
+      icon: "dashboard" as $Enums.Icon,
+      href: `/subaccount/${id}`,
+      order: 1,
+    },
+    {
+      name: "Launchpad",
+      icon: "clipboardIcon" as $Enums.Icon,
+      href: `/subaccount/${id}/launchpad`,
+      order: 2,
+    },
+    {
+      name: "Funnels",
+      icon: "pipelines" as $Enums.Icon,
+      href: `/subaccount/${id}/funnels`,
+      order: 3,
+    },
+    {
+      name: "Media",
+      icon: "database" as $Enums.Icon,
+      href: `/subaccount/${id}/media`,
+      order: 4,
+    },
+    {
+      name: "Automations",
+      icon: "chip" as $Enums.Icon,
+      href: `/subaccount/${id}/automations`,
+      order: 5,
+    },
+    {
+      name: "Pipelines",
+      icon: "flag" as $Enums.Icon,
+      href: `/subaccount/${id}/pipelines`,
+      order: 6,
+    },
+    {
+      name: "Contacts",
+      icon: "person" as $Enums.Icon,
+      href: `/subaccount/${id}/contacts`,
+      order: 7,
+    },
+  ];
 
   const subAccounts = user.Agency.SubAccount.filter((subaccount) =>
     user.Permissions.find(
@@ -224,7 +388,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
                 title="Overview"
                 type={type}
                 agencySideOptions={agencySideOptions}
-                subaccountSideOptions={subaccountSideOptions}
+                subaccountSideOptions={subaccountSidebarOptions}
               />
               {/* <li>
                 <div className="text-xs font-semibold leading-6 text-slate-400">

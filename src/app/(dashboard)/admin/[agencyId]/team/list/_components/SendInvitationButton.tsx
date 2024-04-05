@@ -15,7 +15,7 @@ const SendInvitationButton: React.FC<SendInvitationButtonProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div>
-      <Button variant={"secondary"} onClick={() => setIsOpen(true)}>
+      <Button variant={"default"} onClick={() => setIsOpen(true)}>
         <span className="sr-only">Link Button </span>
         <Plus size={16} className="mr-2" />
         Invite User

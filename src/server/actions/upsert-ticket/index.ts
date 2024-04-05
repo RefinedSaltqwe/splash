@@ -17,7 +17,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       error: "Unauthorized",
     };
   }
-  const { tags, subAccountId, ticketId, ...rest } = data;
+  const { materialsUsed, tags, subAccountId, ticketId, ...rest } = data;
   let response;
   try {
     response = await upsertTicketQuery(
@@ -26,6 +26,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         ...rest,
       },
       tags,
+      materialsUsed,
     );
     await saveActivityLogsNotification({
       agencyId: undefined,

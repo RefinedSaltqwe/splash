@@ -28,7 +28,7 @@ const CustomersPage: React.FC<CustomersPageProps> = async ({ params }) => {
         <ClientButtonLink
           buttonName="Create Customer"
           href={`/admin/${params.agencyId}/customers/create`}
-          variant={"secondary"}
+          variant={"default"}
         />
       </div>
 

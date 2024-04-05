@@ -59,6 +59,11 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
         if (error.includes("Foreign key constraint failed")) {
           toast.warning(`Timesheets were already created.`);
           return;
+        } else if (error.includes("no-other-users")) {
+          toast.error("Cannot create timesheet", {
+            description:
+              "You need to add user to be able to generate timesheet.",
+          });
         }
         toast.error(error, {
           duration: 5000,

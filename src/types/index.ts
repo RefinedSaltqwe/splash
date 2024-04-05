@@ -1,3 +1,5 @@
+import { type $Enums } from "@prisma/client";
+
 export type User = {
   id: string;
   firstname: string;
@@ -76,6 +78,20 @@ export type Supplier = {
   email: string;
   phoneNumber: string;
   createdAt: string;
+};
+
+export type SideMenuLinksChildren = {
+  name: string;
+  href: string;
+  order: number;
+};
+
+export type SideMenuLinks = {
+  name: string;
+  href: string;
+  icon: $Enums.Icon;
+  order: number;
+  children: SideMenuLinksChildren[] | null | undefined;
 };
 
 //! Expenses

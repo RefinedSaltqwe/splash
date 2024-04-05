@@ -3,6 +3,8 @@ const currencyNumberRegex = /^\d+(\.\d{1,2})?$/;
 export const UpsertTicket = z.object({
   subAccountId: z.string(),
   customerId: z.string(),
+  deadline: z.date(),
+  priority: z.boolean(),
   laneId: z.string(),
   ticketId: z.string().optional(),
   assignedUserId: z.string(),
@@ -23,4 +25,14 @@ export const UpsertTicket = z.object({
       subAccountId: z.string(),
     }),
   ),
+  materialsUsed: z
+    .array(
+      z.object({
+        id: z.string(),
+        quantity: z.number(),
+        inventoryId: z.string(),
+        ticketId: z.string(),
+      }),
+    )
+    .optional(),
 });

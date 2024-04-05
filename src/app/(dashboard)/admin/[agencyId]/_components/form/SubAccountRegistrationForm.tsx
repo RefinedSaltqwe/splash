@@ -90,8 +90,8 @@ const SubAccountRegistrationForm: React.FC<SubAccountRegistrationFormProps> = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-12">
-            <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-slate-200 dark:border-slate-700">
-              <div className="col-span-1 grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 ">
+              <div className="col-span-1 grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 px-1 sm:grid-cols-6">
                 <div className="col-span-full">
                   <FormField
                     control={form.control}

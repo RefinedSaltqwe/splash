@@ -15,6 +15,7 @@ import {
   type Tag,
   type Ticket,
   type User,
+  MaterialsUsed,
 } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
@@ -736,6 +737,7 @@ export const deleteLaneQuery = async (laneId: string) => {
 export const upsertTicketQuery = async (
   ticket: Prisma.TicketUncheckedCreateInput,
   tags: Tag[],
+  materialsUsed?: MaterialsUsed[],
 ) => {
   let order: number;
   if (!ticket.order) {
@@ -751,8 +753,17 @@ export const upsertTicketQuery = async (
     where: {
       id: ticket.id ?? randomUUID(),
     },
-    update: { ...ticket, Tags: { set: tags } },
-    create: { ...ticket, Tags: { connect: tags }, order },
+    update: {
+      ...ticket,
+      Tags: { set: tags },
+      MaterialsUsed: { set: materialsUsed },
+    },
+    create: {
+      ...ticket,
+      Tags: { connect: tags },
+      MaterialsUsed: { connect: materialsUsed },
+      order,
+    },
     include: {
       Assigned: true,
       Customer: true,

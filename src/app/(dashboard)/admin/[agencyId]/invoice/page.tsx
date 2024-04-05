@@ -94,7 +94,7 @@ const InvoicePage: React.FC<InvoicePageProps> = async ({ params }) => {
         <ClientButtonLink
           buttonName="Create Invoice"
           href={`/admin/${agencyId}/invoice/create`}
-          variant={"secondary"}
+          variant={"default"}
         />
       </div>
       <div className="mb-10 w-full">

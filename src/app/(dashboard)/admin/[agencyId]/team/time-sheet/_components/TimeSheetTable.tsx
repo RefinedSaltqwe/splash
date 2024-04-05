@@ -74,7 +74,7 @@ const TimeSheetTable = ({
                 )}
               >
                 <div className="flex w-full flex-col text-center ">
-                  <span>{dateSplitter(num)[1]}</span>
+                  <span>{dateSplitter(num)[1]?.split("at")[0]}</span>
                   <span>{dateSplitter(num)[0]}</span>
                 </div>
               </TableHead>

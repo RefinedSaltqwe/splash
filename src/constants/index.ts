@@ -1,99 +1,9 @@
 import { type ApexChartType } from "@/types/apexcharts";
-import {
-  Archive,
-  AreaChart,
-  CircleDollarSign,
-  HardHat,
-  HomeIcon,
-  Receipt,
-  Truck,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
 
 export const headerLinks = [
   {
     label: "Site",
     route: "/",
-  },
-];
-
-export type SideMenuLinksChildren = {
-  name: string;
-  href: string;
-};
-
-export type SideMenuLinks = {
-  name: string;
-  href: string;
-  icon: LucideIcon;
-  children: SideMenuLinksChildren[];
-};
-
-export const sideMenuLinks: SideMenuLinks[] = [
-  {
-    name: "Dashboard",
-    href: "/admin/dashboard",
-    icon: HomeIcon,
-    children: [],
-  },
-  {
-    name: "Analytics",
-    href: "/admin/analytics/",
-    icon: AreaChart,
-    children: [],
-  },
-  {
-    name: "Services",
-    href: "/admin/services",
-    icon: HardHat,
-    children: [],
-  },
-  {
-    name: "Expense",
-    href: "/admin/expense",
-    icon: CircleDollarSign,
-    children: [
-      { name: "Overview", href: "/admin/expense/overview" },
-      { name: "Transactions", href: "/admin/expense/transactions" },
-      // Upload Receipts
-      { name: "Bills", href: "/admin/expense/bills" },
-      { name: "Suppliers", href: "/admin/expense/suppliers" },
-    ],
-  },
-  {
-    name: "Employees",
-    href: "/admin/employees",
-    icon: Users,
-    children: [
-      { name: "List", href: "/admin/employees/list" },
-      { name: "Time Sheet", href: "/admin/employees/time-sheet" },
-      { name: "Labor Tracking", href: "/admin/employees/labor-tracking" },
-    ],
-  },
-  {
-    name: "Inventory",
-    href: "/admin/inventory",
-    icon: Archive,
-    children: [],
-  },
-  {
-    name: "Customers",
-    href: "/admin/customers",
-    icon: Users,
-    children: [],
-  },
-  {
-    name: "Suppliers",
-    href: "/admin/suppliers",
-    icon: Truck,
-    children: [],
-  },
-  {
-    name: "Invoice",
-    href: "/admin/invoice",
-    icon: Receipt,
-    children: [],
   },
 ];
 

@@ -50,12 +50,10 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       const constructedDataForTimeInputs: { timesheetId: string }[] = [];
 
       getUsers.forEach((user) => {
-        const generatedId = `${user.id}${dateFr
-          .toLocaleDateString()
-          .split("-")
-          .join("")
-          .split("/")
-          .join("")}`;
+        const generatedId = `${
+          user.id
+        }?${dateFr.getDate()}?${dateFr.getMonth()}?${dateFr.getFullYear()}`;
+
         constructedDataForTimesheet.push({
           id: generatedId,
           userId: user.id,
@@ -63,6 +61,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
           dateTo,
           agencyId,
         });
+
         constructedDataForTimeInputs.push({
           timesheetId: generatedId,
         });
@@ -105,6 +104,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       if (!timeIn || !timeOut || !breakIn || !breakOut || !timeTotal) {
         throw new Error("One of the time inputs failed.");
       }
+    } else {
+      throw new Error("no-other-users");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {

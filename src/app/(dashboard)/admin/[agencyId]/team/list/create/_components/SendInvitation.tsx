@@ -44,9 +44,10 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
       toast.success(`Invitational link sent to ${data.email}.`);
     },
     onError: (error) => {
-      toast.error(error, {
-        duration: 5000,
-      });
+      if (error.includes("Unique constraint failed on the fields: (`email`)"))
+        toast.error("Link already send to email", {
+          duration: 5000,
+        });
     },
     onComplete: () => {
       setIsOpen(false);
