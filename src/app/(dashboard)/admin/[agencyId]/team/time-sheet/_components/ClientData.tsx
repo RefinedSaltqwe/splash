@@ -28,13 +28,6 @@ const ClientData: React.FC<ClientDataProps> = ({
   const queryClient = useQueryClient();
 
   const agencyId = useCurrentUserStore((state) => state.agencyId);
-  const dateTimeLocalNow = new Date(
-    new Date().getTime() - new Date().getTimezoneOffset() * 60_000,
-  )
-    .toISOString()
-    .slice(0, 16);
-
-  console.log("Date Now: ", dateTimeLocalNow);
   const [timesheets, setTimesheets] = useState<TimesheetWithInputTimes[]>([]);
   const [isContentHidden, setIsContentHidden] = useState<string[]>([]);
 
@@ -96,12 +89,14 @@ const ClientData: React.FC<ClientDataProps> = ({
       },
     });
 
+  console.log(getFirstAndLastDatesNextWeek(1).toString());
+
   useEffect(() => {
     if (timesheetsData.length === 0) {
       const time = setTimeout(() => {
         void executeCreateTimesheet({
-          dateFr: getFirstAndLastDatesNextWeek(1), // get the next week from lastest timesheet dateTo instead
-          dateTo: getFirstAndLastDatesNextWeek(7),
+          dateFr: getFirstAndLastDatesNextWeek(1).toString(), // get the next week from lastest timesheet dateTo instead
+          dateTo: getFirstAndLastDatesNextWeek(7).toString(),
           agencyId: agencyId!,
         });
       }, 1000);

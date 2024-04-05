@@ -1,7 +1,7 @@
 "use client";
 import GlobalModal from "@/components/drawer/GlobalModal";
 import React, { useState } from "react";
-import SendInvitationComponent from "../create/_components/SendInvitation";
+import SendInvitationComponent from "./SendInvitation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
@@ -18,7 +18,7 @@ const SendInvitationButton: React.FC<SendInvitationButtonProps> = ({
       <Button variant={"default"} onClick={() => setIsOpen(true)}>
         <span className="sr-only">Link Button </span>
         <Plus size={16} className="mr-2" />
-        Invite User
+        Invite user
       </Button>
       <GlobalModal
         isOpen={isOpen}

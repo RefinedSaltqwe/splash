@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CreateTimesheet = z.object({
-  dateFr: z.date(),
-  dateTo: z.date(),
+  dateFr: z.string(),
+  dateTo: z.string(),
   agencyId: z.string(),
 });

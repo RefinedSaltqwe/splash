@@ -23,7 +23,7 @@ type GlobalModalProps = {
   children: React.ReactNode;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  title: string;
+  title?: string;
   description?: string;
   withInput?: boolean;
 };

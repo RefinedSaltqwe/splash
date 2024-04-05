@@ -7,6 +7,7 @@ export const UpdateEmployee = z.object({
   phoneNumber: z.string(),
   street: z.string().min(3, { message: "Street is required" }),
   country: z.string(),
+  // status: z.string(),
   city: z.string().min(3, { message: "City is required" }),
   state: z.string().min(3, { message: "State is required" }),
   postalCode: z.string().min(3, { message: "Postal code is required" }),

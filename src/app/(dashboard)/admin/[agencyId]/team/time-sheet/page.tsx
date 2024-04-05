@@ -24,16 +24,18 @@ const TimeSheetPage: React.FC<TimeSheetPagePops> = async ({ params }) => {
           title={
             timesheetsData?.length === 0 ? "Loading..." : "Enter Time Sheet"
           }
-          subTitle={`Time In/Time Out for ${
+          subTitle={`Time In/Time Out: ${
             timesheetsData
               ? formatDateTime(
-                  timesheetsData[0]?.dateFr ?? getFirstAndLastDatesNextWeek(1),
+                  timesheetsData[0]?.dateFr ??
+                    getFirstAndLastDatesNextWeek(1).toString(),
                 ).dateOnly
               : ""
           } to ${
             timesheetsData
               ? formatDateTime(
-                  timesheetsData[0]?.dateTo ?? getFirstAndLastDatesNextWeek(7),
+                  timesheetsData[0]?.dateTo ??
+                    getFirstAndLastDatesNextWeek(7).toString(),
                 ).dateOnly
               : ""
           }`}

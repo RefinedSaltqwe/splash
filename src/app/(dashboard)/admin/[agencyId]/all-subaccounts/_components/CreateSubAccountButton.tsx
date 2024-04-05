@@ -2,6 +2,7 @@
 "use client";
 import SubAccountDrawer from "@/components/drawer/SubaccountDrawer";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useSubaccountModal } from "@/stores/useSubaccountModal";
 import {
   type Agency,
@@ -9,8 +10,6 @@ import {
   type SubAccount,
   type User,
 } from "@prisma/client";
-import { PlusCircleIcon } from "lucide-react";
-import { twMerge } from "tailwind-merge";
 import SubAccountRegistrationForm from "../../_components/form/SubAccountRegistrationForm";
 
 type Props = {
@@ -26,7 +25,7 @@ type Props = {
       | null;
   };
   id?: string;
-  className: string;
+  className?: string;
 };
 
 const CreateSubaccountButton = ({ className, id, user }: Props) => {
@@ -37,14 +36,13 @@ const CreateSubaccountButton = ({ className, id, user }: Props) => {
   if (!agencyDetails) return;
 
   return (
-    <>
+    <div className="flex w-full">
       <Button
-        className={twMerge("flex w-full gap-4", className)}
+        className={cn("flex w-full", className)}
         onClick={() => {
           subaccountModal.onCreate();
         }}
       >
-        <PlusCircleIcon size={15} />
         Create Sub Account
       </Button>
       <SubAccountDrawer>
@@ -54,7 +52,7 @@ const CreateSubaccountButton = ({ className, id, user }: Props) => {
           userName={user.name}
         />
       </SubAccountDrawer>
-    </>
+    </div>
   );
 };
 

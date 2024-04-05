@@ -666,8 +666,8 @@ model Invoice {
 
 model Timesheet {
     id              String @id @default(cuid())
-    dateFr          DateTime
-    dateTo          DateTime
+    dateFr          String
+    dateTo          String
     status          String @default("draft") //Draft or Submit
 
     userId          String 

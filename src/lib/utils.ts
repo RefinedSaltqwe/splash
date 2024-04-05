@@ -246,8 +246,16 @@ export async function getData(): Promise<User[]> {
 }
 
 export const getFirstAndLastDatesNextWeek = (dayOfWeek: number) => {
-  const curr = new Date();
+  const dateTimeLocalNow = new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60_000,
+  )
+    .toISOString()
+    .slice(0, 16);
+
+  const curr = new Date(dateTimeLocalNow);
   // today's date eg. 2024-02-13(Tue) => 13 + 7 = 2024-02-20(Tue) => 20-2(Tue is 2nd Day of the week) = 2024-02-18(Sun) start day of the week
+
+  //13 + 7 = 2024-02-20(Tue)
   const firstDayOfNextWeek = curr.getDate() + 7 - curr.getDay();
   const specificDate = firstDayOfNextWeek + (dayOfWeek - 1);
   const date: Date = new Date(curr.setDate(specificDate));

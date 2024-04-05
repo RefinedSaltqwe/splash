@@ -60,6 +60,12 @@ const PricingCard = ({
   });
 
   useEffect(() => {
+    if (!isOpen && !planExists) {
+      setIsLoading(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const channel = pusher.subscribe(`upsert-subscription-${agencyId}`);
     channel.bind("upsert", function (data: Subscription) {
       if (data) {

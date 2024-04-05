@@ -78,8 +78,8 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
   const form = useForm<z.infer<typeof CreateTimesheet>>({
     resolver: zodResolver(CreateTimesheet),
     defaultValues: {
-      dateFr: getFirstAndLastDatesNextWeek(1), // get the next week from lastest timesheet dateTo instead
-      dateTo: getFirstAndLastDatesNextWeek(7),
+      dateFr: getFirstAndLastDatesNextWeek(1).toString(), // get the next week from lastest timesheet dateTo instead
+      dateTo: getFirstAndLastDatesNextWeek(7).toString(),
       agencyId: agencyId!,
     },
   });

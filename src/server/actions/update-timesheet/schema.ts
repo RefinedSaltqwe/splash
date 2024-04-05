@@ -13,8 +13,8 @@ export const UpdateTimesheets = z.object({
         id: z.string(),
         status: z.string(),
         userId: z.string(),
-        dateFr: z.date(),
-        dateTo: z.date(),
+        dateFr: z.string(),
+        dateTo: z.string(),
         agencyId: z.string(),
         timeIn: z
           .object({

@@ -40,9 +40,9 @@ const TimeSheetTable = ({
 
   const dateFr = stagnantTimesheet!.dateFr;
   const dateSplitter = (num: number) => {
-    return formatDateTime(getDayWithSpecificDate(num, dateFr)).dateTime.split(
-      ",",
-    );
+    return formatDateTime(
+      getDayWithSpecificDate(num, new Date(dateFr)),
+    ).dateTime.split(",");
   };
   const onSetTimesheets = useCallback(
     (timesheetId: string, newTimesheet: TimesheetWithInputTimes) => {
@@ -113,7 +113,7 @@ const TimeSheetTable = ({
                       onSetTimesheets={onSetTimesheets}
                       field={day}
                       rowKey={rowKey}
-                      theDate={getDayWithSpecificDate(num, dateFr)}
+                      theDate={getDayWithSpecificDate(num, new Date(dateFr))}
                     />
                   </TableCell>
                 );

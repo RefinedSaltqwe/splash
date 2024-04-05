@@ -76,7 +76,7 @@ const SendInvitationComponent: React.FC<SendInvitationComponentProps> = ({
           className="flex w-full flex-col gap-6"
         >
           <div className="space-y-12">
-            <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-slate-200 pb-5 dark:border-slate-700">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10">
               <div className="col-span-1 grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-full">
                   <div className="mt-2">

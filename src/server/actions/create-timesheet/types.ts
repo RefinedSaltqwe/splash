@@ -5,5 +5,5 @@ import { type CreateTimesheet } from "./schema";
 export type InputType = z.infer<typeof CreateTimesheet>;
 export type ReturnType = ActionState<
   InputType,
-  { count: number; dateFr: Date; dateTo: Date }
+  { count: number; dateFr: string; dateTo: string }
 >;

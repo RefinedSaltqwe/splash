@@ -692,9 +692,6 @@ export const getLatestTimeSheets = cache(
             id: agencyId,
           },
         },
-        orderBy: {
-          dateFr: "desc",
-        },
       });
       const timesheets = await db.timesheet.findMany({
         where: {
@@ -717,6 +714,7 @@ export const getLatestTimeSheets = cache(
           timeTotal: true,
         },
       });
+      console.log(timesheets);
       return timesheets;
     } catch (error) {
       if (
