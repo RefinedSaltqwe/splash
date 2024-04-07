@@ -42,6 +42,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     if (getUsers) {
       const constructedDataForTimesheet: {
         id: string;
+        groupId: string;
         userId: string;
         dateFr: string;
         dateTo: string;
@@ -52,11 +53,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       const date = dateFr.split(" ");
 
       getUsers.forEach((user) => {
-        const generatedId = `${user.id}?${date[1]}?${date[2]}?${date[3]}`;
-
+        const generatedId = `${user.id}${date[1]}${date[2]}${date[3]}`;
+        const groupId = `ts_${date[1]}${date[2]}${date[3]}`;
         constructedDataForTimesheet.push({
           id: generatedId,
           userId: user.id,
+          groupId,
           dateFr,
           dateTo,
           agencyId,

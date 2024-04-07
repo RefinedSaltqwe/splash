@@ -6,10 +6,14 @@ import React from "react";
 import { columns } from "./Columns";
 import { DataTable } from "./DataTable";
 
-const SupplierList: React.FC = () => {
+type SupplierListProps = {
+  agencyId: string;
+};
+
+const SupplierList: React.FC<SupplierListProps> = ({ agencyId }) => {
   const { data: supplierData } = useQuery({
-    queryFn: () => getSuppliers(),
-    queryKey: ["suppliers"],
+    queryFn: () => getSuppliers(agencyId),
+    queryKey: ["suppliers", agencyId],
   });
   if (!supplierData) {
     return <div>Loading...</div>;

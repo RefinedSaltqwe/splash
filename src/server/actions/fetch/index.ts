@@ -1,17 +1,17 @@
 "use server";
 import {
-  FunnelsWithFunnelPages,
   type AgencyWithSubAccounts,
+  type FunnelsWithFunnelPages,
+  type FunnelsWithFunnelPagesNoNull,
   type GetAllUsersInAgency,
   type GetAuthUserDetails,
-  type GetLanesWithTicketAndTags,
   type GetMediaFromSubAccount,
   type GetTagsForSubaccount,
+  type InventoryListBySubaccountIdAndSupplierMaterialsUsed,
   type InvoiceWithService,
   type PipelineWithLanesAndTickets,
+  type SubAccountWithContacts,
   type TimesheetWithInputTimes,
-  FunnelsWithFunnelPagesNoNull,
-  SubAccountWithContacts,
 } from "@/types/prisma";
 import {
   type LaneDetail,
@@ -21,6 +21,7 @@ import { currentUser } from "@clerk/nextjs";
 import {
   Prisma,
   type AuthorizedEmail,
+  type Contact,
   type Customer,
   type Invoice,
   type Pipeline,
@@ -30,7 +31,6 @@ import {
   type TwoFactorToken,
   type User,
   type VerificationToken,
-  type Contact,
 } from "@prisma/client";
 import { cache } from "react";
 import { db } from "../../db";
@@ -259,6 +259,38 @@ export const getServiceTypes = cache(
         orderBy: { name: "asc" },
       });
       return [...services];
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientInitializationError ||
+        error instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        throw new Error(
+          "System error. There is an error fetching service types.",
+        );
+      }
+      throw error;
+    }
+  },
+);
+
+export const getInventoryListBySubaccountId = cache(
+  async (
+    subaccountId: string,
+  ): Promise<
+    InventoryListBySubaccountIdAndSupplierMaterialsUsed[] | undefined
+  > => {
+    try {
+      const items = await db.inventory.findMany({
+        where: {
+          subaccountId,
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+          Supplier: true,
+          MaterialsUsed: true,
+        },
+      });
+      return [...items];
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientInitializationError ||
@@ -650,7 +682,6 @@ export const getUserById = cache(
 
 export const getTimesheets = cache(
   async (agencyId: string): Promise<TimesheetWithInputTimes[] | undefined> => {
-    //! WIP: Only get this week's timesheet
     try {
       const timesheets = await db.timesheet.findMany({
         where: {
@@ -658,7 +689,7 @@ export const getTimesheets = cache(
             id: agencyId,
           },
         },
-        orderBy: { id: "asc" },
+        orderBy: { dateCreated: "asc" },
         include: {
           timeIn: true,
           timeOut: true,
@@ -682,30 +713,26 @@ export const getTimesheets = cache(
   },
 );
 
-export const getLatestTimeSheets = cache(
-  async (agencyId: string): Promise<TimesheetWithInputTimes[] | undefined> => {
+export const getTimesheetsByGroupId = cache(
+  async (
+    agencyId: string,
+    groupId: string,
+  ): Promise<TimesheetWithInputTimes[] | undefined> => {
     //! WIP: Only get this week's timesheet
     try {
-      const getLatestTimesheet = await db.timesheet.findFirst({
-        where: {
-          Agency: {
-            id: agencyId,
-          },
-        },
-      });
       const timesheets = await db.timesheet.findMany({
         where: {
           Agency: {
             id: agencyId,
           },
+          groupId,
           user: {
             role: {
               not: "AGENCY_OWNER",
             },
           },
-          dateFr: getLatestTimesheet?.dateFr,
         },
-        orderBy: { id: "asc" },
+        orderBy: { dateCreated: "asc" },
         include: {
           timeIn: true,
           timeOut: true,
@@ -714,7 +741,11 @@ export const getLatestTimeSheets = cache(
           timeTotal: true,
         },
       });
-      console.log(timesheets);
+
+      if (!timesheets) {
+        throw new Error("Failed to fetch timesheets");
+      }
+
       return timesheets;
     } catch (error) {
       if (

@@ -1,3 +1,4 @@
+import { type InventoryListBySubaccountIdAndSupplierMaterialsUsed } from "@/types/prisma";
 import { type PricesList, type TicketWithTags } from "@/types/stripe";
 import {
   type Agency,
@@ -29,6 +30,7 @@ type CurrentUserStore = {
   userData?: User | undefined;
   agencyData?: Agency | undefined;
   ticketData?: TicketWithTags[0] | undefined;
+  inventoryItemData: InventoryListBySubaccountIdAndSupplierMaterialsUsed[] | [];
   contactData?: Contact | undefined;
   plansData?:
     | {
@@ -39,6 +41,13 @@ type CurrentUserStore = {
   setUserData: (user: User | undefined) => void;
   setAgencyData: (agency: Agency | undefined) => void;
   setTicketData: (ticket: TicketWithTags[0] | undefined) => void;
+  setInventoryItemData: (
+    item: InventoryListBySubaccountIdAndSupplierMaterialsUsed,
+    type: "create" | "update",
+  ) => void;
+  setInventoryItemsData: (
+    item: InventoryListBySubaccountIdAndSupplierMaterialsUsed[],
+  ) => void;
   setContactData: (contact: Contact | undefined) => void;
   setPlansData: (
     defaultPriceId: Plan | null,
@@ -66,6 +75,7 @@ export const useCurrentUserStore = create<CurrentUserStore>((set) => ({
   userData: undefined,
   agencyData: undefined,
   ticketData: undefined,
+  inventoryItemData: [],
   contactData: undefined,
   plansData: {
     defaultPriceId: "price_1OsvDQHWcDxTr9jhU2PS17jJ",
@@ -82,6 +92,24 @@ export const useCurrentUserStore = create<CurrentUserStore>((set) => ({
   setTicketData: (ticket: TicketWithTags[0] | undefined) =>
     set(() => ({
       ticketData: ticket,
+    })),
+  setInventoryItemData: (
+    item1: InventoryListBySubaccountIdAndSupplierMaterialsUsed,
+    type: "create" | "update",
+  ) =>
+    set((state) => ({
+      inventoryItemData:
+        type === "update"
+          ? state.inventoryItemData.map((item2) =>
+              item2.id === item1.id ? item1 : item2,
+            )
+          : [item1, ...state.inventoryItemData],
+    })),
+  setInventoryItemsData: (
+    items: InventoryListBySubaccountIdAndSupplierMaterialsUsed[],
+  ) =>
+    set(() => ({
+      inventoryItemData: items,
     })),
   setContactData: (contact: Contact | undefined) =>
     set(() => ({

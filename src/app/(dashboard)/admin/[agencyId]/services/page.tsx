@@ -19,7 +19,7 @@ const ServicePage: React.FC<ServicePageProps> = async ({ params }) => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryFn: () => getServiceTypes(params.agencyId),
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", params.agencyId],
   });
 
   return (

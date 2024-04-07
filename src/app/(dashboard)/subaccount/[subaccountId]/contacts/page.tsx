@@ -21,7 +21,7 @@ const ContactPage = async ({ params }: ContactPageProps) => {
   return (
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
-        <Heading title="Services" subTitle="Services list" />
+        <Heading title="Contacts" />
         <CreateContactButton subaccountId={params.subaccountId} />
       </div>
       <HydrationBoundary state={dehydrate(queryClient)}>

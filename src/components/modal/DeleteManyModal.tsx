@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
   getCustomers,
+  getInventoryListBySubaccountId,
   getServiceTypes,
   getSuppliers,
 } from "@/server/actions/fetch";
@@ -33,6 +34,7 @@ const DeleteInvoicePrompt: React.FC = () => {
   const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const modalType = useDeleteManyModal((state) => state.type);
   const agencyId = useCurrentUserStore((state) => state.agencyId);
+  const subaccountId = useCurrentUserStore((state) => state.subaccountId);
   const [notConfirm, setNotConfirm] = useState<boolean>(true);
 
   const { data: serviceTypes } = useQuery({
@@ -40,15 +42,23 @@ const DeleteInvoicePrompt: React.FC = () => {
     queryFn: () => getServiceTypes(agencyId ?? ""),
     enabled: modalType === "serviceType",
   });
+
   const { data: customers } = useQuery({
     queryKey: ["customers"],
     queryFn: () => getCustomers(agencyId ?? ""),
     enabled: modalType === "customer",
   });
+
   const { data: suppliers } = useQuery({
     queryKey: ["suppliers"],
     queryFn: () => getSuppliers(agencyId ?? ""),
     enabled: modalType === "supplier",
+  });
+
+  const { data: inventory } = useQuery({
+    queryKey: ["inventory"],
+    queryFn: () => getInventoryListBySubaccountId(subaccountId ?? ""),
+    enabled: modalType === "inventory",
   });
 
   useEffect(() => {
@@ -97,6 +107,9 @@ const DeleteInvoicePrompt: React.FC = () => {
                   ? name[0]!.companyName
                   : name[0]!.name
                 : item;
+            } else if (modalType === "inventory") {
+              const name = inventory?.filter((i) => i.id === item);
+              finalName = name ? name[0]!.name : item;
             }
             return (
               <Badge key={item} variant={"outline"}>

@@ -44,12 +44,22 @@ import { type TicketWithTags } from "@/types/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Contact, type Tag } from "@prisma/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckIcon, ChevronsUpDownIcon, User2 } from "lucide-react";
+import {
+  CalendarIcon,
+  CheckIcon,
+  ChevronsUpDownIcon,
+  Flame,
+  User2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
 import TagCreator from "../TagCreator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { addDays, format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import GlobalModal from "@/components/drawer/GlobalModal";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -67,6 +77,7 @@ const TicketForm = ({
   pipelineId,
 }: Props) => {
   const ticketData = useCurrentUserStore((state) => state.ticketData);
+  const setTicketData = useCurrentUserStore((state) => state.setTicketData);
   const { data: allTeamMembers } = useQuery({
     queryKey: ["SubAccountTeamMembers", subaccountId],
     queryFn: () => getSubAccountTeamMembers(subaccountId),
@@ -77,20 +88,32 @@ const TicketForm = ({
   });
 
   const [tags, setTags] = useState<Tag[]>([]);
-  const [contact, setContact] = useState("");
+  const [contact, setContact] = useState<string>(ticketData?.customerId ?? "");
+  const [isPriority, setIsPriority] = useState<boolean>(
+    ticketData?.priority ?? false,
+  );
+  const [isDeadLine, setIsDeadline] = useState<boolean>(false);
   const [contactList, setContactList] = useState<Contact[]>([]);
-  const [assignedTo, setAssignedTo] = useState(ticketData?.Assigned?.id ?? "");
+  const [assignedTo, setAssignedTo] = useState<string>(
+    ticketData?.assignedUserId ?? "",
+  );
+  const [dueDate, setDueDate] = useState<Date | null>(
+    ticketData?.deadline ?? null,
+  );
+
   const queryClient = useQueryClient();
 
   const defaultValue = {
     subAccountId: subaccountId,
     laneId,
+    priority: isPriority,
+    deadline: dueDate,
     ticketId: ticketData?.id,
-    assignedUserId: assignedTo,
+    assignedUserId: assignedTo === "" ? null : assignedTo,
+    customerId: contact === "" ? null : contact,
     description: ticketData?.description ?? "",
     name: ticketData?.name ?? "",
     value: String(ticketData?.value ?? 0),
-    customerId: contact,
     tags,
   };
 
@@ -99,11 +122,11 @@ const TicketForm = ({
     defaultValues: defaultValue,
   });
 
-  const { execute: executeCreateTicket, isLoading } = useAction(upsertTicket, {
+  const { execute: executeUpsertTicket, isLoading } = useAction(upsertTicket, {
     onSuccess: (data) => {
       if (data) {
+        let count = 0;
         setTicketList((prev) => {
-          let count = 0;
           const newTickets = prev.map((prev) => {
             // If data is an update
             if (prev.id === data.id) {
@@ -112,16 +135,24 @@ const TicketForm = ({
             }
             return prev;
           });
-          // If mew data
+          // If new data
           if (count === 0) {
             newTickets.push(data);
           }
 
           return newTickets;
         });
-        toast.success("Success", {
-          description: "New ticket added.",
-        });
+
+        if (count === 0) {
+          toast.success("Success", {
+            description: "New ticket added.",
+          });
+        } else {
+          toast.success("Success", {
+            description: "Ticket updated.",
+          });
+        }
+
         void queryClient.invalidateQueries({
           queryKey: ["lanes", pipelineId],
         });
@@ -135,6 +166,7 @@ const TicketForm = ({
       setTags([]);
       setContact("");
       setAssignedTo("");
+      setTicketData(undefined);
     },
   });
 
@@ -145,27 +177,23 @@ const TicketForm = ({
   useEffect(() => {
     if (ticketData) {
       form.reset(defaultValue);
-      if (ticketData.customerId) setContact(ticketData.customerId);
-
-      setContactList(contactListData ?? []);
+      if (ticketData.customerId) {
+        setContact(ticketData.customerId);
+        setAssignedTo(ticketData.assignedUserId ?? "");
+        setContactList(contactListData ?? []);
+      }
     }
   }, [ticketData]);
 
   const onSubmit = async (values: z.infer<typeof UpsertTicket>) => {
     if (!laneId) return;
-    if (assignedTo.length < 3) {
-      toast.error("Assigned user is required");
-      return;
-    }
-    if (contact.length < 3) {
-      toast.error("Customer is required");
-      return;
-    }
-    void executeCreateTicket({
+    void executeUpsertTicket({
       ...values,
-      assignedUserId: assignedTo,
-      customerId: contact,
+      assignedUserId: assignedTo === "" ? null : assignedTo,
+      customerId: contact === "" ? null : contact,
       tags,
+      deadline: dueDate,
+      priority: isPriority,
     });
   };
 
@@ -180,7 +208,7 @@ const TicketForm = ({
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel
                   htmlFor="name"
                   className="block text-sm font-medium leading-6 text-foreground"
@@ -188,17 +216,44 @@ const TicketForm = ({
                   Ticket name
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    type="text"
-                    id="name"
-                    autoComplete="ticket-name"
-                    {...field}
+                  <div
                     className={cn(
-                      "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
-                      "splash-base-input splash-inputs",
+                      "flex w-full justify-between rounded-md py-0.5 shadow-sm ring-offset-card",
+                      "splash-inputs-within splash-base-input",
                     )}
-                    placeholder="Ticket name"
-                  />
+                  >
+                    <Input
+                      type="text"
+                      id="name"
+                      {...field}
+                      className="block flex-1 border-0 bg-transparent py-2 pl-3 font-normal text-foreground placeholder:text-gray-400 focus:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 sm:text-sm sm:leading-6 dark:placeholder:text-gray-600"
+                      placeholder="Project or Task"
+                    />
+                    <div className="flex items-center space-x-2 pr-3">
+                      <Checkbox
+                        id="terms"
+                        checked={isPriority}
+                        onCheckedChange={(value) => {
+                          setIsPriority(!!value);
+                        }}
+                      />
+                      <label
+                        htmlFor="terms"
+                        className="text-muret-foreground text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        <span className="flex flex-row items-center justify-center">
+                          <span>Priority</span>
+                          <Flame
+                            size={20}
+                            className={cn(
+                              "ml-2 text-muted-foreground",
+                              isPriority && "text-orange-500",
+                            )}
+                          />
+                        </span>
+                      </label>
+                    </div>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -263,128 +318,255 @@ const TicketForm = ({
               </FormItem>
             )}
           />
-          <Label className="block text-sm font-medium leading-6 text-foreground">
-            Add tags
-          </Label>
-          <TagCreator
-            pipelineId={pipelineId}
-            subAccountId={subaccountId}
-            getSelectedTags={setTags}
-            defaultTags={ticketData?.Tags ?? []}
-          />
-          <FormLabel
-            htmlFor="country"
-            className="block text-sm font-medium leading-6 text-foreground"
-          >
-            Assigned To Team Member
-          </FormLabel>
-          <Select onValueChange={setAssignedTo} defaultValue={assignedTo}>
-            <SelectTrigger
-              className={cn(
-                "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
-                "splash-base-input splash-inputs",
-              )}
+          <div className="flex flex-col gap-2">
+            <Label className="block text-sm font-medium leading-6 text-foreground">
+              Add tags
+            </Label>
+            <TagCreator
+              pipelineId={pipelineId}
+              subAccountId={subaccountId}
+              getSelectedTags={setTags}
+              defaultTags={ticketData?.Tags ?? []}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label
+              htmlFor="deadline"
+              className="block text-sm font-medium leading-6 text-foreground"
             >
-              <SelectValue
-                placeholder={
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage alt="contact" />
-                      <AvatarFallback className="bg-primary text-sm text-white">
-                        <User2 size={14} />
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <span className="text-sm text-muted-foreground">
-                      Not Assigned
-                    </span>
-                  </div>
-                }
-              />
-            </SelectTrigger>
-            <SelectContent className="bg-drop-downmenu" role="dialog">
-              {allTeamMembers?.map((teamMember) => (
-                <SelectItem
-                  key={teamMember.id}
-                  value={teamMember.id}
-                  role="menuitem"
-                >
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage alt="contact" src={teamMember.image} />
-                      <AvatarFallback className="bg-primary text-sm text-white">
-                        <User2 size={14} />
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <span className="text-sm text-muted-foreground">
-                      {teamMember.name}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FormLabel>Customer</FormLabel>
-          <Popover>
-            <PopoverTrigger
-              asChild
-              className={cn(
-                "w-full font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
-                "splash-base-input splash-inputs",
-              )}
-            >
+              Deadline
+            </Label>
+            <div className="flex w-full flex-row items-center gap-2">
               <Button
-                variant="outline"
-                role="combobox"
-                className="justify-between"
+                id="deadline"
+                variant={"outline"}
+                onClick={() => setIsDeadline(true)}
+                type="button"
+                asChild
+                className={cn(
+                  "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                  "splash-base-input splash-inputs",
+                )}
               >
-                {contact
-                  ? contactList.find((c) => c.id === contact)?.name
-                  : "Select Customer..."}
-                <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <Button
+                  variant={"outline"}
+                  type="button"
+                  className={cn(
+                    "w-full pl-3 text-left font-normal",
+                    !dueDate && "text-muted-foreground",
+                  )}
+                >
+                  {dueDate ? format(dueDate, "PPP") : <span>Pick a date</span>}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
               </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              className={cn(
-                "w-[400px] border-[1px] border-slate-200 bg-card p-0 font-normal placeholder:text-gray-400 dark:border-slate-700 dark:placeholder:text-gray-600",
-              )}
+              <span
+                className="text-red-500 hover:cursor-pointer hover:underline"
+                onClick={() => setDueDate(null)}
+              >
+                Clear
+              </span>
+            </div>
+
+            <GlobalModal
+              isOpen={isDeadLine}
+              setIsOpen={setIsDeadline}
+              className="w-auto"
             >
-              <Command>
-                <CommandInput placeholder="Search..." className="h-9" />
-                <CommandList>
-                  <CommandEmpty>No Customer found.</CommandEmpty>
-                  <CommandGroup>
-                    {contactList?.map((c) => {
-                      return (
-                        <CommandItem
-                          key={`${c.name}-${c.id}`}
-                          value={`${c.name}-${c.id}`}
-                          onSelect={(currentValue) => {
-                            const currentValueSplit =
-                              currentValue.split("-")[1] ?? "";
-                            setContact(
-                              currentValueSplit === contact
-                                ? ""
-                                : currentValueSplit,
-                            );
-                          }}
-                        >
-                          <span>{c.name}</span>
-                          <CheckIcon
-                            className={cn(
-                              "ml-auto h-4 w-4",
-                              contact === c.id ? "opacity-100" : "opacity-0",
-                            )}
-                          />
-                        </CommandItem>
-                      );
-                    })}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+              <Select
+                onValueChange={(value) => {
+                  setDueDate(addDays(new Date(), parseInt(value)));
+                }}
+              >
+                <SelectTrigger
+                  className={cn(
+                    "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                    "splash-base-input splash-inputs",
+                  )}
+                  aria-placeholder="date"
+                >
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent
+                  position="popper"
+                  className={cn(
+                    "border-[1px] border-slate-200 bg-card font-normal placeholder:text-gray-400 dark:border-slate-700 dark:placeholder:text-gray-600",
+                  )}
+                >
+                  <SelectItem
+                    value="0"
+                    className="hover:!bg-muted-foreground/5"
+                  >
+                    Today
+                  </SelectItem>
+                  <SelectItem
+                    value="1"
+                    className="hover:!bg-muted-foreground/5"
+                  >
+                    Tomorrow
+                  </SelectItem>
+                  <SelectItem
+                    value="3"
+                    className="hover:!bg-muted-foreground/5"
+                  >
+                    In 3 days
+                  </SelectItem>
+                  <SelectItem
+                    value="7"
+                    className="hover:!bg-muted-foreground/5"
+                  >
+                    In a week
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Calendar
+                mode="single"
+                selected={dueDate ?? undefined}
+                onSelect={(value) => {
+                  setDueDate(value ?? null);
+                  setIsDeadline(false);
+                }}
+                initialFocus
+              />
+            </GlobalModal>
+          </div>
+          <div className="flex flex-col gap-2">
+            <FormLabel
+              htmlFor="country"
+              className="block text-sm font-medium leading-6 text-foreground"
+            >
+              Assigned To Team Member
+            </FormLabel>
+            <div className="flex w-full flex-row items-center gap-2">
+              <Select onValueChange={setAssignedTo} value={assignedTo}>
+                <SelectTrigger
+                  className={cn(
+                    "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                    "splash-base-input splash-inputs",
+                  )}
+                >
+                  <SelectValue
+                    placeholder={
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage alt="contact" />
+                          <AvatarFallback className="bg-primary text-sm text-white">
+                            <User2 size={14} />
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <span className="text-sm text-muted-foreground">
+                          Not Assigned
+                        </span>
+                      </div>
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent className="bg-drop-downmenu" role="dialog">
+                  {allTeamMembers?.map((teamMember) => (
+                    <SelectItem
+                      key={teamMember.id}
+                      value={teamMember.id}
+                      role="menuitem"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage alt="contact" src={teamMember.image} />
+                          <AvatarFallback className="bg-primary text-sm text-white">
+                            <User2 size={14} />
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <span className="text-sm text-muted-foreground">
+                          {teamMember.name}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span
+                className="text-red-500 hover:cursor-pointer hover:underline"
+                onClick={() => setAssignedTo("")}
+              >
+                Clear
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <FormLabel>Customer</FormLabel>
+            <div className="flex w-full flex-row items-center gap-2">
+              <Popover>
+                <PopoverTrigger
+                  asChild
+                  className={cn(
+                    "w-full font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
+                    "splash-base-input splash-inputs",
+                  )}
+                >
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="justify-between"
+                  >
+                    {contact
+                      ? contactList.find((c) => c.id === contact)?.name
+                      : "Select Customer..."}
+                    <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className={cn(
+                    "w-[400px] border-[1px] border-slate-200 bg-card p-0 font-normal placeholder:text-gray-400 dark:border-slate-700 dark:placeholder:text-gray-600",
+                  )}
+                >
+                  <Command>
+                    <CommandInput placeholder="Search..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No Customer found.</CommandEmpty>
+                      <CommandGroup>
+                        {contactList?.map((c) => {
+                          return (
+                            <CommandItem
+                              key={`${c.name}-${c.id}`}
+                              value={`${c.name}=${c.id}`}
+                              onSelect={(currentValue) => {
+                                console.log(currentValue);
+                                const currentValueSplit =
+                                  currentValue.split("=")[1] ?? "";
+                                setContact(
+                                  currentValueSplit === contact
+                                    ? ""
+                                    : currentValueSplit,
+                                );
+                              }}
+                            >
+                              <span>{c.name}</span>
+                              <CheckIcon
+                                className={cn(
+                                  "ml-auto h-4 w-4",
+                                  contact === c.id
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <span
+                className="text-red-500 hover:cursor-pointer hover:underline"
+                onClick={() => setContact("")}
+              >
+                Clear
+              </span>
+            </div>
+          </div>
+
           <div className="flex w-full flex-row justify-end">
             <Button className="w-full" disabled={isLoading} type="submit">
               {isLoading ? (

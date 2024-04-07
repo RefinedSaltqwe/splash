@@ -19,7 +19,7 @@ const SupplierPage: React.FC<SupplierPageProps> = async ({ params }) => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryFn: () => getSuppliers(params.agencyId),
-    queryKey: ["suppliers"],
+    queryKey: ["suppliers", params.agencyId],
   });
 
   return (
@@ -27,14 +27,14 @@ const SupplierPage: React.FC<SupplierPageProps> = async ({ params }) => {
       <div className="flex items-center justify-between">
         <Heading title="Suppliers" subTitle="Supplier list" />
         <ClientButtonLink
-          buttonName="Create Supplier"
+          buttonName="Create supplier"
           href={`/admin/${params.agencyId}/suppliers/create`}
           variant={"default"}
         />
       </div>
 
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <SupplierList />
+        <SupplierList agencyId={params.agencyId} />
       </HydrationBoundary>
     </section>
   );

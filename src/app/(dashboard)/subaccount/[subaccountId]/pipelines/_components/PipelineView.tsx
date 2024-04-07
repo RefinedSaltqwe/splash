@@ -44,7 +44,7 @@ const PipelineView = ({ pipelineDetails, pipelineId, subaccountId }: Props) => {
           <div className="flex items-center justify-between">
             <Heading
               title={pipelineDetails?.name ?? ""}
-              subTitle="Kanban board"
+              subTitle="Projects and Tasks"
             />
             <Button
               className="flex items-center gap-4"

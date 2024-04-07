@@ -40,7 +40,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/suppliers/update/${id}`);
+  revalidatePath(`/admin/${updatedSupplier?.agencyId}/suppliers`, "page");
   return { data: updatedSupplier };
 };
 

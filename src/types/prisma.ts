@@ -1,4 +1,7 @@
 import {
+  type Inventory,
+  type MaterialsUsed,
+  type Supplier,
   type Agency,
   type AgencySidebarOption,
   type BreakIn,
@@ -154,4 +157,10 @@ export type GetTagsForSubaccount = {
 //============================SubAccountWithContacts
 export type SubAccountWithContacts = SubAccount & {
   Contact: (Contact & { Ticket: Ticket[] })[];
+};
+
+//============================InventoryListBySubaccountIdAndSupplierMaterialsUsed
+export type InventoryListBySubaccountIdAndSupplierMaterialsUsed = Inventory & {
+  Supplier: Supplier | null;
+  MaterialsUsed: MaterialsUsed[];
 };

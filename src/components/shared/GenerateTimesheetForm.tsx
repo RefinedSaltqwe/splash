@@ -33,11 +33,11 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
       onSuccess: (data) => {
         if (data.count === 0) {
           toast.error(
-            `Timesheets for ${
+            `Timesheet for ${
               formatDateTime(getFirstAndLastDatesNextWeek(1)).dateOnly
             } to ${
               formatDateTime(getFirstAndLastDatesNextWeek(7)).dateOnly
-            } were already created.`,
+            } has already been created.`,
           );
         } else {
           toast.success(

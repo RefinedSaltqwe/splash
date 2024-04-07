@@ -10,7 +10,6 @@ import Link from "next/link";
 import React from "react";
 import { ModeToggle } from "../themeModeToggle";
 import { Button } from "../ui/button";
-import GenerateTimesheetButton from "./GenerateTimesheetButton";
 import NotificationMenu from "./NotificationMenu";
 
 type HeaderProps = {
@@ -51,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ notifications, role }) => {
         <div className="flex w-full items-center justify-end space-x-2 align-middle md:flex md:w-auto">
           <ModeToggle />
           <NotificationMenu notifications={notifications} role={role} />
-          <GenerateTimesheetButton />
+
           <Button
             className="rounded-full text-foreground"
             variant={"ghost"}

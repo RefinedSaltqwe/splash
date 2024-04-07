@@ -23,6 +23,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     response = await upsertTicketQuery(
       {
         id: ticketId,
+        customerId: rest.customerId === "" ? null : rest.customerId,
+        assignedUserId: rest.assignedUserId === "" ? null : rest.assignedUserId,
         ...rest,
       },
       tags,

@@ -20,7 +20,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useAction } from "@/hooks/useAction";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { deleteLane } from "@/server/actions/delete-lane";
 import { type LaneDetail, type TicketWithTags } from "@/types/stripe";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
@@ -64,11 +64,6 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
   const [ticketList, setTicketList] = useState<TicketWithTags>([]);
 
   const queryClient = useQueryClient();
-
-  const amt = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-  });
 
   const laneAmt = useMemo(() => {
     return tickets.reduce(
@@ -162,7 +157,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                     </div>
                     <div className="flex flex-row items-center gap-2">
                       <Badge className="bg-white text-black ">
-                        {amt.format(laneAmt)}
+                        {formatPrice(String(laneAmt))}
                       </Badge>
                       <DropdownMenuTrigger className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-accent hover:text-accent-foreground">
                         <MoreVertical className="cursor-pointer text-muted-foreground" />

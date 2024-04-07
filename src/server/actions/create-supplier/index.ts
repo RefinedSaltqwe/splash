@@ -25,6 +25,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         address,
         email,
         phoneNumber,
+        agencyId,
       },
     });
   } catch (err: unknown) {
@@ -35,7 +36,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/${agencyId}/suppliers/create`);
+  revalidatePath(`/admin/${agencyId}/suppliers`, "page");
   return { data: newSupplier };
 };
 

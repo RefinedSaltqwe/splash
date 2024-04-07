@@ -31,11 +31,13 @@ import { type z } from "zod";
 interface ContactUserFormProps {
   subaccountId: string;
   modal?: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ContactUserForm: React.FC<ContactUserFormProps> = ({
   subaccountId,
   modal = false,
+  setIsOpen,
 }) => {
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof UpsertContact>>({
@@ -58,6 +60,9 @@ const ContactUserForm: React.FC<ContactUserFormProps> = ({
       },
       onError: (error) => {
         toast.error(error);
+      },
+      onComplete: () => {
+        setIsOpen(false);
       },
     },
   );
@@ -133,7 +138,7 @@ const ContactUserForm: React.FC<ContactUserFormProps> = ({
               {isLoading ? (
                 <Loader classNames="h-4 w-4 border-2 border-white/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
               ) : (
-                "Save Contact Details!"
+                "Save contact details"
               )}
             </Button>
           </form>

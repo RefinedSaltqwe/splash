@@ -31,7 +31,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     });
 
     if (!response) {
-      throw new Error("Error: cpould not save information");
+      throw new Error("Error: could not save information");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {

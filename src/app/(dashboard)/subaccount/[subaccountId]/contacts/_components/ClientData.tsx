@@ -50,7 +50,7 @@ const ClientData: React.FC<ClientDataProps> = ({ subaccountId }) => {
     <Card padding={false}>
       <Table className="pb-6 pt-4">
         <TableHeader>
-          <TableRow>
+          <TableRow className="splash-border-color">
             <TableHead className="w-[200px]">Name</TableHead>
             <TableHead className="w-[300px]">Email</TableHead>
             <TableHead className="w-[200px]">Active</TableHead>

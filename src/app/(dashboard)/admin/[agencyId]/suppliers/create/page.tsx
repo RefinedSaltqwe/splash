@@ -3,14 +3,18 @@ import Heading from "@/components/shared/Heading";
 import React from "react";
 import InputForm from "../_components/InputForm";
 
-type CreateSupplierPageProps = object;
+type CreateSupplierPageProps = {
+  params: {
+    agencyId: string;
+  };
+};
 
-const CreateSupplierPage: React.FC<CreateSupplierPageProps> = () => {
+const CreateSupplierPage: React.FC<CreateSupplierPageProps> = ({ params }) => {
   return (
     <section className="flex w-full flex-col">
       <Heading title="Create" subTitle="Create a new supplier" />
       <Card>
-        <InputForm type="create" />
+        <InputForm type="create" agencyId={params.agencyId} />
       </Card>
     </section>
   );

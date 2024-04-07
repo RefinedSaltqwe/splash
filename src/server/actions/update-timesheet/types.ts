@@ -5,5 +5,5 @@ import { type UpdateTimesheets } from "./schema";
 export type InputType = z.infer<typeof UpdateTimesheets>;
 export type ReturnType = ActionState<
   InputType,
-  { count: number; dateFr: Date; dateTo: Date; status: string }
+  { count: number; dateFr: string; dateTo: string; status: string }
 >;

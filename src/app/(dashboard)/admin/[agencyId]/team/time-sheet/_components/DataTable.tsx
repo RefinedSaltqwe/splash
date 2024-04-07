@@ -28,17 +28,17 @@ import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
 import { deleteService } from "@/server/actions/delete-services";
 import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
-import { type ServiceType } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
+import { type TimesheetWithInputTimes } from "@/types/prisma";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  serviceType: ServiceType[];
+  timesheetWithInputTimes: TimesheetWithInputTimes[];
 }
 
 const extractTableIndex = (data: object) => {
@@ -49,12 +49,15 @@ const extractTableIndex = (data: object) => {
   return keysAsNumbersArray;
 };
 
-const extractRowIds = (rows: number[], users: ServiceType[]) => {
-  const data = users;
+const extractRowIds = (
+  rows: number[],
+  timesheets: TimesheetWithInputTimes[],
+) => {
+  const data = timesheets;
   const extract: string[] = []; // Initialize extract as an empty array
   data.forEach((value, index) => {
     if (rows.includes(index)) {
-      extract.push(value.id);
+      extract.push(value!.groupId);
     }
   });
   return extract;
@@ -63,7 +66,7 @@ const extractRowIds = (rows: number[], users: ServiceType[]) => {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  serviceType,
+  timesheetWithInputTimes,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -97,7 +100,7 @@ export function DataTable<TData, TValue>({
   const isProceed = useDeleteManyModal((state) => state.proceed);
   const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const onClose = useDeleteManyModal((state) => state.onClose);
-  const serviceModal = useDeleteManyModal();
+  const timesheetModal = useDeleteManyModal();
   const queryClient = useQueryClient();
 
   const { execute, isLoading } = useAction(deleteService, {
@@ -110,7 +113,7 @@ export function DataTable<TData, TValue>({
         } been deleted.`,
       );
       void queryClient.invalidateQueries({
-        queryKey: ["serviceTypes"],
+        queryKey: ["TimesheetWithInputTimes"],
       });
     },
     onError: (error) => {
@@ -132,11 +135,11 @@ export function DataTable<TData, TValue>({
     [globalFilterString],
   );
   const deleteSelecetedUsers = () => {
-    const getUsers = extractRowIds(
+    const getTimesheets = extractRowIds(
       extractTableIndex(rowSelection),
-      serviceType,
+      timesheetWithInputTimes,
     );
-    serviceModal.onOpen(getUsers, "serviceType");
+    timesheetModal.onOpen(getTimesheets, "timesheet");
   };
 
   useEffect(() => {

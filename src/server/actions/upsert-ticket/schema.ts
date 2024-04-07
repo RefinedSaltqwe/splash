@@ -2,12 +2,12 @@ import { z } from "zod";
 const currencyNumberRegex = /^\d+(\.\d{1,2})?$/;
 export const UpsertTicket = z.object({
   subAccountId: z.string(),
-  customerId: z.string(),
-  deadline: z.date(),
-  priority: z.boolean(),
+  customerId: z.string().optional().nullable(),
+  deadline: z.date().optional().nullable(),
+  priority: z.boolean().optional(),
   laneId: z.string(),
   ticketId: z.string().optional(),
-  assignedUserId: z.string(),
+  assignedUserId: z.string().optional().nullable(),
   name: z
     .string()
     .min(1, { message: "Name must contain at least 1 character." }),

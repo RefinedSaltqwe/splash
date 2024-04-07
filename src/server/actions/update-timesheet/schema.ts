@@ -12,6 +12,8 @@ export const UpdateTimesheets = z.object({
       .object({
         id: z.string(),
         status: z.string(),
+        groupId: z.string(),
+        dateCreated: z.date(),
         userId: z.string(),
         dateFr: z.string(),
         dateTo: z.string(),

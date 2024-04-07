@@ -251,25 +251,28 @@ model MaterialsUsed {
 }
 
 model Ticket {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   name            String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  deadline        DateTime
-  priority        Boolean @default(false)
-  laneId          String
-  order           Int      @default(0)
-  Lane            Lane     @relation(fields: [laneId], references: [id], onDelete: Cascade)
   value           Decimal?
   description     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deadline        DateTime?
+  priority        Boolean   @default(false)
+  status          String    @default("project")
+  order           Int       @default(0)
+
+  laneId          String
+  Lane            Lane      @relation(fields: [laneId], references: [id], onDelete: Cascade)
+  
   Tags            Tag[]
   MaterialsUsed   MaterialsUsed[]
 
   customerId      String?
-  Customer        Contact? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  Customer        Contact?  @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   assignedUserId  String?
-  Assigned        User?   @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
+  Assigned        User?     @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
 
   @@index([laneId])
   @@index([customerId])
@@ -624,17 +627,17 @@ model Service {
 model Inventory {
     id            String      @id @default(cuid()) 
     name          String
-    cost          Int
+    cost          Float       @default(0)
     quantity      Int
     description   String      @default("")
     createdAt     DateTime    @default(now())
     updatedAt     DateTime    @default(now())
 
     supplierId    String 
-    Supplier      Supplier    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+    Supplier      Supplier?    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
     agencyId      String
-    Agency        Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    Agency        Agency?      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
     subaccountId  String?
     Subaccount    SubAccount? @relation(fields: [subaccountId], references: [id], onDelete: Cascade)
@@ -666,9 +669,11 @@ model Invoice {
 
 model Timesheet {
     id              String @id @default(cuid())
+    groupId         String 
     dateFr          String
     dateTo          String
     status          String @default("draft") //Draft or Submit
+    dateCreated     DateTime @default(now())
 
     userId          String 
     user            User @relation(fields: [userId], references: [id], onDelete: Cascade)

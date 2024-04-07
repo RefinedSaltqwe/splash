@@ -42,6 +42,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     timesheetsOnly.push({
       agencyId: timesheet!.agencyId,
       id: timesheet!.id,
+      groupId: timesheet!.groupId,
+      dateCreated: timesheet!.dateCreated,
       status,
       userId: timesheet!.userId,
       dateFr: timesheet!.dateFr,

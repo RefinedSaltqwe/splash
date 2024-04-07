@@ -85,6 +85,38 @@ export const floatToTwoDecimal = (number: number) => {
   return formattedNumber;
 };
 
+export const calculateCurrentAndFutureDates = (future: Date) => {
+  // Future Date
+  const firstDate: Date = future;
+
+  // Current Date
+  const secondDate: Date = new Date();
+
+  // Time Difference in Milliseconds
+  const milliDiff: number = firstDate.getTime() - secondDate.getTime();
+
+  // Converting time into hh:mm:ss format
+
+  // Total number of seconds in the difference
+  const totalSeconds = Math.floor(milliDiff / 1000);
+
+  // Total number of minutes in the difference
+  const totalMinutes = Math.floor(totalSeconds / 60);
+
+  // Total number of hours in the difference
+  const totalHours = Math.floor(totalMinutes / 60);
+
+  // Getting the number of seconds left in one minute
+  const remSeconds = totalSeconds % 60;
+
+  // Getting the number of minutes left in one hour
+  const remMinutes = totalMinutes % 60;
+
+  return {
+    days: totalHours / 24,
+  };
+};
+
 export const convertInvoiceStatus = (num: string) => {
   let x = "";
   switch (num) {

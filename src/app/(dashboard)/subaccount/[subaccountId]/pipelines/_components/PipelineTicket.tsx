@@ -26,14 +26,28 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useAction } from "@/hooks/useAction";
+import {
+  calculateCurrentAndFutureDates,
+  cn,
+  formatDateTime,
+  formatPrice,
+} from "@/lib/utils";
 import { deleteTicket } from "@/server/actions/delete-ticket";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { type TicketWithTags } from "@/types/stripe";
 import { Draggable } from "@hello-pangea/dnd";
 import { useQueryClient } from "@tanstack/react-query";
-import { Contact2, Edit, MoreHorizontalIcon, Trash, User2 } from "lucide-react";
-import { useState } from "react";
+import {
+  Edit,
+  Flame,
+  Link2Off,
+  MoreHorizontalIcon,
+  Trash,
+  User2,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import ContactDetail from "./ContactDetail";
 import TagComponent from "./TagComponent";
 import TicketForm from "./form/UpsertTicket";
 
@@ -56,8 +70,14 @@ const PipelineTicket = ({
     useState<boolean>(false);
   const [isOpenDeleteTicketModal, setIsOpenDeleteTicketModal] =
     useState<boolean>(false);
+  const [isOpenContact, setIsOpenContact] = useState<boolean>(false);
   const setTicketData = useCurrentUserStore((state) => state.setTicketData);
   const queryClient = useQueryClient();
+  useEffect(() => {
+    if (!isOpenUpdateTicketModal) {
+      setTicketData(undefined);
+    }
+  }, [isOpenUpdateTicketModal]);
 
   const { execute: executeDeleteTicket, isLoading: deletingTicket } = useAction(
     deleteTicket,
@@ -87,6 +107,12 @@ const PipelineTicket = ({
   return (
     <Draggable draggableId={ticket.id.toString()} index={index}>
       {(provided, snapshot) => {
+        let deadlineIn;
+        if (ticket.deadline) {
+          deadlineIn = Math.ceil(
+            calculateCurrentAndFutureDates(ticket.deadline).days,
+          );
+        }
         if (snapshot.isDragging) {
           const offset = { x: 0, y: 20 };
           //@ts-expect-error
@@ -112,7 +138,10 @@ const PipelineTicket = ({
                   <CardTitle className="flex items-center justify-between">
                     <HoverCard>
                       <HoverCardTrigger asChild>
-                        <span className="w-full max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap text-lg">
+                        <span className="flex w-full max-w-[180px] flex-row items-center overflow-hidden text-ellipsis whitespace-nowrap text-lg">
+                          {ticket.priority && (
+                            <Flame size={18} className="mr-2 text-orange-500" />
+                          )}
                           {ticket.name}
                         </span>
                       </HoverCardTrigger>
@@ -128,8 +157,23 @@ const PipelineTicket = ({
                       <MoreHorizontalIcon className="text-muted-foreground" />
                     </DropdownMenuTrigger>
                   </CardTitle>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date().toLocaleDateString()}
+                  <span
+                    className={cn(
+                      "text-xs text-muted-foreground",
+                      deadlineIn && deadlineIn < 2 && "text-red-500",
+                    )}
+                  >
+                    {`Due on: ${
+                      ticket.deadline
+                        ? `${
+                            formatDateTime(new Date(ticket.deadline)).dateOnly
+                          } (${deadlineIn} ${
+                            deadlineIn !== 1 ?? deadlineIn !== -1
+                              ? "days"
+                              : "day"
+                          })`
+                        : "None"
+                    }`}
                   </span>
                   <div className="flex flex-wrap items-center gap-2">
                     {ticket.Tags.map((tag) => (
@@ -144,9 +188,19 @@ const PipelineTicket = ({
                     {ticket.description}
                   </CardDescription>
                   <HoverCard>
-                    <HoverCardTrigger asChild>
+                    <HoverCardTrigger
+                      asChild
+                      onClick={() => setIsOpenContact(true)}
+                    >
                       <div className="flex cursor-pointer items-center gap-2 rounded-lg p-2 text-muted-foreground transition-all hover:bg-muted-foreground/5">
-                        <LinkIcon />
+                        {ticket.customerId ? (
+                          <LinkIcon />
+                        ) : (
+                          <Link2Off
+                            size={18}
+                            className="text-muted-foreground"
+                          />
+                        )}
                         <span className="text-xs font-bold">CONTACT</span>
                       </div>
                     </HoverCardTrigger>
@@ -154,30 +208,23 @@ const PipelineTicket = ({
                       side="right"
                       className="bg-drop-downmenu w-fit"
                     >
-                      <div className="flex justify-between space-x-4">
-                        <Avatar>
-                          <AvatarImage />
-                          <AvatarFallback className="bg-primary text-white">
-                            {ticket.Customer?.name.slice(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-semibold">
-                            {ticket.Customer?.name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {ticket.Customer?.email}
-                          </p>
-                          <div className="flex items-center pt-2">
-                            <Contact2 className="mr-2 h-4 w-4 opacity-70" />
-                            <span className="text-xs text-muted-foreground">
-                              Joined{" "}
-                              {ticket.Customer?.createdAt.toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                      {ticket.Customer?.email ? (
+                        <ContactDetail ticket={ticket} />
+                      ) : (
+                        "Not assigned"
+                      )}
                     </HoverCardContent>
+                    <GlobalModal
+                      isOpen={isOpenContact}
+                      setIsOpen={setIsOpenContact}
+                      className="w-auto"
+                    >
+                      {ticket.Customer?.email ? (
+                        <ContactDetail ticket={ticket} />
+                      ) : (
+                        "Not assigned"
+                      )}
+                    </GlobalModal>
                   </HoverCard>
                 </CardHeader>
                 <CardFooter className="splash-border-color m-0 flex items-center justify-between border-t-[1px] p-2">
@@ -191,7 +238,7 @@ const PipelineTicket = ({
                     </Avatar>
                     <div className="flex flex-col justify-center">
                       <span className="text-sm text-muted-foreground">
-                        {ticket.assignedUserId ? "Assigned to" : "Not Assigned"}
+                        {ticket.assignedUserId ? "Assigned to" : "Not assigned"}
                       </span>
                       {ticket.assignedUserId && (
                         <span className="w-28 overflow-hidden  overflow-ellipsis whitespace-nowrap text-xs text-muted-foreground">
@@ -201,11 +248,7 @@ const PipelineTicket = ({
                     </div>
                   </div>
                   <span className="text-sm font-bold">
-                    {!!ticket.value &&
-                      new Intl.NumberFormat(undefined, {
-                        style: "currency",
-                        currency: "USD",
-                      }).format(+ticket.value)}
+                    {!!ticket.value && formatPrice(String(ticket.value))}
                   </span>
                 </CardFooter>
                 <DropdownMenuContent className="bg-drop-downmenu" role="dialog">

@@ -177,16 +177,16 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
       children: null,
     },
     {
-      name: "Billing",
-      icon: "payment",
-      href: `/admin/${id}/billing`,
+      name: "Sub Accounts",
+      icon: "person",
+      href: `/admin/${id}/all-subaccounts`,
       order: 11,
       children: null,
     },
     {
-      name: "Sub Accounts",
-      icon: "person",
-      href: `/admin/${id}/all-subaccounts`,
+      name: "Billing",
+      icon: "payment",
+      href: `/admin/${id}/billing`,
       order: 12,
       children: null,
     },
@@ -234,6 +234,12 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
       icon: "person" as $Enums.Icon,
       href: `/subaccount/${id}/contacts`,
       order: 7,
+    },
+    {
+      name: "Inventory",
+      icon: "inventory" as $Enums.Icon,
+      href: `/subaccount/${id}/inventory`,
+      order: 8,
     },
   ];
 

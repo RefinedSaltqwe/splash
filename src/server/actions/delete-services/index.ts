@@ -2,7 +2,6 @@
 import { createSafeAction } from "@/lib/create-safe-actions";
 import { db } from "@/server/db";
 import { currentUser } from "@clerk/nextjs";
-import { revalidatePath } from "next/cache";
 import { DeleteService } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
@@ -35,7 +34,6 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  revalidatePath(`/admin/services`);
   return { data: { count: deleteServices.count } };
 };
 

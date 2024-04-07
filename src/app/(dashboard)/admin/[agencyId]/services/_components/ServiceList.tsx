@@ -13,7 +13,7 @@ type ServiceListProps = {
 const ServiceList: React.FC<ServiceListProps> = ({ agencyId }) => {
   const { data: serviceTypeData } = useQuery({
     queryFn: () => getServiceTypes(agencyId),
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", agencyId],
   });
   return (
     <Suspense

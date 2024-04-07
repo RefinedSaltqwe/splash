@@ -71,7 +71,7 @@ export const columns: ColumnDef<Supplier>[] = [
           onClick={() =>
             console.log("Columns.tsx: line 97: ", row.getValue("id"))
           }
-          className="text-right font-medium hover:cursor-pointer hover:underline"
+          className="text-right font-medium text-muted-foreground hover:cursor-pointer hover:underline"
         >
           {data.name}
         </span>
@@ -114,7 +114,7 @@ export const columns: ColumnDef<Supplier>[] = [
     },
     cell: ({ row }) => {
       return (
-        <span className="text-medium text-muted-foreground">
+        <span className="text-medium font-normal text-muted-foreground">
           {row.original.email}
         </span>
       );
@@ -137,7 +137,7 @@ export const columns: ColumnDef<Supplier>[] = [
     },
     cell: ({ row }) => {
       return (
-        <span className="text-medium text-muted-foreground">
+        <span className="text-medium font-normal text-muted-foreground">
           {row.original.phoneNumber}
         </span>
       );
@@ -165,7 +165,7 @@ export const columns: ColumnDef<Supplier>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <Link
-                href={`/admin/suppliers/update/${item.id}`}
+                href={`/admin/${item.agencyId}/suppliers/update/${item.id}`}
                 className="text-left hover:cursor-pointer"
               >
                 <DropdownMenuItem>Edit</DropdownMenuItem>

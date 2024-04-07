@@ -8,6 +8,8 @@ type CustomerModalStore = {
     | "customer"
     | "service"
     | "serviceType"
+    | "timesheet"
+    | "inventory"
     | "none";
   proceed: boolean;
   isOpen: boolean;
@@ -19,6 +21,8 @@ type CustomerModalStore = {
       | "customer"
       | "service"
       | "serviceType"
+      | "timesheet"
+      | "inventory"
       | "none",
   ) => void;
   onIsProceed: (is: boolean) => void;
@@ -38,6 +42,8 @@ export const useDeleteManyModal = create<CustomerModalStore>((set) => ({
       | "customer"
       | "service"
       | "serviceType"
+      | "timesheet"
+      | "inventory"
       | "none",
   ) => set({ isOpen: true, modalIds: ids, type }),
   onIsProceed: (is: boolean) => set({ proceed: is }),

@@ -72,7 +72,7 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
         });
       },
       onComplete: () => {
-        router.push(`/admin/suppliers`);
+        router.push(`/admin/${agencyId}/suppliers`);
       },
     });
 
@@ -103,7 +103,7 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
         });
       },
       onComplete: () => {
-        router.push("/admin/suppliers");
+        router.push(`/admin/${agencyId}/suppliers`);
       },
     });
 
@@ -326,7 +326,7 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
           <Button
             type="button"
             variant={"card_outline"}
-            onClick={() => router.push("/admin/customers")}
+            onClick={() => router.back()}
           >
             Cancel
           </Button>

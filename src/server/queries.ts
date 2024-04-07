@@ -10,15 +10,14 @@ import {
   Prisma,
   type Agency,
   type Lane,
+  type MaterialsUsed,
   type Role,
   type SubAccount,
   type Tag,
   type Ticket,
   type User,
-  MaterialsUsed,
 } from "@prisma/client";
 import { randomUUID } from "crypto";
-import { revalidatePath } from "next/cache";
 import { type z } from "zod";
 import { db } from "./db";
 
@@ -756,13 +755,15 @@ export const upsertTicketQuery = async (
     update: {
       ...ticket,
       Tags: { set: tags },
-      MaterialsUsed: { set: materialsUsed },
+      MaterialsUsed: { set: materialsUsed ?? [] },
+      updatedAt: new Date(),
     },
     create: {
       ...ticket,
       Tags: { connect: tags },
-      MaterialsUsed: { connect: materialsUsed },
+      MaterialsUsed: { connect: materialsUsed ?? [] },
       order,
+      updatedAt: new Date(),
     },
     include: {
       Assigned: true,
@@ -810,6 +811,27 @@ export const upsertContactQuery = async (
     where: { id: contact.id ?? randomUUID() },
     update: contact,
     create: contact,
+  });
+  return response;
+};
+
+export const upsertInventoryQuery = async (
+  item: Prisma.InventoryUncheckedCreateInput,
+) => {
+  const response = await db.inventory.upsert({
+    where: { id: item.id ?? randomUUID() },
+    update: {
+      ...item,
+      updatedAt: new Date(),
+    },
+    create: {
+      ...item,
+      name: item.name ?? "",
+      cost: item.cost ?? 0,
+      quantity: item.quantity ?? 0,
+      supplierId: item.supplierId,
+      agencyId: item.agencyId,
+    },
   });
   return response;
 };

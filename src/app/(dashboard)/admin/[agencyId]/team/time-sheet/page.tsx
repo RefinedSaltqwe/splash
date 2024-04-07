@@ -1,9 +1,9 @@
 import Card from "@/app/(dashboard)/_components/containers/Card";
 import Heading from "@/components/shared/Heading";
-import { formatDateTime, getFirstAndLastDatesNextWeek } from "@/lib/utils";
-import { getLatestTimeSheets, getUsers } from "@/server/actions/fetch";
+import { getTimesheets } from "@/server/actions/fetch";
 import React from "react";
 import ClientData from "./_components/ClientData";
+import GenerateTimesheetButton from "@/components/shared/GenerateTimesheetButton";
 
 type TimeSheetPagePops = {
   params: {
@@ -12,41 +12,21 @@ type TimeSheetPagePops = {
 };
 
 const TimeSheetPage: React.FC<TimeSheetPagePops> = async ({ params }) => {
-  const timesheets = getLatestTimeSheets(params.agencyId);
-  const users = getUsers(params.agencyId);
+  const timesheets = await getTimesheets(params.agencyId);
 
-  const [usersData, timesheetsData] = await Promise.all([users, timesheets]);
+  const uniqueTimesheets = [
+    ...new Map(timesheets?.map((item) => [item?.groupId, item])).values(),
+  ];
 
   return (
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between">
-        <Heading
-          title={
-            timesheetsData?.length === 0 ? "Loading..." : "Enter Time Sheet"
-          }
-          subTitle={`Time In/Time Out: ${
-            timesheetsData
-              ? formatDateTime(
-                  timesheetsData[0]?.dateFr ??
-                    getFirstAndLastDatesNextWeek(1).toString(),
-                ).dateOnly
-              : ""
-          } to ${
-            timesheetsData
-              ? formatDateTime(
-                  timesheetsData[0]?.dateTo ??
-                    getFirstAndLastDatesNextWeek(7).toString(),
-                ).dateOnly
-              : ""
-          }`}
-        />
+        <Heading title={"Timesheet List"} />
+        <GenerateTimesheetButton />
       </div>
 
       <Card padding={false}>
-        <ClientData
-          timesheetsData={timesheetsData ? timesheetsData : []}
-          usersData={usersData ? usersData : []}
-        />
+        <ClientData timesheetsData={uniqueTimesheets ? uniqueTimesheets : []} />
       </Card>
     </section>
   );

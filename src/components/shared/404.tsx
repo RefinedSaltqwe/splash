@@ -15,10 +15,7 @@ const Custom404 = () => {
       <h1 className="text-3xl md:text-6xl">
         404: The page you are looking for isn't here
       </h1>
-      <p>
-        You either tried some shady route or you came here by mistake. Whichever
-        it is, try using the navigation.
-      </p>
+      <p>You came here by mistake. Try using the navigation.</p>
       <Link href="/" className="mt-4 rounded-lg bg-primary p-2 px-2">
         <span className="px-2">Back to home</span>
       </Link>
