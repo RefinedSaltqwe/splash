@@ -349,7 +349,7 @@ export const getNotificationAndUser = async (agencyId: string) => {
 
 export const upsertAgency = async (agency: Agency) => {
   if (!agency.companyEmail) return null;
-  console.log("in1");
+
   const agencyDetails = await db.agency.upsert({
     where: {
       id: agency.id,
@@ -357,6 +357,7 @@ export const upsertAgency = async (agency: Agency) => {
     update: agency,
     create: {
       users: {
+        //This connect the user with the email equal to agency company email since they are the same
         connect: { email: agency.companyEmail },
       },
       ...agency,

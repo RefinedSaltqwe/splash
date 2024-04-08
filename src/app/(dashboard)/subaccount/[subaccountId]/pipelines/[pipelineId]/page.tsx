@@ -56,33 +56,59 @@ const PipelinePage = async ({ params }: PipelinePageProps) => {
   }
 
   return (
-    <Tabs defaultValue="view" className="w-full">
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <TabsList className="splash-border-color mb-4 h-16 w-full justify-between rounded-none border-b-[1px] bg-transparent">
-          <PipelineInfoBar
-            pipelineId={params.pipelineId}
-            subAccountId={params.subaccountId}
-          />
-          <div>
-            <TabsTrigger value="view">Pipeline View</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-          </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Tabs defaultValue="project_task" className="w-full p-4">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[50%]">
+          <TabsTrigger
+            value="project_task"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white"
+          >
+            Projects/Tasks
+          </TabsTrigger>
+          <TabsTrigger
+            value="future"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white"
+          >
+            Future
+          </TabsTrigger>
+          <TabsTrigger
+            value="archive"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white"
+          >
+            Archive
+          </TabsTrigger>
         </TabsList>
-        <TabsContent value="view">
-          <PipelineView
-            pipelineDetails={pipelineDetails}
-            pipelineId={params.pipelineId}
-            subaccountId={params.subaccountId}
-          />
+        <TabsContent value="project_task">
+          <Tabs defaultValue="view" className="w-full">
+            <TabsList className="splash-border-color mb-4 h-16 w-full justify-between rounded-none border-b-[1px] bg-transparent">
+              <PipelineInfoBar
+                pipelineId={params.pipelineId}
+                subAccountId={params.subaccountId}
+              />
+              <div>
+                <TabsTrigger value="view">Pipeline View</TabsTrigger>
+                <TabsTrigger value="settings">Settings</TabsTrigger>
+              </div>
+            </TabsList>
+            <TabsContent value="view">
+              <PipelineView
+                pipelineDetails={pipelineDetails}
+                pipelineId={params.pipelineId}
+                subaccountId={params.subaccountId}
+              />
+            </TabsContent>
+            <TabsContent value="settings">
+              <PipelineSettings
+                pipelineId={params.pipelineId}
+                subaccountId={params.subaccountId}
+              />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
-        <TabsContent value="settings">
-          <PipelineSettings
-            pipelineId={params.pipelineId}
-            subaccountId={params.subaccountId}
-          />
-        </TabsContent>
-      </HydrationBoundary>
-    </Tabs>
+        <TabsContent value="future">Future Projects</TabsContent>
+        <TabsContent value="archive">archive</TabsContent>
+      </Tabs>
+    </HydrationBoundary>
   );
 };
 

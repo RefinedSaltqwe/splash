@@ -90,7 +90,7 @@ export const columns: ColumnDef<Invoice>[] = [
       return (
         <div className="max-[120px] flex flex-col">
           <Link
-            href={`/admin/invoice/view/${data.id}`}
+            href={`/admin/${data.agencyId}/invoice/view/${data.id}`}
             className="max-w-[135px] overflow-hidden text-ellipsis whitespace-nowrap text-left font-medium hover:cursor-pointer hover:underline"
           >
             <span className="text-medium w-full">

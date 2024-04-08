@@ -164,8 +164,8 @@ const SubaccountPageId = async ({
   return (
     <div className="relative h-full">
       {!subaccountDetails.connectAccountId && (
-        <div className="absolute -left-10 -top-10 bottom-0 right-0 z-30 flex items-center justify-center bg-background/50 backdrop-blur-md">
-          <Card>
+        <div className="absolute -left-10 bottom-0 right-0 top-0 z-30 flex items-start justify-center bg-background/50 backdrop-blur-md">
+          <Card className="!mt-[100px]">
             <CardHeader>
               <CardTitle>Connect Your Stripe</CardTitle>
               <CardDescription>
@@ -173,7 +173,7 @@ const SubaccountPageId = async ({
               </CardDescription>
               <Link
                 href={`/subaccount/${subaccountDetails.id}/launchpad`}
-                className="flex w-fit items-center gap-2 rounded-md bg-secondary p-2 text-white"
+                className="flex w-fit items-center gap-2 rounded-md bg-secondary p-2 text-foreground"
               >
                 <ClipboardIcon />
                 Launch Pad

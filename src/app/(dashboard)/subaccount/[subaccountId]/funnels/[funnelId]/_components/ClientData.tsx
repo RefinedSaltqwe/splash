@@ -1,14 +1,13 @@
 "use client";
+import Heading from "@/components/shared/Heading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getFunnel } from "@/server/actions/fetch";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
-import FunnelSteps from "./FunnelSteps";
 import FunnelSettings from "./FunnelSettings";
-import Heading from "@/components/shared/Heading";
-import { Separator } from "@/components/ui/separator";
+import FunnelSteps from "./FunnelSteps";
 
 type ClientDataProps = {
   subaccountId: string;
@@ -34,7 +33,7 @@ const ClientData: React.FC<ClientDataProps> = ({ subaccountId, funnelId }) => {
       </Link>
       <Heading title={funnelPages.name} />
       <Tabs defaultValue="steps" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-background/20">
+        <TabsList className="grid w-full grid-cols-2 bg-background dark:bg-background/20">
           <TabsTrigger
             value="steps"
             className="data-[state=active]:bg-primary data-[state=active]:text-white"

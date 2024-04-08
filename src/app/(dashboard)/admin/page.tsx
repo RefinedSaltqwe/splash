@@ -1,13 +1,13 @@
+import Heading from "@/components/shared/Heading";
+import Loader from "@/components/shared/Loader";
+import Unauthorized from "@/components/shared/Unauthorized";
+import { getAuthUserDetails } from "@/server/actions/fetch";
 import { verifyAndAcceptInvitation } from "@/server/queries";
 import { currentUser } from "@clerk/nextjs";
 import { type Plan } from "@prisma/client";
 import { redirect } from "next/navigation";
 import React from "react";
-import Heading from "@/components/shared/Heading";
 import AdminRegistrationForm from "./[agencyId]/_components/form/AdminRegistrationForm";
-import { getAuthUserDetails } from "@/server/actions/fetch";
-import Loader from "@/components/shared/Loader";
-import Unauthorized from "@/components/shared/Unauthorized";
 
 type AdminPageProps = {
   searchParams: { plan: Plan; state: string; code: string };
@@ -56,6 +56,10 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
   const authUser = await currentUser();
   if (!authUser) {
     redirect("/admin/sign-in");
+  }
+  //If the redirects fail reload the page
+  if (user?.agencyId) {
+    return redirect(`/admin`);
   }
   return (
     <section className="flex w-full flex-col items-center justify-center">

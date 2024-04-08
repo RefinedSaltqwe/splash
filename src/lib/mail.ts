@@ -84,22 +84,65 @@ export const sendEmailInvitationByResend = async (
   const resend = new Resend(env.RESEND_API_KEY);
   const companyEmail = env.EMAIL_FROM;
 
-  const body = `<div class="container">
-        <h1>Your invitation</h1>
-
-        <p>${name} has invited you to join them on ${siteConfig.name}.</p>
-
-        <a href="${env.NEXT_PUBLIC_URL}/admin">Accept Invitation</a>
-
-        <div class="footer">
-            <p>Please do not reply to this email as it is automatically generated.</p>
-        </div>
-    </div>`;
+  const content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Team Invitation</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+  }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  h1 {
+    color: #333;
+  }
+  p {
+    color: #666;
+  }
+  .team-info {
+    margin-bottom: 20px;
+  }
+  .team-info p {
+    margin: 5px 0;
+  }
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff !important;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Join Our Professional Team</h1>
+  <div class="team-info">
+    <p>${name} has invited you to join them on ${siteConfig.name}.</p>
+  <a href="${env.NEXT_PUBLIC_URL}/admin" class="btn">Accept Invitation</a>
+  <p>Please do not reply to this email as it is automatically generated.</p>\
+</div>
+</body>
+</html>
+`;
 
   await resend.emails.send({
     from: companyEmail,
     to: email,
     subject: `Invitation to join ${siteConfig.name}`,
-    html: body,
+    html: content,
   });
 };
