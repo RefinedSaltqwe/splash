@@ -107,7 +107,7 @@ const PipelineTicket = ({
   return (
     <Draggable draggableId={ticket.id.toString()} index={index}>
       {(provided, snapshot) => {
-        let deadlineIn;
+        let deadlineIn = undefined;
         if (ticket.deadline) {
           deadlineIn = Math.ceil(
             calculateCurrentAndFutureDates(ticket.deadline).days,
@@ -160,7 +160,9 @@ const PipelineTicket = ({
                   <span
                     className={cn(
                       "text-xs text-muted-foreground",
-                      deadlineIn && deadlineIn < 2 && "text-red-500",
+                      typeof deadlineIn == "number" &&
+                        deadlineIn < 2 &&
+                        "text-red-500",
                     )}
                   >
                     {`Due on: ${

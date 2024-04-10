@@ -6,8 +6,8 @@ import Sidebar from "@/components/shared/Sidebar";
 import Unauthorized from "@/components/shared/Unauthorized";
 import { getAuthUserDetails } from "@/server/actions/fetch";
 import {
+  getAgencyIdByLoggedInUser,
   getNotificationAndUser,
-  verifyAndAcceptInvitation,
 } from "@/server/queries";
 import { type NotificationWithUser } from "@/types/stripe";
 import { currentUser } from "@clerk/nextjs";
@@ -29,7 +29,7 @@ const AgencyLayout: React.FC<AgencyLayoutProps> = async ({ children }) => {
     queryKey: ["getAuthUserDetails"],
     queryFn: () => getAuthUserDetails(),
   });
-  const agencyId = await verifyAndAcceptInvitation();
+  const agencyId = await getAgencyIdByLoggedInUser();
   const user = await currentUser();
 
   if (!user) {

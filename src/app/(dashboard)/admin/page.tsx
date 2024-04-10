@@ -3,6 +3,7 @@ import Loader from "@/components/shared/Loader";
 import Unauthorized from "@/components/shared/Unauthorized";
 import { getAuthUserDetails } from "@/server/actions/fetch";
 import { verifyAndAcceptInvitation } from "@/server/queries";
+import { type GetAuthUserDetails } from "@/types/prisma";
 import { currentUser } from "@clerk/nextjs";
 import { type Plan } from "@prisma/client";
 import { redirect } from "next/navigation";
@@ -13,14 +14,15 @@ type AdminPageProps = {
   searchParams: { plan: Plan; state: string; code: string };
 };
 
-const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
-  const agencyId = await verifyAndAcceptInvitation();
-
-  //get the users details
-  const user = await getAuthUserDetails();
-  if (user?.status === "Terminated") {
-    return <Unauthorized />;
-  }
+function redirects(
+  agencyId: string | null | undefined,
+  user: GetAuthUserDetails,
+  searchParams: {
+    plan: Plan;
+    state: string;
+    code: string;
+  },
+) {
   if (agencyId) {
     if (user?.password && user.isTwoFactorEnabled) {
       console.log("Send Two-Factor Authentication Code");
@@ -52,6 +54,18 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
       return <div>Not authorized</div>;
     }
   }
+}
+
+const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
+  const agencyId = await verifyAndAcceptInvitation();
+
+  //get the users details
+  const user = await getAuthUserDetails();
+  if (user?.status === "Terminated") {
+    return <Unauthorized />;
+  }
+
+  redirects(agencyId, user, searchParams);
 
   const authUser = await currentUser();
   if (!authUser) {
@@ -59,7 +73,8 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
   }
   //If the redirects fail reload the page
   if (user?.agencyId) {
-    return redirect(`/admin`);
+    redirects(user.agencyId, user, searchParams);
+    return;
   }
   return (
     <section className="flex w-full flex-col items-center justify-center">

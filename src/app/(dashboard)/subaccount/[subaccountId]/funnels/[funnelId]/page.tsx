@@ -7,12 +7,29 @@ import {
 } from "@tanstack/react-query";
 import ClientData from "./_components/ClientData";
 import { getSubaccountDetails } from "@/server/queries";
+import { type Funnel } from "@prisma/client";
+import { db } from "@/server/db";
 
-type Props = {
+type FunnelPageProps = {
   params: { funnelId: string; subaccountId: string };
 };
 
-const FunnelPage = async ({ params }: Props) => {
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams({ params }: FunnelPageProps) {
+  const funnels: Funnel[] = await db.funnel.findMany({
+    where: {
+      id: params.funnelId,
+      subAccountId: params.subaccountId,
+    },
+  });
+  return funnels.map((row) => {
+    funnelId: row.id.toString();
+    subaccountId: row.subAccountId.toString();
+  });
+}
+
+const FunnelPage = async ({ params }: FunnelPageProps) => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["funnel", params.funnelId],

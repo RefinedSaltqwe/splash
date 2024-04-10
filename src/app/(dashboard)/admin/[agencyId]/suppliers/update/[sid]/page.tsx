@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import React from "react";
 import InputForm from "../../_components/InputForm";
+import { db } from "@/server/db";
 
 type UpdateSupplierPageProps = {
   params: {
@@ -16,20 +17,23 @@ type UpdateSupplierPageProps = {
   };
 };
 
-// export async function generateStaticParams({
-//   params,
-// }: UpdateSupplierPageProps) {
-//   const suppliers = await db.supplier.findMany({
-//     where: {
-//       Agency: {
-//         id: params.agencyId,
-//       },
-//     },
-//   });
-//   return suppliers.map(({ id }) => {
-//     sid: id;
-//   });
-// }
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams({
+  params,
+}: UpdateSupplierPageProps) {
+  const suppliers = await db.supplier.findMany({
+    where: {
+      Agency: {
+        id: params.agencyId,
+      },
+    },
+  });
+  return suppliers.map((row) => {
+    agencyId: row.agencyId.toString();
+    sid: row.id.toString();
+  });
+}
 
 const UpdateSupplierPage: React.FC<UpdateSupplierPageProps> = async ({
   params,

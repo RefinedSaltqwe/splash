@@ -1,4 +1,3 @@
-"use server";
 import TotalCard from "@/components/analytics/TotalCard";
 import CircleProgress from "@/components/shared/CircleProgress";
 import GridColumn from "@/components/shared/GridColumn";
@@ -25,12 +24,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-// export async function generateStaticParams() {
-//   const agencies: Agency[] = await db.agency.findMany();
-//   return agencies.map(({ id }) => {
-//     id;
-//   });
-// }
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const agencies: Agency[] = await db.agency.findMany();
+  return agencies.map(({ id }) => {
+    agencyId: id.toString();
+  });
+}
 
 const AgencyPage = async ({
   params,

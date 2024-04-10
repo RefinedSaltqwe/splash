@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 import FunnelSettings from "./FunnelSettings";
 import FunnelSteps from "./FunnelSteps";
+import { ChevronLeft } from "lucide-react";
 
 type ClientDataProps = {
   subaccountId: string;
@@ -29,7 +30,7 @@ const ClientData: React.FC<ClientDataProps> = ({ subaccountId, funnelId }) => {
         href={`/subaccount/${subaccountId}/funnels`}
         className="mb-4 flex justify-between gap-4 text-muted-foreground"
       >
-        Back
+        <ChevronLeft size={20} className="text-muted-foreground" /> Back
       </Link>
       <Heading title={funnelPages.name} />
       <Tabs defaultValue="steps" className="w-full">

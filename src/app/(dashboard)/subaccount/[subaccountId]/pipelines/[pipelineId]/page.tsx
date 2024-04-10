@@ -16,17 +16,22 @@ import { redirect } from "next/navigation";
 import PipelineInfoBar from "../_components/PipelineInfoBar";
 import PipelineSettings from "../_components/PipelineSettings";
 import PipelineView from "../_components/PipelineView";
-
-// export async function generateStaticParams() {
-//   const pipelines: Pipeline[] = await db.pipeline.findMany();
-//   return pipelines.map(({ id }) => {
-//     pipelineId: id;
-//   });
-// }
+import { type Pipeline } from "@prisma/client";
+import { db } from "@/server/db";
 
 type PipelinePageProps = {
   params: { subaccountId: string; pipelineId: string };
 };
+
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const pipelines: Pipeline[] = await db.pipeline.findMany();
+  return pipelines.map((row) => {
+    subaccountId: row.subAccountId.toString();
+    pipelineId: row.id.toString();
+  });
+}
 
 const PipelinePage = async ({ params }: PipelinePageProps) => {
   const queryClient = new QueryClient();

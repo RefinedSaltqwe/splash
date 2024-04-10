@@ -25,6 +25,7 @@ import {
   type FunnelsWithFunnelPages,
   type FunnelsWithFunnelPagesAndTotalFunnelVisits,
 } from "@/types/prisma";
+import { type SubAccount } from "@prisma/client";
 import {
   HydrationBoundary,
   QueryClient,
@@ -39,19 +40,21 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-// export async function generateStaticParams() {
-//   const subAccounts: SubAccount[] = await db.subAccount.findMany();
-//   return subAccounts.map(({ id }) => {
-//     subaccountId: id;
-//   });
-// }
-
 type SubaccountPageIdProps = {
   params: { subaccountId: string };
   searchParams: {
     code: string;
   };
 };
+
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const subAccounts: SubAccount[] = await db.subAccount.findMany();
+  return subAccounts.map(({ id }) => {
+    subaccountId: id.toString();
+  });
+}
 
 const SubaccountPageId = async ({
   params,

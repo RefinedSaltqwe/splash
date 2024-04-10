@@ -100,6 +100,7 @@ export const createTeamUser = async (agencyId: string, user: User) => {
       postalCode: user.postalCode,
       jobRole: user.jobRole,
       isTwoFactorEnabled: user.isTwoFactorEnabled,
+      agencyId,
     },
   });
 
@@ -141,6 +142,7 @@ export const verifyAndAcceptInvitation = async () => {
           jobRole: "",
           isTwoFactorEnabled: false,
         });
+
         await saveActivityLogsNotification({
           agencyId: invitationExists?.agencyId,
           description: `Joined`,
@@ -164,6 +166,7 @@ export const verifyAndAcceptInvitation = async () => {
           const checkInvitation = await db.invitation.findUnique({
             where: { email: userDetails.email },
           });
+
           if (checkInvitation) {
             const deleteInvitation = await db.invitation.delete({
               where: { email: userDetails.email },
@@ -190,9 +193,26 @@ export const verifyAndAcceptInvitation = async () => {
       error instanceof Prisma.PrismaClientInitializationError ||
       error instanceof Prisma.PrismaClientKnownRequestError
     ) {
-      throw new Error("System error. There is an error fetching customers.");
+      throw new Error("System error. There is an error in the server: ", error);
     }
     throw error;
+  }
+};
+
+export const getAgencyIdByLoggedInUser = async () => {
+  try {
+    const user = await currentUser();
+    if (user) {
+      const agency = await db.user.findUnique({
+        where: {
+          email: user.emailAddresses[0]!.emailAddress,
+        },
+      });
+      return agency ? agency.agencyId : null;
+    }
+    return null;
+  } catch (error) {
+    console.log(error);
   }
 };
 

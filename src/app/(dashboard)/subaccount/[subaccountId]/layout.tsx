@@ -5,8 +5,8 @@ import Sidebar from "@/components/shared/Sidebar";
 import Unauthorized from "@/components/shared/Unauthorized";
 import { getAuthUserDetails } from "@/server/actions/fetch";
 import {
+  getAgencyIdByLoggedInUser,
   getNotificationAndUser,
-  verifyAndAcceptInvitation,
 } from "@/server/queries";
 import { type GetAuthUserDetails } from "@/types/prisma";
 import { type NotificationWithUser } from "@/types/stripe";
@@ -33,7 +33,7 @@ const SubaccountLayout = async ({
     queryKey: ["getAuthUserDetails"],
     queryFn: () => getAuthUserDetails(),
   });
-  const agencyId = await verifyAndAcceptInvitation();
+  const agencyId = await getAgencyIdByLoggedInUser();
   if (!agencyId) return <Unauthorized />;
   const user = await currentUser();
   if (!user) {
