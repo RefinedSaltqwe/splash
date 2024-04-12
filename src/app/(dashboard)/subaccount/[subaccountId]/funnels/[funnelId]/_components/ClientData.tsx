@@ -28,9 +28,10 @@ const ClientData: React.FC<ClientDataProps> = ({ subaccountId, funnelId }) => {
     <div className="flex w-full flex-col">
       <Link
         href={`/subaccount/${subaccountId}/funnels`}
-        className="mb-4 flex justify-between gap-4 text-muted-foreground"
+        className="mb-4 flex items-center justify-start gap-4 text-muted-foreground"
       >
-        <ChevronLeft size={20} className="text-muted-foreground" /> Back
+        <ChevronLeft size={20} className="text-muted-foreground" />{" "}
+        <span>Back</span>
       </Link>
       <Heading title={funnelPages.name} />
       <Tabs defaultValue="steps" className="w-full">

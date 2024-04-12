@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ notifications, role }) => {
   const onOpen = useMobileSidebar((state) => state.onOpen);
 
   return (
-    <header className="flex h-full w-full items-center bg-background/60 px-10 backdrop-blur dark:bg-background/60">
+    <header className="flex h-full w-full items-center bg-background/60 px-2 backdrop-blur md:px-10 dark:bg-background/60">
       <div
         className={cn(
           " flex w-full items-center justify-between",
@@ -73,7 +73,9 @@ const Header: React.FC<HeaderProps> = ({ notifications, role }) => {
             </Button>
           ))} */}
           {/* <UserMenu /> */}
-          <UserButton afterSignOutUrl="/" />
+          <div className="pr-2">
+            <UserButton afterSignOutUrl="/" />
+          </div>
         </div>
       </div>
     </header>

@@ -170,8 +170,12 @@ const PipelineTicket = ({
                         ? `${
                             formatDateTime(new Date(ticket.deadline)).dateOnly
                           } (${deadlineIn} ${
-                            deadlineIn !== 1 ?? deadlineIn !== -1
-                              ? "days"
+                            deadlineIn !== -1
+                              ? deadlineIn !== 0
+                                ? deadlineIn !== 1
+                                  ? "days"
+                                  : "day"
+                                : "day"
                               : "day"
                           })`
                         : "None"
