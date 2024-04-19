@@ -21,12 +21,15 @@ import { useEffect, useState } from "react";
 import CreatePipelineForm from "./form/CreatePipeline";
 import { usePipelineStore } from "@/stores/usePipelineStore";
 
-type Props = {
+type PipelineInfoBarProps = {
   subAccountId: string;
   pipelineId: string;
 };
 
-const PipelineInfoBar = ({ pipelineId, subAccountId }: Props) => {
+const PipelineInfoBar = ({
+  pipelineId,
+  subAccountId,
+}: PipelineInfoBarProps) => {
   const { data: pipelines } = useQuery({
     queryKey: ["pipelines", subAccountId],
     queryFn: () => getPipelinesOnly(subAccountId),

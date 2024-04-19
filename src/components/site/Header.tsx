@@ -10,6 +10,7 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import { ModeToggle } from "../themeModeToggle";
 import { Button } from "../ui/button";
+import { LayoutDashboard } from "lucide-react";
 
 function MobileNavLink({
   href,
@@ -131,7 +132,10 @@ export function Header() {
                   height={40}
                   alt="plur logo"
                 />
-                <span className="text-xl font-bold"> {siteConfig.name}.</span>
+                <span className="hidden text-xl font-bold sm:block ">
+                  {" "}
+                  {siteConfig.name}.
+                </span>
               </aside>
             </Link>
             <div className="hidden md:flex md:gap-x-6">
@@ -153,10 +157,18 @@ export function Header() {
             <SignedIn>
               <Link
                 href={"/admin"}
-                className="rounded-md bg-primary p-2 px-4 text-white hover:bg-primary/80"
+                className="rounded-md bg-transparent p-2 px-4 text-white sm:bg-primary sm:hover:bg-primary/80"
               >
-                Dashboard
+                <LayoutDashboard
+                  className="block text-white sm:hidden"
+                  size={18}
+                />
+                <span className="hidden sm:block">Dashboard</span>
               </Link>
+              {/* FIX THIS */}
+              <div className="-mr-1 md:hidden">
+                <MobileNavigation />
+              </div>
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
             <SignedOut>
@@ -175,11 +187,10 @@ export function Header() {
                   </span>
                 </Link>
               </Button>
+              <div className="-mr-1 md:hidden">
+                <MobileNavigation />
+              </div>
             </SignedOut>
-
-            <div className="-mr-1 md:hidden">
-              <MobileNavigation />
-            </div>
           </div>
         </nav>
       </div>

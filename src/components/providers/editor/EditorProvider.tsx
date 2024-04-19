@@ -12,7 +12,7 @@ export type EditorElement = {
   name: string;
   type: EditorBtns;
   content:
-    | EditorElement[] // ? Recursice Components
+    | EditorElement[] // ? Recursive Components
     | { href?: string; innerText?: string; src?: string }; // ? Static components
 };
 
@@ -85,7 +85,7 @@ const addAnElement = (
         content: [...item.content, action.payload.elementDetails],
       };
     }
-    // ? If container id not found, loop back, but go to current container's content if it is an array
+    // ? If container id not found, loop back, but go to current container's content if it is an array;
     // ? And search for the container id inside.
     // ? Keep looping until the last content
     else if (item.content && Array.isArray(item.content)) {

@@ -1,5 +1,4 @@
 "use client";
-import Card from "@/app/(dashboard)/_components/containers/Card";
 import FileUpload from "@/components/shared/FileUpload";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
@@ -380,7 +379,7 @@ const SubAccountRegistrationForm: React.FC<SubAccountRegistrationFormProps> = ({
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-end">
+          <div className="mt-6 flex max-w-2xl items-center justify-end">
             <Button
               type="submit"
               disabled={createSubaccountIsLoading}

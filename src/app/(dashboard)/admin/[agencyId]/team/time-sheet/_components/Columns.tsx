@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn, formatDateTime } from "@/lib/utils";
 import { type TimesheetWithInputTimes } from "@/types/prisma";
 import { type ColumnDef } from "@tanstack/react-table";
+import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 // This type is used to define the shape of our data.
@@ -60,10 +61,12 @@ export const columns: ColumnDef<TimesheetWithInputTimes>[] = [
       return (
         <Link
           href={`/admin/${data?.agencyId}/team/time-sheet/${data?.groupId}`}
+          className="flex min-w-[1000px] flex-row items-center justify-start "
         >
-          <span className="min-w-[1000px] text-right font-medium hover:cursor-pointer hover:underline">
-            {`${dateFr} - ${dateTo}`}
+          <span className="text-right font-medium hover:cursor-pointer hover:underline">
+            {`${dateFr} - ${dateTo} `}
           </span>
+          <ExternalLink size={15} className="ml-2" />
         </Link>
       );
     },

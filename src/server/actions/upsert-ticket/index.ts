@@ -26,6 +26,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         customerId: rest.customerId === "" ? null : rest.customerId,
         assignedUserId: rest.assignedUserId === "" ? null : rest.assignedUserId,
         ...rest,
+        value: parseFloat(rest.value),
       },
       tags,
       materialsUsed,

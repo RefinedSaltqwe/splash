@@ -161,7 +161,7 @@ export const getCustomer = cache(async (id: string): Promise<Customer> => {
 });
 
 export const getPipelines = cache(
-  async (subaccountId: string): Promise<PipelineWithLanesAndTickets[] | []> => {
+  async (subaccountId: string): Promise<PipelineWithLanesAndTickets[]> => {
     const response = await db.pipeline.findMany({
       where: { subAccountId: subaccountId },
       include: {
@@ -175,7 +175,7 @@ export const getPipelines = cache(
 );
 
 export const getPipelinesOnly = cache(
-  async (subaccountId: string): Promise<Pipeline[] | []> => {
+  async (subaccountId: string): Promise<Pipeline[]> => {
     const response = await db.pipeline.findMany({
       where: { subAccountId: subaccountId },
     });
@@ -649,12 +649,13 @@ export const getAgencyByIdWithSubAccounts = cache(
         error instanceof Prisma.PrismaClientInitializationError ||
         error instanceof Prisma.PrismaClientKnownRequestError
       ) {
-        throw new Error("System error. There is an error fetching user.");
+        throw new Error("System error. There is an error fetching agency.");
       }
       throw error;
     }
   },
 );
+
 export const getUserById = cache(
   async (id: string): Promise<GetAllUsersInAgency | undefined> => {
     try {
@@ -689,7 +690,7 @@ export const getTimesheets = cache(
             id: agencyId,
           },
         },
-        orderBy: { dateCreated: "asc" },
+        orderBy: { dateCreated: "desc" },
         include: {
           timeIn: true,
           timeOut: true,
@@ -899,26 +900,39 @@ export const getFunnelPageDetails = cache(async (funnelPageId: string) => {
 });
 
 export const getSubAccountWithContacts = cache(async (subaccountId: string) => {
-  const response = (await db.subAccount.findUnique({
-    where: {
-      id: subaccountId,
-    },
-
-    include: {
-      Contact: {
-        include: {
-          Ticket: {
-            select: {
-              value: true,
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+  try {
+    const response = (await db.subAccount.findUnique({
+      where: {
+        id: subaccountId,
+      },
+      include: {
+        Contact: {
+          include: {
+            Ticket: {
+              select: {
+                value: true,
+              },
             },
           },
-        },
-        orderBy: {
-          createdAt: "asc",
+          orderBy: {
+            createdAt: "asc",
+          },
         },
       },
-    },
-  })) as SubAccountWithContacts;
+    })) as SubAccountWithContacts;
 
-  return response;
+    return response;
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientInitializationError ||
+      error instanceof Prisma.PrismaClientKnownRequestError
+    ) {
+      throw new Error("System error. There is an error fetching subaccounts.");
+    }
+    throw error;
+  }
 });
