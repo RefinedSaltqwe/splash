@@ -142,6 +142,24 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
       ],
     },
     {
+      name: "Transactions",
+      href: `/admin/${id}/transactions`,
+      icon: "invoice",
+      order: 5,
+      children: [
+        {
+          name: "Quotes",
+          href: `/admin/${id}/transactions/quotes`,
+          order: 1,
+        },
+        {
+          name: "Invoice",
+          href: `/admin/${id}/transactions/invoice`,
+          order: 2,
+        },
+      ],
+    },
+    {
       name: "Inventory",
       href: `/admin/${id}/inventory`,
       icon: "inventory",
@@ -162,13 +180,13 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
       order: 8,
       children: null,
     },
-    {
-      name: "Invoice",
-      href: `/admin/${id}/invoice`,
-      icon: "invoice",
-      order: 9,
-      children: null,
-    },
+    // {
+    //   name: "Invoice",
+    //   href: `/admin/${id}/invoice`,
+    //   icon: "invoice",
+    //   order: 9,
+    //   children: null,
+    // },
     {
       name: "Launchpad",
       icon: "clipboardIcon",

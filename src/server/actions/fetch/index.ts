@@ -522,12 +522,15 @@ export const getUsers = cache(
   },
 );
 
-export const getUsersExcludeCurrentUserById = cache(
-  async (id: string, agencyId: string): Promise<User[] | undefined> => {
+export const getUsersExcludeCurrentAgencyOwner = cache(
+  async (agencyId: string): Promise<User[] | undefined> => {
     try {
       const users = await db.user.findMany({
         where: {
           agencyId,
+          role: {
+            not: "AGENCY_OWNER",
+          },
         },
         orderBy: { createdAt: "asc" },
         include: {
@@ -535,12 +538,8 @@ export const getUsersExcludeCurrentUserById = cache(
           Permissions: { include: { SubAccount: true } },
         },
       });
-      let usersWithoutCurrentUser;
-      if (users) {
-        usersWithoutCurrentUser = users.filter((user) => user.id !== id);
-      }
 
-      return usersWithoutCurrentUser;
+      return users;
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientInitializationError ||
@@ -552,6 +551,7 @@ export const getUsersExcludeCurrentUserById = cache(
     }
   },
 );
+
 export const getAllUsersInAgency = cache(
   async (agencyId: string): Promise<GetAllUsersInAgency[] | undefined> => {
     try {

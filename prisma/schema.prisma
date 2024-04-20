@@ -119,6 +119,7 @@ model User {
     accounts                Account[]
     sessions                Session[]
     timesheets              Timesheet[]
+    labortracking           LaborTracking[]
 }
 
 model Permissions {
@@ -164,6 +165,7 @@ model Agency {
   Invoices         Invoice[]
   Timesheets       Timesheet[]
   Inventory        Inventory[]
+  LaborTracking    LaborTracking[]
 }
 
 model SubAccount {
@@ -764,4 +766,22 @@ model TimeTotal {
     timesheetId     String 
     timesheet       Timesheet @relation(fields: [timesheetId], references: [id], onDelete: Cascade)
     @@unique([timesheetId])
+}
+
+model LaborTracking {
+  id              String @id @default(cuid())
+  title           String
+  description     String  @default("")
+  start           String 
+  end             String
+  allDay          Boolean @default(false)
+  location        String  @default("")
+
+  userId          String
+  User            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  agencyId        String
+  Agency          Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, id])
 }

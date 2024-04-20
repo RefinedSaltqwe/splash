@@ -435,7 +435,7 @@ const TicketForm = ({
               htmlFor="country"
               className="block text-sm font-medium leading-6 text-foreground"
             >
-              Assigned To Team Member
+              Assigned tp team member
             </FormLabel>
             <div className="flex w-full flex-row items-center gap-2">
               <Select onValueChange={setAssignedTo} value={assignedTo}>

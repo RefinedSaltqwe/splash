@@ -94,4 +94,10 @@ export type SideMenuLinks = {
   children: SideMenuLinksChildren[] | null | undefined;
 };
 
-//! Expenses
+export type LaborTrackingEvent = {
+  title: string;
+  start: Date | string;
+  end: Date | string;
+  allDay: boolean;
+  id: string;
+};

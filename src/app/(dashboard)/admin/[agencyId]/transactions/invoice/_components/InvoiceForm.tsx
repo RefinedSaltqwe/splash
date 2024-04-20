@@ -211,7 +211,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
         void queryClient.invalidateQueries({
           queryKey: ["invoices"],
         });
-        router.push(`/admin/${data.agencyId}/invoice`);
+        router.push(`/admin/${data.agencyId}/transactions/invoice`);
       },
       onError: (error) => {
         toast.error(error, {
@@ -237,7 +237,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
         void queryClient.invalidateQueries({
           queryKey: ["invoices"],
         });
-        router.push(`/admin/${data.agencyId}/invoice`);
+        router.push(`/admin/${data.agencyId}/transactions/invoice`);
       },
       onError: (error) => {
         toast.error(error, {

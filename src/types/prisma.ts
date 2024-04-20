@@ -25,6 +25,7 @@ import {
   type TimeTotal,
   type Timesheet,
   type User,
+  type LaborTracking,
 } from "@prisma/client";
 // ? Custom Types
 export type InvoiceWithService = Invoice & { services: Service[] };
@@ -163,4 +164,9 @@ export type SubAccountWithContacts = SubAccount & {
 export type InventoryListBySubaccountIdAndSupplierMaterialsUsed = Inventory & {
   Supplier: Supplier | null;
   MaterialsUsed: MaterialsUsed[];
+};
+
+//============================LaborTrackingWithUsers
+export type LaborTrackingWithUsers = LaborTracking & {
+  User: User;
 };
