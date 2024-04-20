@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,60 +19,60 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { getSubAccountTeamMembers } from "@/server/actions/fetch";
-import { UpsertTicket } from "@/server/actions/upsert-ticket/schema";
-import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { type LaborTracking, type User } from "@prisma/client";
 import { User2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { type z } from "zod";
+import { v4 } from "uuid";
+import { z } from "zod";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   agencyId: string;
+  allTeamMembers: User[];
+  setAllEvents: React.Dispatch<React.SetStateAction<LaborTracking[]>>;
+  newEvent: LaborTracking;
 };
 
-const LaborTrackingForm = ({ agencyId, setIsOpen }: Props) => {
-  const ticketData = useCurrentUserStore((state) => state.ticketData);
-  const { data: allTeamMembers } = useQuery({
-    queryKey: ["SubAccountTeamMembers", agencyId],
-    queryFn: () => getSubAccountTeamMembers(agencyId),
-  });
+const LaborTrackingUpsert = z.object({
+  userId: z.string(),
+  description: z.string().default("").optional(),
+});
 
-  const [contact, setContact] = useState<string>(ticketData?.customerId ?? "");
-  const [assignedTo, setAssignedTo] = useState<string>(
-    ticketData?.assignedUserId ?? "",
-  );
+const LaborTrackingForm = ({
+  agencyId,
+  setIsOpen,
+  allTeamMembers,
+  setAllEvents,
+  newEvent,
+}: Props) => {
+  const [assignedTo, setAssignedTo] = useState<string>("");
 
   const defaultValue = {
-    agencyId: agencyId,
-    ticketId: ticketData?.id,
-    assignedUserId: assignedTo === "" ? null : assignedTo,
-    customerId: contact === "" ? null : contact,
-    description: ticketData?.description ?? "",
-    name: ticketData?.name ?? "",
-    value: String(ticketData?.value ?? 0),
+    userId: "",
+    description: "",
   };
 
-  const form = useForm<z.infer<typeof UpsertTicket>>({
-    resolver: zodResolver(UpsertTicket),
+  const form = useForm<z.infer<typeof LaborTrackingUpsert>>({
+    resolver: zodResolver(LaborTrackingUpsert),
     defaultValues: defaultValue,
   });
 
-  useEffect(() => {
-    if (ticketData) {
-      form.reset(defaultValue);
-      if (ticketData.customerId) {
-        setContact(ticketData.customerId);
-        setAssignedTo(ticketData.assignedUserId ?? "");
-      }
-    }
-  }, [ticketData]);
-
-  const onSubmit = async (values: z.infer<typeof UpsertTicket>) => {
-    console.log(values);
+  const onSubmit = (values: z.infer<typeof LaborTrackingUpsert>) => {
+    const name = allTeamMembers.filter((user) => user.id === assignedTo);
+    setAllEvents((prev) => [
+      ...prev,
+      {
+        ...newEvent,
+        id: v4(),
+        userId: assignedTo,
+        description: values.description ?? "",
+        title: `${name[0]?.firstName.split(" ")[0]} ${name[0]?.lastName}`,
+        agencyId,
+      },
+    ]);
+    setIsOpen(false);
   };
 
   return (
@@ -88,7 +87,7 @@ const LaborTrackingForm = ({ agencyId, setIsOpen }: Props) => {
               htmlFor="country"
               className="block text-sm font-medium leading-6 text-foreground"
             >
-              Assigned to team member
+              Assigned to
             </FormLabel>
             <div className="flex w-full flex-row items-center gap-2">
               <Select onValueChange={setAssignedTo} value={assignedTo}>
@@ -169,9 +168,6 @@ const LaborTrackingForm = ({ agencyId, setIsOpen }: Props) => {
                     )}
                   />
                 </FormControl>
-                <FormDescription className="mt-3 text-sm font-normal leading-6 text-muted-foreground">
-                  Write about the ticket.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

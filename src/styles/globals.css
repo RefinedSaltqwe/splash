@@ -6,6 +6,16 @@ html,
 body,
 :root {
   height: 100%;
+  /* Full Calendar */
+  --fc-small-font-size: 0.85em;
+  --fc-page-bg-color: #fff;
+  --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
+  --fc-neutral-text-color: #808080;
+
+  --fc-event-bg-color: hsl(221.2 83.2% 53.3%);
+  --fc-event-border-color: hsl(221.2 83.2% 53.3%);
+  --fc-event-text-color: #fff;
+  --fc-today-bg-color: hsla(217, 91%, 60%, 0.15);
 }
 
 * {
@@ -75,6 +85,18 @@ html.dark .apexcharts-gridline {
     --input: 220 13% 91%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+
+    /* FULL CALENDAR */
+
+    --fc-button-text-color: hsl(220.9 39.3% 11%);
+    --fc-button-bg-color: hsl(220 14.3% 95.9%);
+    --fc-button-border-color: hsl(220 14.3% 95.9%);
+    --fc-button-hover-bg-color: hsl(220 14.3% 95.9%);
+    --fc-button-hover-border-color: hsl(220 14.3% 95.9%);
+    --fc-button-active-bg-color: hsl(214, 32%, 91%);
+    --fc-button-active-border-color: hsl(214, 32%, 91%);
+
+    --fc-border-color: hsl(214, 32%, 91%);
   }
 
   .dark {
@@ -97,6 +119,18 @@ html.dark .apexcharts-gridline {
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
     --ring: 217.2 91.2% 59.8%;
+
+    /* FULL CALENDAR */
+
+    --fc-button-text-color: hsl(210 20% 98%);
+    --fc-button-bg-color: hsl(215 27.9% 16.9%);
+    --fc-button-border-color: hsl(215 27.9% 16.9%);
+    --fc-button-hover-bg-color: hsl(215 27.9% 16.9%);
+    --fc-button-hover-border-color: hsl(215 27.9% 16.9%);
+    --fc-button-active-bg-color: hsl(215, 25%, 27%);
+    --fc-button-active-border-color: hsl(215, 25%, 27%);
+
+    --fc-border-color: hsl(215, 25%, 27%);
   }
 }
 .use-automation-zoom-in {

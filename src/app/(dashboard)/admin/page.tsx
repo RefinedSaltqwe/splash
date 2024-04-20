@@ -68,7 +68,9 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
   redirects(agencyId, user, searchParams);
 
   const authUser = await currentUser();
-  if (!user) {
+
+  if (!authUser) {
+    return <div>{authUser}</div>;
     redirect("/admin/sign-in");
   }
   //If the redirects fail reload the page
