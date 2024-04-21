@@ -2,8 +2,7 @@
 import { createSafeAction } from "@/lib/create-safe-actions";
 import { db } from "@/server/db";
 import { currentUser } from "@clerk/nextjs";
-import { revalidatePath } from "next/cache";
-import { DeleteInvoice } from "./schema";
+import { DeleteSchedule } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
@@ -14,12 +13,10 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       error: "Unauthorized",
     };
   }
-
-  const { id: ids, agencyId } = data;
-
-  let deleteUsers;
+  const { ids } = data;
+  let deleteSchedule;
   try {
-    deleteUsers = await db.invoice.deleteMany({
+    deleteSchedule = await db.laborTracking.deleteMany({
       where: {
         id: {
           in: ids,
@@ -37,8 +34,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  revalidatePath(`/admin/${agencyId}/transactions/invoice`, "page");
-  return { data: { count: deleteUsers.count } };
+  return { data: { count: deleteSchedule.count } };
 };
 
-export const deleteInvoice = createSafeAction(DeleteInvoice, handler);
+export const deleteSchedule = createSafeAction(DeleteSchedule, handler);

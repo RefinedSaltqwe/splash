@@ -9,12 +9,11 @@ import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { useGenerateTimesheetModal } from "@/stores/useGenerateTimesheetModal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import React, { lazy } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
-
-const Loader = lazy(() => import("@/components/shared/Loader"));
+import Loader from "./Loader";
 
 type GenerateTimesheetFormProps = {
   className?: string;

@@ -7,6 +7,7 @@ import {
 } from "@/types/stripe";
 import { clerkClient, currentUser } from "@clerk/nextjs";
 import {
+  type LaborTracking,
   Prisma,
   type Agency,
   type Lane,
@@ -796,6 +797,23 @@ export const upsertTicketQuery = async (
 
   return response;
 };
+export const upsertScheduleQuery = async (
+  payload: Prisma.LaborTrackingUncheckedCreateInput,
+) => {
+  const response = await db.laborTracking.upsert({
+    where: {
+      id: payload.id ?? "",
+    },
+    update: {
+      ...payload,
+    },
+    create: {
+      ...payload,
+    },
+  });
+
+  return response;
+};
 
 export const deleteTicketQuery = async (ticketId: string) => {
   const response = await db.ticket.delete({
@@ -852,6 +870,10 @@ export const upsertInventoryQuery = async (
       quantity: item.quantity ?? 0,
       supplierId: item.supplierId,
       agencyId: item.agencyId,
+    },
+    include: {
+      Supplier: true,
+      MaterialsUsed: true,
     },
   });
   return response;

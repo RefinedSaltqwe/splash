@@ -69,7 +69,7 @@ const PipelineSettings = ({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         title={`Are you sure you want to delete this pipeline?`}
-        description="TThis action cannot be undone. This will permanently delete your data from our servers."
+        description="This action cannot be undone. This will permanently delete your data from our servers."
       >
         <div className="flex w-full flex-col justify-end gap-3 md:flex-row">
           <Button

@@ -94,7 +94,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/invoice`);
+  revalidatePath(`/admin/${agencyId}/transactions/invoice`, "page");
   return { data: promiseAll };
 };
 

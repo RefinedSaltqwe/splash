@@ -82,13 +82,27 @@ export const columns: ColumnDef<TimesheetWithInputTimes>[] = [
       const currentDate = new Date();
       let status = data?.status;
       if (currentDate > deadline && status === "draft") {
-        status = `Overdue (${currentDate.getDate() - deadline.getDate()})`;
+        const deadlineIn = currentDate.getDate() - deadline.getDate();
+        status = `Overdue (${
+          deadline
+            ? `${deadlineIn} ${
+                deadlineIn !== -1
+                  ? deadlineIn !== 0
+                    ? deadlineIn !== 1
+                      ? "days"
+                      : "day"
+                    : "day"
+                  : "day"
+              }`
+            : ""
+        })`;
       }
       return (
         <span
           className={cn(
-            "min-w-[1000px] text-right font-medium capitalize",
+            "min-w-[1000px] text-right font-medium",
             currentDate > deadline && "!text-red-500",
+            status?.includes("draft") && "capitalize",
           )}
         >
           {`${status}`}

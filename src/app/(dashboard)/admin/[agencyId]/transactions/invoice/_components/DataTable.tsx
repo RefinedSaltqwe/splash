@@ -14,6 +14,7 @@ import {
 } from "@tanstack/react-table";
 
 import { DataTablePagination } from "@/app/(dashboard)/_components/datatable/DataTablePagination";
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -31,11 +32,9 @@ import { useCustomerList } from "@/stores/useCustomersList";
 import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
 import { type Customer, type Invoice } from "@prisma/client";
 import { Trash2 } from "lucide-react";
-import { lazy, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
-
-const Loader = lazy(() => import("@/components/shared/Loader"));
 
 interface DataTableInvoiceProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

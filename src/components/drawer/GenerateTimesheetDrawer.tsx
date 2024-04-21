@@ -20,7 +20,7 @@ import {
 
 const GenerateTimesheetDrawer: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const serviceModal = useGenerateTimesheetModal();
+  const timesheetModal = useGenerateTimesheetModal();
   const isOpen = useGenerateTimesheetModal((state) => state.isOpen);
   const onClose = useGenerateTimesheetModal((state) => state.onClose);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -40,9 +40,9 @@ const GenerateTimesheetDrawer: React.FC = () => {
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{serviceModal.title}</DialogTitle>
+            <DialogTitle>{timesheetModal.title}</DialogTitle>
             <DialogDescription>
-              {serviceModal.description} Click submit when you're done.
+              {timesheetModal.description} Click submit when you're done.
             </DialogDescription>
           </DialogHeader>
           <GenerateTimesheetForm />
@@ -55,9 +55,9 @@ const GenerateTimesheetDrawer: React.FC = () => {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>{serviceModal.title}</DrawerTitle>
+          <DrawerTitle>{timesheetModal.title}</DrawerTitle>
           <DrawerDescription>
-            {serviceModal.description} Click submit when you're done.
+            {timesheetModal.description} Click submit when you're done.
           </DrawerDescription>
         </DrawerHeader>
         <GenerateTimesheetForm className="px-4 pb-4" />

@@ -34,6 +34,7 @@ import { Trash2 } from "lucide-react";
 import { lazy, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 
 const Loader = lazy(() => import("@/components/shared/Loader"));
 
@@ -80,6 +81,7 @@ export function DataTable<TData, TValue>({
   const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const setCustomers = useCustomerList((state) => state.setCustomers);
   const ids = useDeleteManyModal((state) => state.modalIds);
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
 
   const table = useReactTable({
     data,
@@ -142,6 +144,7 @@ export function DataTable<TData, TValue>({
       const timer = setTimeout(() => {
         void executeDeleteInvoice({
           id: ids!,
+          agencyId: agencyId ?? "",
         });
       }, 1000);
 

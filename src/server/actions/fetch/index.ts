@@ -312,7 +312,7 @@ export const getInvoices = cache(
         where: {
           agencyId,
         },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: "desc" },
       });
       return [...invoices];
     } catch (error) {

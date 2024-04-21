@@ -64,7 +64,13 @@ const InvoicePage: React.FC<InvoicePageProps> = async ({ params }) => {
     let total = 0;
     if (id === "total") {
       invoicesData?.forEach((item) => {
-        total += item.payment;
+        const totalComputation = totalValueWithTax(
+          item.subTotal,
+          item.shipping,
+          item.discount,
+          item.tax,
+        );
+        total += totalComputation;
       });
       return total;
     } else if (id === "3" || id === "4") {
