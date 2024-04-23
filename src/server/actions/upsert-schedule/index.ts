@@ -49,7 +49,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
   }
 
-  revalidatePath(`/admin/${agencyId}/team/labor-tracking`, "page");
+  revalidatePath(`/admin/${agencyId}/team/schedule`, "page");
   return { data: response };
 };
 

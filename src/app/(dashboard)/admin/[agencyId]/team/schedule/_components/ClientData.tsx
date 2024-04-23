@@ -100,6 +100,44 @@ const ClientData: React.FC<ClientDataProps> = ({
     }
   }, [showModal]);
 
+  function renderEventContent(eventInfo: {
+    timeText:
+      | string
+      | number
+      | boolean
+      | React.ReactElement<
+          unknown,
+          string | React.JSXElementConstructor<unknown>
+        >
+      | Iterable<React.ReactNode>
+      | React.ReactPortal
+      | React.PromiseLikeOfReactNode
+      | null
+      | undefined;
+    event: {
+      title:
+        | string
+        | number
+        | boolean
+        | React.ReactElement<
+            unknown,
+            string | React.JSXElementConstructor<unknown>
+          >
+        | Iterable<React.ReactNode>
+        | React.ReactPortal
+        | React.PromiseLikeOfReactNode
+        | null
+        | undefined;
+    };
+  }) {
+    return (
+      <span className="flex flex-row gap-2 px-1">
+        <b>{eventInfo.timeText}</b>
+        <i>{eventInfo.event.title}</i>
+      </span>
+    );
+  }
+
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex h-[90vh] flex-col items-center justify-between">
@@ -121,6 +159,7 @@ const ClientData: React.FC<ClientDataProps> = ({
               selectMirror={true}
               dateClick={handleDateClick}
               eventClick={(data) => handleUpdateModal(data)}
+              eventContent={renderEventContent}
               eventChange={(data) => {
                 void executeUpsertSchedule({
                   id: data.event._def.publicId,
@@ -143,7 +182,8 @@ const ClientData: React.FC<ClientDataProps> = ({
         <GlobalModal
           isOpen={showModal}
           setIsOpen={setShowModal}
-          title="Add schedule"
+          title="Add or Update schedule"
+          description="Effortlessly manage employee schedules. Save time, reduce costs."
         >
           <LaborTrackingForm
             setIsOpen={setShowModal}

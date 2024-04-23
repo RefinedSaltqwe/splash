@@ -5,7 +5,7 @@ export const UpdateInvoice = z.object({
   customerId: z.string(),
   status: z.string(),
   shipping: z.coerce.number().multipleOf(0.01),
-  tax: z.coerce.number(),
+  tax: z.coerce.number().multipleOf(0.01),
   payment: z.coerce.number().multipleOf(0.01),
   discount: z.coerce.number().multipleOf(0.01),
   subTotal: z.coerce.number().multipleOf(0.01),
@@ -21,4 +21,12 @@ export const UpdateInvoice = z.object({
       description: z.string(),
     }),
   ),
+  payments: z
+    .array(
+      z.object({
+        id: z.string(),
+        value: z.coerce.number().multipleOf(0.01),
+      }),
+    )
+    .optional(),
 });

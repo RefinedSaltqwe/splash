@@ -28,6 +28,8 @@ import { useAction } from "@/hooks/useAction";
 import {
   cn,
   convertInvoiceStatus,
+  formatDateTime,
+  formatPrice,
   statusGenerator,
   subTotalPlusShippingMinusDiscount,
   taxValue,
@@ -45,7 +47,7 @@ import { useAddInvoiceReceiverModal } from "@/stores/useAddInvoiceReceiverModal"
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { type Service } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type Customer } from "@prisma/client";
+import { type Payment, type Customer } from "@prisma/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, Pencil, Plus } from "lucide-react";
@@ -70,12 +72,16 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
     queryKey: ["invoice", invId],
     queryFn: () => getInvoiceWithServices(invId!),
     enabled: type === "update" && !!invId,
+    staleTime: undefined,
+    refetchInterval: undefined,
   });
 
   const { data: customerData } = useQuery({
     queryKey: ["customer", invId],
     queryFn: () => getCustomer(invoiceData!.customerId),
     enabled: !!invoiceData, //? Dependent to invoiceData
+    staleTime: undefined,
+    refetchInterval: undefined,
   });
 
   const { data: serviceTypesData } = useQuery({
@@ -123,6 +129,11 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
     discount: invoiceData?.discount ? invoiceData.discount : 0,
     tax: invoiceData?.tax ? invoiceData.tax : 0,
   });
+  const extractPayments: number[] = [];
+  invoiceData?.Payments.forEach((item) => extractPayments.push(item.value));
+  const [payments, setPayments] = useState<Payment[]>(
+    invoiceData?.Payments ?? [],
+  );
 
   const form = useForm<z.infer<typeof CreateInvoice>>({
     resolver: zodResolver(CreateInvoice),
@@ -293,6 +304,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
         id: "",
         ...mainValues,
         services: [...services],
+        payments: [...payments.map((item) => item.value)],
       });
       form.reset();
     } else if (type === "update" && proceed == 0) {
@@ -300,6 +312,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
         id: invoiceData!.id,
         ...mainValues,
         services: [...services],
+        payments: [
+          ...payments.map((item) => {
+            return {
+              id: item.id,
+              value: item.value,
+            };
+          }),
+        ],
         createdAt: invoiceData!.createdAt,
       });
     }
@@ -523,8 +543,39 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
             <PriceInputs
               addCalculatedPrice={addCalculatedPrice}
               calculatedPrice={calculatedPrice}
+              setPayments={setPayments}
+              payments={payments}
             />
-            <div className="col-span-full grid grid-cols-2 items-center justify-center gap-4 px-3 py-2 sm:col-span-4 sm:col-start-9">
+            <div className="col-span-full grid grid-cols-2 items-start justify-center gap-4 px-3 py-2 sm:col-span-4 sm:col-start-1">
+              <div className="col-span-full flex flex-row justify-between">
+                <div className="flex w-full justify-end">
+                  <h6 className="font-normal text-muted-foreground">
+                    Payments made
+                  </h6>
+                </div>
+                <div className="flex w-full justify-end">
+                  <div className="flex flex-col items-end">
+                    {payments.map((payment) => (
+                      <span
+                        key={`${payment.id}`}
+                        className="font-normal text-muted-foreground"
+                      >
+                        {`${formatPrice(String(payment.value))} -${
+                          formatDateTime(payment.createdAt).dateOnly.split(
+                            ",",
+                          )[1]
+                        }, ${
+                          formatDateTime(payment.createdAt).dateOnly.split(
+                            ",",
+                          )[2]
+                        }`}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-span-full grid grid-cols-2 items-start justify-center gap-4 px-3 py-2 sm:col-span-4 sm:col-start-9">
               <FinalDetails title="Subtotal" value={subTotal} />
               <FinalDetails
                 title="Travel Expense"
@@ -557,7 +608,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
                 )}
               />
               <FinalDetails
-                title="Payment"
+                title="Total payment"
                 value={calculatedPrice.payment}
                 childClassNames="text-destructive"
                 isMinus={true}

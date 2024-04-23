@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const Unauthorized = () => {
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center gap-2 bg-background p-4 text-center">
+    <div className="flex h-screen w-full flex-col items-center justify-center gap-2 bg-background p-4 text-center">
       <Image
         src="/assets/images/error-401.png"
         alt="Picture of error 401"

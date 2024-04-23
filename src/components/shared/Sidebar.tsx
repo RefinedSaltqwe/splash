@@ -135,8 +135,8 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
           order: 2,
         },
         {
-          name: "Labor Tracking",
-          href: `/admin/${id}/team/labor-tracking`,
+          name: "Schedule",
+          href: `/admin/${id}/team/schedule`,
           order: 3,
         },
       ],

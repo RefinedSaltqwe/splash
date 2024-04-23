@@ -66,7 +66,6 @@ const AdminRegistrationForm: React.FC<AdminRegistrationFormProps> = ({
   const { execute: executeCreateAdmin, isLoading: createAdminIsLoading } =
     useAction(createAdmin, {
       onSuccess: (data) => {
-        console.log(data);
         toast.success("Success", {
           description: "Agency details saved.",
         });

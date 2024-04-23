@@ -33,21 +33,33 @@ const Permission: React.FC<PermissionProps> = ({
         control for each Sub Account. This is only visible to agency owners
       </FormDescription>
       <div className="flex flex-col gap-4">
-        {subAccounts?.map((subAccount) => {
-          return (
-            <div key={subAccount.id}>
-              <FormSwitch
-                userData={userData}
-                authUserDataQuery={authUserDataQuery}
-                page={page}
-                role={userData!.role!}
-                type={type}
-                subAccountPermissions={subAccountPermissions}
-                subAccount={subAccount}
-              />
-            </div>
-          );
-        })}
+        {subAccounts ? (
+          subAccounts.length > 0 ? (
+            subAccounts.map((subAccount) => {
+              return (
+                <div key={subAccount.id}>
+                  <FormSwitch
+                    userData={userData}
+                    authUserDataQuery={authUserDataQuery}
+                    page={page}
+                    role={userData!.role!}
+                    type={type}
+                    subAccountPermissions={subAccountPermissions}
+                    subAccount={subAccount}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <span className="font-normal text-muted-foreground">
+              You don't have any subaccount.
+            </span>
+          )
+        ) : (
+          <span className="font-normal text-muted-foreground">
+            You don't have any subaccount.
+          </span>
+        )}
       </div>
     </div>
   );

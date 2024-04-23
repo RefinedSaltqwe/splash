@@ -14,6 +14,7 @@ enum Role {
     AGENCY_ADMIN
     SUBACCOUNT_USER
     SUBACCOUNT_GUEST
+    USER
 }
 
 enum Icon {
@@ -143,6 +144,8 @@ model Agency {
   companyEmail     String                @db.Text
   companyPhone     String
   whiteLabel       Boolean               @default(true)
+  pst              Float                 @default(6)
+  gst              Float                 @default(5)
   address          String
   city             String
   zipCode          String
@@ -166,6 +169,7 @@ model Agency {
   Timesheets       Timesheet[]
   Inventory        Inventory[]
   LaborTracking    LaborTracking[]
+  Payments         Payment[]
 }
 
 model SubAccount {
@@ -653,7 +657,7 @@ model Invoice {
     payment       Float @default(0)
     total         Float
     shipping      Float
-    tax           Int
+    tax           Float
     subTotal      Float
     discount      Float
 
@@ -665,8 +669,25 @@ model Invoice {
     
     services        Service[]
 
+    Payments        Payment[]
+
     createdAt       DateTime  @default(now())
     dueDate         DateTime
+
+}
+
+model Payment {
+  id          String @id @default(uuid())
+  value       Float @default(0.00)
+  createdAt   DateTime @default(now())
+
+  agencyId    String
+  Agency      Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  invoiceId   String
+  Invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([value, id])
 }
 
 model Timesheet {

@@ -15,7 +15,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  const { id, services, ...rest } = data;
+  const { id, services, payments, ...rest } = data;
 
   let promiseAll;
 
@@ -51,6 +51,29 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       data: [...servicesWithInvoiceId],
     });
 
+    if (payments) {
+      const filteredPayments = payments.filter((item) =>
+        item.id.includes("new"),
+      );
+      const paymentsObject = filteredPayments.map((val) => {
+        const paymentObject = {
+          id: undefined,
+          value: val.value,
+          invoiceId: id,
+          agencyId: rest.agencyId!,
+        };
+        return paymentObject;
+      });
+
+      const createPayments = await db.payment.createMany({
+        data: [...paymentsObject],
+      });
+
+      if (!createPayments) {
+        throw new ReferenceError("Error creating payments.");
+      }
+    }
+
     if (!invoicePromise) {
       throw new ReferenceError("Error updating invoice");
     }
@@ -64,6 +87,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     promiseAll = {
       ...invoicePromise,
       services: [],
+      Payments: [],
     };
   } catch (err: unknown) {
     if (err instanceof Error) {

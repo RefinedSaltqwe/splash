@@ -26,7 +26,7 @@ const CustomersPage: React.FC<CustomersPageProps> = async ({ params }) => {
       <div className="flex items-center justify-between">
         <Heading title="Customers" subTitle="Customer list" />
         <ClientButtonLink
-          buttonName="Create Customer"
+          buttonName="Create customer"
           href={`/admin/${params.agencyId}/customers/create`}
           variant={"default"}
         />

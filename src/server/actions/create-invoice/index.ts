@@ -28,12 +28,16 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     total,
     agencyId,
     services,
+    payments,
   } = data;
 
   let promiseAll;
 
   try {
     const getLastInvoiceId = await db.invoice.findFirst({
+      where: {
+        agencyId,
+      },
       orderBy: { createdAt: "desc" },
       select: { id: true },
     });
@@ -70,11 +74,35 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         total,
         agencyId: agencyId!,
       },
+      include: {
+        services: true,
+        Payments: true,
+      },
     });
 
     const servicesDB = await db.service.createMany({
       data: [...servicesWithInvoiceId],
     });
+
+    if (payments) {
+      const paymentsObject = payments.map((val) => {
+        const paymentObject = {
+          id: undefined,
+          value: val,
+          invoiceId: generateInvoiceId,
+          agencyId: agencyId!,
+        };
+        return paymentObject;
+      });
+
+      const createPayments = await db.payment.createMany({
+        data: [...paymentsObject],
+      });
+
+      if (!createPayments) {
+        throw new ReferenceError("Error creating payments.");
+      }
+    }
 
     if (!invoice) {
       throw new ReferenceError("Error creating invoice");
@@ -84,7 +112,6 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     }
     promiseAll = {
       ...invoice,
-      services: [],
     };
   } catch (err: unknown) {
     if (err instanceof Error) {

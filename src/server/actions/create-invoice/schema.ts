@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { number, z } from "zod";
 
 export const CreateInvoice = z.object({
   id: z.string(),
@@ -20,4 +20,5 @@ export const CreateInvoice = z.object({
       description: z.string(),
     }),
   ),
+  payments: z.array(number()).optional(),
 });
