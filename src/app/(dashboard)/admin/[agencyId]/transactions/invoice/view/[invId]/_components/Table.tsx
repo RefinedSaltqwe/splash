@@ -16,16 +16,18 @@ import {
   totalValueWithTax,
 } from "@/lib/utils";
 import { getServiceTypes } from "@/server/actions/fetch";
-import { type InvoiceWithService } from "@/types/prisma";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
+import { type InvoiceWithServiceAndPayment } from "@/types/prisma";
 import { useQuery } from "@tanstack/react-query";
 
 type TableInvoiceProps = {
-  data: InvoiceWithService;
+  data: InvoiceWithServiceAndPayment;
 };
 
 export function TableInvoice({ data }: TableInvoiceProps) {
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
   const { data: serviceTypesData } = useQuery({
-    queryFn: () => getServiceTypes(),
+    queryFn: () => getServiceTypes(agencyId ?? ""),
     queryKey: ["serviceTypes"],
   });
   return (

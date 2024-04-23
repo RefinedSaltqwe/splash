@@ -1,13 +1,20 @@
+import Unauthorized from "@/components/shared/Unauthorized";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import type React from "react";
+import React from "react";
 
-const page: React.FC = async () => {
+type TeamPageProps = {
+  params: {
+    agencyId: string;
+  };
+};
+
+const TeamPage: React.FC<TeamPageProps> = async ({ params }) => {
   const session = await currentUser();
   if (session) {
-    return redirect(`/admin/employees/list`);
+    return redirect(`/admin/${params.agencyId}/team/list`);
   } else {
-    return redirect("/admin/auth");
+    return <Unauthorized />;
   }
 };
-export default page;
+export default TeamPage;

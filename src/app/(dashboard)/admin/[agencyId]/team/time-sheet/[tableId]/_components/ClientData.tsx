@@ -10,7 +10,6 @@ import { updateTimesheets } from "@/server/actions/update-timesheet";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { type TimesheetWithInputTimes } from "@/types/prisma";
 import { type User } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 import { ChevronUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -25,8 +24,6 @@ const ClientData: React.FC<ClientDataProps> = ({
   timesheetsData,
   usersData,
 }) => {
-  const queryClient = useQueryClient();
-
   const agencyId = useCurrentUserStore((state) => state.agencyId);
   const [timesheets, setTimesheets] = useState<TimesheetWithInputTimes[]>([]);
   const [isContentHidden, setIsContentHidden] = useState<string[]>([]);
@@ -45,9 +42,6 @@ const ClientData: React.FC<ClientDataProps> = ({
               }`,
             },
           );
-          void queryClient.invalidateQueries({
-            queryKey: ["timesheets"],
-          });
         }
       },
       onError: (error) => {

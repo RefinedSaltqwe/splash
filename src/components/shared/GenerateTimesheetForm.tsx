@@ -8,7 +8,6 @@ import { CreateTimesheet } from "@/server/actions/create-timesheet/schema";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { useGenerateTimesheetModal } from "@/stores/useGenerateTimesheetModal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -23,12 +22,10 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
   className,
 }) => {
   const onClose = useGenerateTimesheetModal((state) => state.onClose);
-  const queryClient = useQueryClient();
   const agencyId = useCurrentUserStore((state) => state.agencyId);
 
-  const { execute: create, isLoading: createLoading } = useAction(
-    createTimesheet,
-    {
+  const { execute: executeCreateTimesheet, isLoading: createLoading } =
+    useAction(createTimesheet, {
       onSuccess: (data) => {
         if (data.count === 0) {
           toast.error(
@@ -49,9 +46,6 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
               }`,
             },
           );
-          void queryClient.invalidateQueries({
-            queryKey: ["timesheets"],
-          });
         }
       },
       onError: (error) => {
@@ -71,8 +65,7 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
       onComplete: () => {
         onClose();
       },
-    },
-  );
+    });
 
   const form = useForm<z.infer<typeof CreateTimesheet>>({
     resolver: zodResolver(CreateTimesheet),
@@ -84,7 +77,7 @@ const GenerateTimesheetForm: React.FC<GenerateTimesheetFormProps> = ({
   });
 
   function onSubmit(values: z.infer<typeof CreateTimesheet>) {
-    void create({
+    void executeCreateTimesheet({
       dateFr: values.dateFr,
       dateTo: values.dateTo,
       agencyId: agencyId!,

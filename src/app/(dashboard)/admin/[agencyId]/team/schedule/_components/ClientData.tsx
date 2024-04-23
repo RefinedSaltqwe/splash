@@ -131,7 +131,11 @@ const ClientData: React.FC<ClientDataProps> = ({
     };
   }) {
     return (
-      <span className="flex flex-row gap-2 px-1">
+      <span className="flex flex-row items-center gap-2 px-1">
+        {eventInfo.timeText && (
+          <span className="h-2 w-2 rounded-full bg-primary" />
+        )}
+
         <b>{eventInfo.timeText}</b>
         <i>{eventInfo.event.title}</i>
       </span>
