@@ -28,12 +28,11 @@ import { useAction } from "@/hooks/useAction";
 import { cn } from "@/lib/utils";
 import { deleteService } from "@/server/actions/delete-services";
 import { useDeleteManyModal } from "@/stores/useDeleteManyModal";
-import { useQueryClient } from "@tanstack/react-query";
+import { type TimesheetWithInputTimes } from "@/types/prisma";
 import { Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
-import { type TimesheetWithInputTimes } from "@/types/prisma";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -101,7 +100,6 @@ export function DataTable<TData, TValue>({
   const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const onClose = useDeleteManyModal((state) => state.onClose);
   const timesheetModal = useDeleteManyModal();
-  const queryClient = useQueryClient();
 
   const { execute, isLoading } = useAction(deleteService, {
     onSuccess: () => {
@@ -112,9 +110,6 @@ export function DataTable<TData, TValue>({
             : "Service has"
         } been deleted.`,
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["TimesheetWithInputTimes"],
-      });
     },
     onError: (error) => {
       toast.error(error, {

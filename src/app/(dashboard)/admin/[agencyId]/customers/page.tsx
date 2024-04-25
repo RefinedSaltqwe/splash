@@ -18,7 +18,7 @@ const CustomersPage: React.FC<CustomersPageProps> = async ({ params }) => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryFn: () => getCustomers(params.agencyId),
-    queryKey: ["customers"],
+    queryKey: ["customers", params.agencyId],
   });
 
   return (

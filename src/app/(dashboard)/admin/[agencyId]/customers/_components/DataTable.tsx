@@ -115,7 +115,7 @@ export function DataTable<TData, TValue>({
         );
         //? Refetch the updated customer data
         void queryClient.invalidateQueries({
-          queryKey: ["customers"],
+          queryKey: ["customers", agencyId],
         });
       }
     },

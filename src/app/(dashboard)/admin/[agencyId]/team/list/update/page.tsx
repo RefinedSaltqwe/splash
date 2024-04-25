@@ -32,7 +32,7 @@ const UpdateUser: React.FC<UpdateUserProps> = async ({ params }) => {
     queryFn: () => getUserPermissions(uid),
   });
   await queryClient.prefetchQuery({
-    queryKey: ["agencyWithSubAccount", uid],
+    queryKey: ["agencyWithSubAccount", params.agencyId],
     queryFn: () => getAgencyByIdWithSubAccounts(params.agencyId),
   });
   return (

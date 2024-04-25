@@ -20,11 +20,11 @@ const CreateInvoicePage: React.FC<CreateInvoicePageProps> = async ({
 }) => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["customers"],
+    queryKey: ["customers", params.agencyId],
     queryFn: () => getCustomers(params.agencyId),
   });
   await queryClient.prefetchQuery({
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", params.agencyId],
     queryFn: () => getServiceTypes(params.agencyId),
   });
   return (

@@ -78,11 +78,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
     const _12hrFormat = hr - sub;
     if (_12hrFormat < 10) {
       return `0${_12hrFormat}:${min}`;
-    }
-    //! else if (_12hrFormat === 12) {
-    //   return `11:59`;
-    // }
-    else {
+    } else {
       return `${_12hrFormat}:${min}`;
     }
   };

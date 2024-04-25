@@ -34,6 +34,7 @@ import { Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTableFilters } from "./DataTableFilters";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -99,7 +100,7 @@ export function DataTable<TData, TValue>({
   const onClose = useDeleteManyModal((state) => state.onClose);
   const serviceModal = useDeleteManyModal();
   const queryClient = useQueryClient();
-
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
   const { execute, isLoading } = useAction(deleteService, {
     onSuccess: () => {
       toast.success(
@@ -110,7 +111,7 @@ export function DataTable<TData, TValue>({
         } been deleted.`,
       );
       void queryClient.invalidateQueries({
-        queryKey: ["serviceTypes"],
+        queryKey: ["serviceTypes", agencyId],
       });
     },
     onError: (error) => {

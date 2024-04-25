@@ -63,7 +63,7 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
           queryKey: ["supplier-", sid],
         });
         void queryClient.invalidateQueries({
-          queryKey: ["suppliers"],
+          queryKey: ["suppliers", data.agencyId],
         });
       },
       onError: (error) => {
@@ -85,7 +85,7 @@ const InputForm: React.FC<InputFormProps> = ({ sid, type, agencyId }) => {
           }" has been created.`,
         );
         void queryClient.invalidateQueries({
-          queryKey: ["suppliers"],
+          queryKey: ["suppliers", data.agencyId],
         });
       },
       onError: (error) => {

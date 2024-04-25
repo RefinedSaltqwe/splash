@@ -13,7 +13,7 @@ type CustomerListProps = {
 const CustomerList: React.FC<CustomerListProps> = ({ agencyId }) => {
   const { data: customersData } = useQuery({
     queryFn: () => getCustomers(agencyId),
-    queryKey: ["customers"],
+    queryKey: ["customers", agencyId],
   });
 
   return (

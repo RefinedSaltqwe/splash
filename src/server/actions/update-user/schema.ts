@@ -11,5 +11,6 @@ export const UpdateUser = z.object({
     "AGENCY_ADMIN",
     "SUBACCOUNT_USER",
     "SUBACCOUNT_GUEST",
+    "USER",
   ]),
 });

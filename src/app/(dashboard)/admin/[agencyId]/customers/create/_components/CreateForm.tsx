@@ -40,7 +40,7 @@ const CreateForm: React.FC = () => {
       });
       //? Refetch the updated customer data
       void queryClient.invalidateQueries({
-        queryKey: ["customers"],
+        queryKey: ["customers", agencyId],
       });
     },
     onError: (error) => {

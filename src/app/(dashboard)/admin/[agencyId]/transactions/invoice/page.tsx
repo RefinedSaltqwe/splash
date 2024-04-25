@@ -36,11 +36,11 @@ const InvoicePage: React.FC<InvoicePageProps> = async ({ params }) => {
   const agencyId = params.agencyId;
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", agencyId],
     queryFn: () => getServiceTypes(agencyId),
   });
   await queryClient.prefetchQuery({
-    queryKey: ["invoices"],
+    queryKey: ["invoices", agencyId],
     queryFn: () => getInvoices(agencyId),
   });
 
@@ -98,7 +98,7 @@ const InvoicePage: React.FC<InvoicePageProps> = async ({ params }) => {
       <div className="flex items-center justify-between">
         <Heading title="Invoice" />
         <ClientButtonLink
-          buttonName="Create Invoice"
+          buttonName="Create invoice"
           href={`/admin/${agencyId}/transactions/invoice/create`}
           variant={"default"}
         />

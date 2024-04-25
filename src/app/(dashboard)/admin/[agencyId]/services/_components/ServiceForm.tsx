@@ -41,7 +41,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ className }) => {
       onSuccess: (data) => {
         toast.success(`New service "${data.name}" created.`);
         void queryClient.invalidateQueries({
-          queryKey: ["serviceTypes"],
+          queryKey: ["serviceTypes", data.agencyId],
         });
       },
       onError: (error) => {
@@ -61,7 +61,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ className }) => {
       onSuccess: (data) => {
         toast.success(`"${name}" has been updated to "${data.name}".`);
         void queryClient.invalidateQueries({
-          queryKey: ["serviceTypes"],
+          queryKey: ["serviceTypes", data.agencyId],
         });
       },
       onError: (error) => {

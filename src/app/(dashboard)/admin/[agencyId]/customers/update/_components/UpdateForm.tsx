@@ -49,7 +49,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ cid }) => {
         queryKey: ["customer-", cid],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["customers"],
+        queryKey: ["customers", data.agencyId],
       });
 
       router.push(`/admin/${data.agencyId}/customers`);

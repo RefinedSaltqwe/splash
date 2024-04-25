@@ -38,25 +38,25 @@ const DeleteInvoicePrompt: React.FC = () => {
   const [notConfirm, setNotConfirm] = useState<boolean>(true);
 
   const { data: serviceTypes } = useQuery({
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", agencyId ?? ""],
     queryFn: () => getServiceTypes(agencyId ?? ""),
     enabled: modalType === "serviceType",
   });
 
   const { data: customers } = useQuery({
-    queryKey: ["customers"],
+    queryKey: ["customers", agencyId ?? ""],
     queryFn: () => getCustomers(agencyId ?? ""),
     enabled: modalType === "customer",
   });
 
   const { data: suppliers } = useQuery({
-    queryKey: ["suppliers"],
+    queryKey: ["suppliers", agencyId ?? ""],
     queryFn: () => getSuppliers(agencyId ?? ""),
     enabled: modalType === "supplier",
   });
 
   const { data: inventory } = useQuery({
-    queryKey: ["inventory"],
+    queryKey: ["inventory", subaccountId ?? ""],
     queryFn: () => getInventoryListBySubaccountId(subaccountId ?? ""),
     enabled: modalType === "inventory",
   });

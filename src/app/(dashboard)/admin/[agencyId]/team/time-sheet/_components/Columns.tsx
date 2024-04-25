@@ -8,9 +8,6 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
-// This type is used to define the shape of our data.
-// You can use a Zod 22schema here if you want.
-
 export const columns: ColumnDef<TimesheetWithInputTimes>[] = [
   {
     id: "select",

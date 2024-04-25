@@ -25,7 +25,7 @@ const SettingsPage = async ({ params }: Props) => {
     queryFn: () => getAuthUserDetails(),
   });
   await queryClient.prefetchQuery({
-    queryKey: ["getUserPermissions"],
+    queryKey: ["getUserPermissions", authUser.id],
     queryFn: () => getUserPermissions(authUser.id),
   });
 

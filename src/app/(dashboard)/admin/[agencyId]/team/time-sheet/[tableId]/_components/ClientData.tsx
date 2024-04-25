@@ -96,7 +96,6 @@ const ClientData: React.FC<ClientDataProps> = ({
       return () => clearTimeout(time);
     }
   }, [timesheetsData]);
-  // console.log("Client Data Timesheets: ", timesheets);
   useEffect(() => {
     setTimesheets(timesheetsData ? timesheetsData : []);
   }, [timesheetsData]);

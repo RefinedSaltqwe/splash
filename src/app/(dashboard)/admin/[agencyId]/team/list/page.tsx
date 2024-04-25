@@ -26,7 +26,7 @@ const EmployeeListPage: React.FC<EmployeeListPageProps> = async ({
 
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["getAllUsersInAgency"],
+    queryKey: ["getAllUsersInAgency", params.agencyId],
     queryFn: () => getAllUsersInAgency(params.agencyId),
   });
 

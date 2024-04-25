@@ -29,7 +29,7 @@ const SelectRecieverModal: React.FC<SelectRecieverModalProps> = ({
   const onClose = useAddInvoiceReceiverModal((state) => state.onClose);
   const { data: customersData } = useQuery({
     queryFn: () => getCustomers(agencyId ?? ""),
-    queryKey: ["customers"],
+    queryKey: ["customers", agencyId ?? ""],
   });
 
   const customers = customersData ? customersData : [];

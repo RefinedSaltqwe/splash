@@ -41,7 +41,7 @@ export async function generateStaticParams({ params }: UpdateInvoiceProps) {
 const UpdateInvoicePage: React.FC<UpdateInvoiceProps> = async ({ params }) => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["customers"],
+    queryKey: ["customers", params.agencyId],
     queryFn: () => getCustomers(params.agencyId),
   });
   await queryClient.prefetchQuery({
@@ -49,7 +49,7 @@ const UpdateInvoicePage: React.FC<UpdateInvoiceProps> = async ({ params }) => {
     queryFn: () => getInvoiceWithServices(params.invId),
   });
   await queryClient.prefetchQuery({
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", params.agencyId],
     queryFn: () => getServiceTypes(params.agencyId),
   });
   return (

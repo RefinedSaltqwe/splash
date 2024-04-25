@@ -85,7 +85,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
   });
 
   const { data: serviceTypesData } = useQuery({
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", agencyId],
     queryFn: () => getServiceTypes(agencyId),
   });
 
@@ -220,7 +220,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
           },
         );
         void queryClient.invalidateQueries({
-          queryKey: ["invoices"],
+          queryKey: ["invoices", data.agencyId],
         });
         router.push(`/admin/${data.agencyId}/transactions/invoice`);
       },
@@ -246,7 +246,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
           queryKey: ["invoice", invId],
         });
         void queryClient.invalidateQueries({
-          queryKey: ["invoices"],
+          queryKey: ["invoices", data.agencyId],
         });
         router.push(`/admin/${data.agencyId}/transactions/invoice`);
       },

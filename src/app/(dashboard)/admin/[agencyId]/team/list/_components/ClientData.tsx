@@ -19,7 +19,7 @@ export function ClientData<TData, TValue>({
   agencyId,
 }: DataTableInvoiceProps<TData, TValue>) {
   const { data: users } = useQuery({
-    queryKey: ["getAllUsersInAgency"],
+    queryKey: ["getAllUsersInAgency", agencyId],
     queryFn: () => getAllUsersInAgency(agencyId),
     enabled: uid.length > 5,
   });

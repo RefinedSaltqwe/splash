@@ -34,6 +34,7 @@ import { useCallback, useEffect, useState } from "react";
 import { DataTableFilters } from "./DataTableFilters";
 import { deleteSuppliers } from "@/server/actions/delete-suppliers";
 import { toast } from "sonner";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -99,6 +100,7 @@ export function DataTable<TData, TValue>({
   const onIsProceed = useDeleteManyModal((state) => state.onIsProceed);
   const onClose = useDeleteManyModal((state) => state.onClose);
   const suppliersModal = useDeleteManyModal();
+  const agencyId = useCurrentUserStore((state) => state.agencyId);
 
   const queryClient = useQueryClient();
   const { execute, isLoading } = useAction(deleteSuppliers, {
@@ -112,7 +114,7 @@ export function DataTable<TData, TValue>({
       );
       //? Refetch the updated Supplier data
       void queryClient.invalidateQueries({
-        queryKey: ["suppliers"],
+        queryKey: ["suppliers", agencyId],
       });
     },
     onError: (error) => {

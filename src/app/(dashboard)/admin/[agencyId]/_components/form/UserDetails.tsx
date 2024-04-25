@@ -62,7 +62,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
     enabled: !!userData,
   });
   const { data: getUserPermissionsQuery } = useQuery({
-    queryKey: ["getUserPermissions"],
+    queryKey: ["getUserPermissions", userData ? userData.id! : ""],
     queryFn: () => getUserPermissions(userData ? userData.id! : ""),
     enabled: !!authUserDataQuery,
   });

@@ -16,7 +16,7 @@ const DrawerProvider: React.FC = async () => {
   const getUser = await getUserById(user?.id ?? "");
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["users"],
+    queryKey: ["users", getUser?.agencyId ?? ""],
     queryFn: () => getUsers(getUser?.agencyId ?? ""),
   });
   return (

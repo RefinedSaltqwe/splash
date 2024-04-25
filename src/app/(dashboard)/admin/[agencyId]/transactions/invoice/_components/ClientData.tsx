@@ -32,7 +32,7 @@ export function ClientData<TData, TValue>({
   agencyId,
 }: DataTableInvoiceProps<TData, TValue>) {
   const { data: invoices } = useQuery({
-    queryKey: ["invoices"],
+    queryKey: ["invoices", agencyId],
     queryFn: () => getInvoices(agencyId),
   });
   return (

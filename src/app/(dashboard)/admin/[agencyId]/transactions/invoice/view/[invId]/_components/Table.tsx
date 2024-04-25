@@ -28,7 +28,7 @@ export function TableInvoice({ data }: TableInvoiceProps) {
   const agencyId = useCurrentUserStore((state) => state.agencyId);
   const { data: serviceTypesData } = useQuery({
     queryFn: () => getServiceTypes(agencyId ?? ""),
-    queryKey: ["serviceTypes"],
+    queryKey: ["serviceTypes", agencyId ?? ""],
   });
   return (
     <Table>
