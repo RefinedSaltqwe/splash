@@ -88,6 +88,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       ...invoicePromise,
       services: [],
       Payments: [],
+      Agency: null,
     };
   } catch (err: unknown) {
     if (err instanceof Error) {

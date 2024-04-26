@@ -77,6 +77,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       include: {
         services: true,
         Payments: true,
+        Agency: true,
       },
     });
 

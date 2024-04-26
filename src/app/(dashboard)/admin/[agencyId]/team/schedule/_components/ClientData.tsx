@@ -131,14 +131,15 @@ const ClientData: React.FC<ClientDataProps> = ({
     };
   }) {
     return (
-      <span className="flex flex-row items-center gap-2 px-1">
-        {eventInfo.timeText && (
-          <span className="h-2 w-2 rounded-full bg-primary" />
-        )}
-
-        <b>{eventInfo.timeText}</b>
-        <i>{eventInfo.event.title}</i>
-      </span>
+      <div className="flex flex-row items-center gap-1 overflow-hidden px-1">
+        {eventInfo.timeText && <div className="fc-daygrid-event-dot"></div>}
+        <div className="fc-event-time">
+          <b>{eventInfo.timeText}</b>
+        </div>
+        <div className="!font-normal">
+          <i>{eventInfo.event.title}</i>
+        </div>
+      </div>
     );
   }
 

@@ -8,7 +8,7 @@ import {
   type GetMediaFromSubAccount,
   type GetTagsForSubaccount,
   type InventoryListBySubaccountIdAndSupplierMaterialsUsed,
-  type InvoiceWithServiceAndPayment,
+  type InvoiceWithServiceAndPaymentAndAgency,
   type PipelineWithLanesAndTickets,
   type SubAccountWithContacts,
   type TimesheetWithInputTimes,
@@ -333,7 +333,7 @@ export const getInvoices = cache(
 export const getInvoiceWithServices = cache(
   async (
     id: string,
-  ): Promise<InvoiceWithServiceAndPayment | undefined | null> => {
+  ): Promise<InvoiceWithServiceAndPaymentAndAgency | undefined | null> => {
     try {
       const invoiceWithServices = db.invoice.findUnique({
         where: {
@@ -342,6 +342,7 @@ export const getInvoiceWithServices = cache(
         include: {
           services: true,
           Payments: true,
+          Agency: true,
         },
       });
       return invoiceWithServices;

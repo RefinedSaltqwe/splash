@@ -130,13 +130,18 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
           order: 1,
         },
         {
-          name: "Time Sheet",
+          name: "Timesheet",
           href: `/admin/${id}/team/time-sheet`,
           order: 2,
         },
         {
           name: "Schedule",
           href: `/admin/${id}/team/schedule`,
+          order: 3,
+        },
+        {
+          name: "Requests",
+          href: `/admin/${id}/team/requests`,
           order: 3,
         },
       ],
@@ -195,7 +200,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id, type, defaultOpen = true }) => {
       children: null,
     },
     {
-      name: "Sub Accounts",
+      name: "Subaccounts",
       icon: "person",
       href: `/admin/${id}/all-subaccounts`,
       order: 11,

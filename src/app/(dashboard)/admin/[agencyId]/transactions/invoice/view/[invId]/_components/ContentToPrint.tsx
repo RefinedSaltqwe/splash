@@ -1,48 +1,33 @@
 "use client";
+import Card from "@/app/(dashboard)/_components/containers/Card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
 import { convertInvoiceStatus, convertStatusToColor } from "@/lib/utils";
-import { type InvoiceWithServiceAndPayment } from "@/types/prisma";
-import React, { useRef } from "react";
+import { useCurrentUserStore } from "@/stores/useCurrentUser";
+import { type InvoiceWithServiceAndPaymentAndAgency } from "@/types/prisma";
+import Image from "next/image";
+import React from "react";
+import Head from "./Head";
 import HeadClient from "./HeadClient";
 import { TableInvoice } from "./Table";
-import Card from "@/app/(dashboard)/_components/containers/Card";
-import Head from "./Head";
-import { Printer } from "lucide-react";
-import { useReactToPrint } from "react-to-print";
-import { Button } from "@/components/ui/button";
-import { useCurrentUserStore } from "@/stores/useCurrentUser";
-import Image from "next/image";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 type ContentToPrintProps = {
-  invoiceWithServices: InvoiceWithServiceAndPayment | null | undefined;
+  invoiceWithServices: InvoiceWithServiceAndPaymentAndAgency | null | undefined;
   invID: string;
+  componentRef: React.MutableRefObject<null>;
 };
 
 const ContentToPrint: React.FC<ContentToPrintProps> = ({
   invoiceWithServices,
   invID,
+  componentRef,
 }) => {
   const color = convertStatusToColor(invoiceWithServices!.status);
   const logo = useCurrentUserStore((state) => state.agencyData?.agencyLogo);
-  const componentRef = useRef(null);
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
   return (
     <div className="col-span-3 lg:col-span-2 ">
       <Card padding={false}>
         <div className="flex w-full flex-col">
-          <div className="mt-5 flex w-full items-center justify-end pr-5">
-            <Button
-              onClick={handlePrint}
-              className="rounded-full text-foreground"
-              variant={"ghost"}
-              size={"icon"}
-            >
-              <Printer className="text-muted-foreground" size={18} />
-            </Button>
-          </div>
           <div className="flex w-full flex-col p-10" ref={componentRef}>
             {/* First */}
             <div className="flex w-full flex-row justify-between">

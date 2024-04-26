@@ -29,9 +29,10 @@ import {
   type Payment,
 } from "@prisma/client";
 // ? Custom Types
-export type InvoiceWithServiceAndPayment = Invoice & {
+export type InvoiceWithServiceAndPaymentAndAgency = Invoice & {
   services: Service[];
   Payments: Payment[];
+  Agency: Agency | null;
 };
 
 export type TimesheetWithInputTimes =

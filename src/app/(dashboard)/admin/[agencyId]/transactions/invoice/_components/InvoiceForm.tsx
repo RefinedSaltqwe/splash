@@ -353,6 +353,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ type, invId, agencyId }) => {
                   size={"icon"}
                   variant={"ghost"}
                   className="rounded-full"
+                  type="button"
                 >
                   <Pencil className="text-muted-foreground" size={20} />
                 </Button>
