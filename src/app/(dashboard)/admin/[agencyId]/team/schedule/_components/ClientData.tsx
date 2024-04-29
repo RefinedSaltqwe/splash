@@ -131,21 +131,19 @@ const ClientData: React.FC<ClientDataProps> = ({
     };
   }) {
     return (
-      <div className="flex flex-row items-center gap-1 overflow-hidden px-1">
+      <>
         {eventInfo.timeText && <div className="fc-daygrid-event-dot"></div>}
         <div className="fc-event-time">
           <b>{eventInfo.timeText}</b>
         </div>
-        <div className="!font-normal">
-          <i>{eventInfo.event.title}</i>
-        </div>
-      </div>
+        <div className="fc-event-title">{eventInfo.event.title}</div>
+      </>
     );
   }
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex h-[90vh] flex-col items-center justify-between">
+      <div className="flex h-auto flex-col items-center justify-between">
         <div className="grid w-full grid-cols-10 gap-5">
           <div className="col-span-full">
             <FullCalendar

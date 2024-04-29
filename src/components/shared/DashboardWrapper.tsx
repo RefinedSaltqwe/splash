@@ -1,5 +1,6 @@
 "use client";
 import { getAuthUserDetails } from "@/server/actions/fetch";
+import { getSubaccountDetails } from "@/server/queries";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
 import { type Agency, type User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -20,12 +21,23 @@ const DashboardWrapper: React.FC<DashboardWrapperProps> = ({
     queryKey: ["getAuthUserDetails"],
     queryFn: () => getAuthUserDetails(),
   });
+
+  const { data: subaccount } = useQuery({
+    queryKey: ["subaccount", subaccountId],
+    queryFn: () => getSubaccountDetails(subaccountId ?? ""),
+    enabled: !!subaccountId,
+  });
+
   const setUser = useCurrentUserStore((state) => state.setUser);
   const setUserData = useCurrentUserStore((state) => state.setUserData);
   const setAgencyData = useCurrentUserStore((state) => state.setAgencyData);
+  const setSubaccountData = useCurrentUserStore(
+    (state) => state.setSubaccountData,
+  );
   useEffect(() => {
     setUserData(user as User);
     setAgencyData((user?.Agency ?? undefined) as Agency);
+    setSubaccountData(subaccount);
     setUser(
       user?.id,
       agencyId,
@@ -35,6 +47,9 @@ const DashboardWrapper: React.FC<DashboardWrapperProps> = ({
       user?.role,
       subaccountId ?? "",
     );
+    if (!subaccountId) {
+      setSubaccountData(null);
+    }
   }, [user]);
   return (
     <div className="w-full pl-0 md:pl-72">

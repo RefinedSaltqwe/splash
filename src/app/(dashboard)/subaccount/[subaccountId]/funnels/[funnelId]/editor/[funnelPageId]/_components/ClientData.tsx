@@ -1,5 +1,5 @@
 "use client";
-import EditorProvider from "@/components/providers/editor/EditorProvider";
+import EditorProvider from "@/components/providers/EditorProvider";
 import { getFunnelPageDetails } from "@/server/actions/fetch";
 import { type FunnelPage } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";

@@ -24,7 +24,7 @@ const ClientData: React.FC<ClientDataProps> = ({ subaccountId }) => {
       actionButtonText={
         <>
           <Plus size={15} />
-          Create Funnel
+          Create funnel
         </>
       }
       subaccountId={subaccountId}

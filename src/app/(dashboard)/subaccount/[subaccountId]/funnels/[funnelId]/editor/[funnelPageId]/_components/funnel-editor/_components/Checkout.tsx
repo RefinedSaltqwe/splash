@@ -7,7 +7,7 @@
 import {
   useEditor,
   type EditorElement,
-} from "@/components/providers/editor/EditorProvider";
+} from "@/components/providers/EditorProvider";
 import Loading from "@/components/shared/Loading";
 import { Badge } from "@/components/ui/badge";
 import { type EditorBtns } from "@/constants/defaultsValues";
@@ -15,6 +15,7 @@ import { env } from "@/env";
 import { getStripe } from "@/lib/stripe/stripe-client";
 import { getFunnel } from "@/server/actions/fetch";
 import { getSubaccountDetails } from "@/server/queries";
+import { useDivSpacer } from "@/stores/funnelDivSpacer";
 import {
   EmbeddedCheckout,
   EmbeddedCheckoutProvider,
@@ -28,11 +29,15 @@ import { toast } from "sonner";
 
 type Props = {
   element: EditorElement;
+  index: number;
+  level: number;
 };
 
 const Checkout = (props: Props) => {
   const { dispatch, state, subaccountId, funnelId, pageDetails } = useEditor();
   const router = useRouter();
+  const onOpen = useDivSpacer((state) => state.onOpen);
+  const onClose = useDivSpacer((state) => state.onClose);
   const [clientSecret, setClientSecret] = useState("");
   const [livePrices, setLivePrices] = useState([]);
   const [subAccountConnectAccId, setSubAccountConnectAccId] = useState("");
@@ -105,6 +110,11 @@ const Checkout = (props: Props) => {
 
   const handleOnClickBody = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (props.index === 0 && props.level === 2) {
+      onOpen();
+    } else {
+      onClose();
+    }
     dispatch({
       type: "CHANGE_CLICKED_ELEMENT",
       payload: {
@@ -113,23 +123,24 @@ const Checkout = (props: Props) => {
     });
   };
 
-  const goToNextPage = () => {
-    if (!state.editor.liveMode) return;
-    const funnelPages = funnelData;
-    if (!funnelPages || !pageDetails) return;
-    if (funnelPages.FunnelPages.length > pageDetails.order + 1) {
-      console.log(funnelPages.FunnelPages.length, pageDetails.order + 1);
-      const nextPage = funnelPages.FunnelPages.find(
-        (page) => page.order === pageDetails.order + 1,
-      );
-      if (!nextPage) return;
-      router.replace(
-        `${process.env.NEXT_PUBLIC_SCHEME}${funnelPages.subDomainName}.${process.env.NEXT_PUBLIC_DOMAIN}/${nextPage.pathName}`,
-      );
-    }
-  };
+  // const goToNextPage = () => {
+  //   if (!state.editor.liveMode) return;
+  //   const funnelPages = funnelData;
+  //   if (!funnelPages || !pageDetails) return;
+  //   if (funnelPages.FunnelPages.length > pageDetails.order + 1) {
+  //     console.log(funnelPages.FunnelPages.length, pageDetails.order + 1);
+  //     const nextPage = funnelPages.FunnelPages.find(
+  //       (page) => page.order === pageDetails.order + 1,
+  //     );
+  //     if (!nextPage) return;
+  //     router.replace(
+  //       `${process.env.NEXT_PUBLIC_SCHEME}${funnelPages.subDomainName}.${process.env.NEXT_PUBLIC_DOMAIN}/${nextPage.pathName}`,
+  //     );
+  //   }
+  // };
 
   const handleDeleteElement = () => {
+    onClose();
     dispatch({
       type: "DELETE_ELEMENT",
       payload: { elementDetails: props.element },
@@ -143,7 +154,7 @@ const Checkout = (props: Props) => {
       onDragStart={(e) => handleDragStart(e, "contactForm")}
       onClick={handleOnClickBody}
       className={clsx(
-        "relative m-[5px] flex w-full items-center justify-center p-[2px] text-[16px] transition-all",
+        "relative m-0 flex w-full items-center justify-center p-[2px] text-[16px] transition-all",
         {
           "!border-blue-500":
             state.editor.selectedElement.id === props.element.id,
@@ -183,12 +194,11 @@ const Checkout = (props: Props) => {
 
       {state.editor.selectedElement.id === props.element.id &&
         !state.editor.liveMode && (
-          <div className="absolute -right-[1px] -top-[25px] rounded-none rounded-t-lg bg-primary  px-2.5 py-1 text-xs font-bold !text-white">
-            <Trash
-              className="cursor-pointer"
-              size={16}
-              onClick={handleDeleteElement}
-            />
+          <div
+            className="absolute -right-[1px] -top-[25px] cursor-pointer rounded-none rounded-t-lg  bg-primary px-2.5 py-1 text-xs font-bold !text-white"
+            onClick={handleDeleteElement}
+          >
+            <Trash size={16} />
           </div>
         )}
     </div>

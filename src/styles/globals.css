@@ -8,9 +8,9 @@ body,
   height: 100%;
   /* Full Calendar */
   --fc-small-font-size: 0.85em;
-  --fc-page-bg-color: #fff;
   --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
   --fc-neutral-text-color: #808080;
+  --fc-daygrid-event-dot-width: 5px;
 
   --fc-event-bg-color: hsl(221.2 83.2% 53.3%);
   --fc-event-border-color: hsl(221.2 83.2% 53.3%);
@@ -97,6 +97,7 @@ html.dark .apexcharts-gridline {
     --fc-button-active-border-color: hsl(214, 32%, 91%);
 
     --fc-border-color: hsl(214, 32%, 91%);
+    --fc-page-bg-color: hsl(214, 32%, 91%);
   }
 
   .dark {
@@ -131,6 +132,7 @@ html.dark .apexcharts-gridline {
     --fc-button-active-border-color: hsl(215, 25%, 27%);
 
     --fc-border-color: hsl(215, 25%, 27%);
+    --fc-page-bg-color: hsl(215, 25%, 27%);
   }
 }
 .use-automation-zoom-in {
@@ -265,5 +267,10 @@ html.dark .apexcharts-gridline {
   /* Button */
   .splash-red-button {
     @apply text-red-500 hover:!bg-red-500/20 hover:!text-red-500;
+  }
+  /* Full Calendar */
+  .fc-event-time,
+  .fc-event-title {
+    @apply !font-normal;
   }
 }

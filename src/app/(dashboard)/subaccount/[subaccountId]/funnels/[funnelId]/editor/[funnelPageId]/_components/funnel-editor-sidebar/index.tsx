@@ -1,5 +1,5 @@
 "use client";
-import { useEditor } from "@/components/providers/editor/EditorProvider";
+import { useEditor } from "@/components/providers/EditorProvider";
 
 import {
   Sheet,

@@ -85,7 +85,7 @@ const FunnelSteps = ({
             )}
           </ScrollArea>
           <Button className="mt-4 w-full" onClick={() => setIsOpen(true)}>
-            Create New Steps
+            Create new steps
           </Button>
         </aside>
         <aside className="flex-[0.7] rounded-r-xl bg-background/20 p-4">
@@ -124,6 +124,7 @@ const FunnelSteps = ({
                   </Link>
                 </div>
                 <CreateFunnelPage
+                  subdomain={funnel.subDomainName}
                   pagesState={pagesState}
                   setClickedPage={setClickedPage}
                   setPagesState={setPagesState}
@@ -147,6 +148,7 @@ const FunnelSteps = ({
         title="Create a funnel page"
       >
         <CreateFunnelPage
+          subdomain={funnel.subDomainName}
           modal={true}
           pagesState={pagesState}
           setClickedPage={setClickedPage}

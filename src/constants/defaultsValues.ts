@@ -159,7 +159,8 @@ export type EditorBtns =
   | "__body"
   | "image"
   | null
-  | "3Col";
+  | "3Col"
+  | "hero1";
 
 export const defaultStyles: React.CSSProperties = {
   backgroundPosition: "center",

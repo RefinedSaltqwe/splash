@@ -7,6 +7,7 @@ import { getAuthUserDetails } from "@/server/actions/fetch";
 import {
   getAgencyIdByLoggedInUser,
   getNotificationAndUser,
+  getSubaccountDetails,
 } from "@/server/queries";
 import { type GetAuthUserDetails } from "@/types/prisma";
 import { type NotificationWithUser } from "@/types/stripe";
@@ -32,6 +33,10 @@ const SubaccountLayout = async ({
   await queryClient.prefetchQuery({
     queryKey: ["getAuthUserDetails"],
     queryFn: () => getAuthUserDetails(),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["subaccount", params.subaccountId],
+    queryFn: () => getSubaccountDetails(params.subaccountId),
   });
   const agencyId = await getAgencyIdByLoggedInUser();
   if (!agencyId) return <Unauthorized />;

@@ -152,7 +152,7 @@ export function FunnelsDataTable<TData, TValue>({
       {/* Pagination and Rows Selected*/}
       <DataTablePagination table={table} />
       <GlobalModal
-        title="Create A Funnel"
+        title="Create a funnel"
         description="Funnels are like websites, but better! Try creating one!"
         setIsOpen={setIsOpen}
         isOpen={isOpen}

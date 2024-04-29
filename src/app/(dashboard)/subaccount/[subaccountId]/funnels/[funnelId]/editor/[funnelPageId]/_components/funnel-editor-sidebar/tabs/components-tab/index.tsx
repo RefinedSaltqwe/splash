@@ -13,6 +13,7 @@ import LinkPlaceholder from "./LinkPlaceholder";
 import ContactFormComponentPlaceholder from "./ContactPlaceholder";
 import CheckoutPlaceholder from "./CheckoutPlaceholder";
 import { type EditorBtns } from "@/constants/defaultsValues";
+import Hero1Placeholder from "./Hero1Placeholder";
 
 type ComponentsTabProps = object;
 
@@ -21,8 +22,14 @@ const ComponentsTab = (props: ComponentsTabProps) => {
     Component: React.ReactNode;
     label: string;
     id: EditorBtns;
-    group: "layout" | "elements";
+    group: "layout" | "elements" | "sections";
   }[] = [
+    {
+      Component: <Hero1Placeholder />,
+      label: "Hero 1",
+      id: "hero1",
+      group: "sections",
+    },
     {
       Component: <TextPlaceholder />,
       label: "Text",
@@ -71,7 +78,7 @@ const ComponentsTab = (props: ComponentsTabProps) => {
     <Accordion
       type="multiple"
       className="w-full"
-      defaultValue={["Layout", "Elements"]}
+      defaultValue={["Layout", "Elements", "Sections"]}
     >
       <AccordionItem value="Layout" className="border-y-[1px] px-6 py-0">
         <AccordionTrigger className="!no-underline">Layout</AccordionTrigger>
@@ -94,6 +101,22 @@ const ComponentsTab = (props: ComponentsTabProps) => {
         <AccordionContent className="flex flex-wrap gap-2 ">
           {elements
             .filter((element) => element.group === "elements")
+            .map((element) => (
+              <div
+                key={element.id}
+                className="flex flex-col items-center justify-center"
+              >
+                {element.Component}
+                <span className="text-muted-foreground">{element.label}</span>
+              </div>
+            ))}
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="Sections" className="px-6 py-0 ">
+        <AccordionTrigger className="!no-underline">Sections</AccordionTrigger>
+        <AccordionContent className="flex flex-wrap gap-2 ">
+          {elements
+            .filter((element) => element.group === "sections")
             .map((element) => (
               <div
                 key={element.id}

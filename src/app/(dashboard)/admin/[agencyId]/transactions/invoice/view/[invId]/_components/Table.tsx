@@ -17,11 +17,11 @@ import {
 } from "@/lib/utils";
 import { getServiceTypes } from "@/server/actions/fetch";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
-import { type InvoiceWithServiceAndPayment } from "@/types/prisma";
+import { type InvoiceWithServiceAndPaymentAndAgency } from "@/types/prisma";
 import { useQuery } from "@tanstack/react-query";
 
 type TableInvoiceProps = {
-  data: InvoiceWithServiceAndPayment;
+  data: InvoiceWithServiceAndPaymentAndAgency;
 };
 
 export function TableInvoice({ data }: TableInvoiceProps) {

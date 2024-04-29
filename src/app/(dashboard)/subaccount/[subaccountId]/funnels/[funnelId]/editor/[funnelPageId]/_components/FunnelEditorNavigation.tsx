@@ -2,7 +2,7 @@
 import {
   useEditor,
   type DeviceTypes,
-} from "@/components/providers/editor/EditorProvider";
+} from "@/components/providers/EditorProvider";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

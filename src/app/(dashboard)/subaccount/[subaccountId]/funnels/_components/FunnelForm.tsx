@@ -152,18 +152,33 @@ const FunnelForm: React.FC<CreateFunnelProps> = ({
               control={form.control}
               name="subDomainName"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sub domain</FormLabel>
+                <FormItem className="w-full">
+                  <FormLabel
+                    htmlFor="subDomainName"
+                    className="block text-sm font-medium leading-6 text-foreground"
+                  >
+                    Sub domain
+                  </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Sub domain for funnel"
-                      {...field}
+                    <div
                       className={cn(
-                        "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
-                        "splash-base-input splash-inputs",
+                        "flex w-full rounded-md py-0.5 shadow-sm ring-offset-card",
+                        "splash-inputs-within splash-base-input",
                       )}
-                    />
+                    >
+                      <Input
+                        type="text"
+                        id="subDomainName"
+                        {...field}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-2.5 font-normal text-foreground placeholder:text-gray-400 focus:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 sm:text-sm sm:leading-6 dark:placeholder:text-gray-600"
+                        placeholder="subdomain"
+                      />
+                      <span className="flex select-none items-center pr-3 font-normal text-gray-500 sm:text-sm">
+                        .splashinnovations.ca
+                      </span>
+                    </div>
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

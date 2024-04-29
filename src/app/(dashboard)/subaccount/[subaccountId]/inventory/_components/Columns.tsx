@@ -12,9 +12,6 @@ import { useState } from "react";
 import InventoryForm from "./InventoryForm";
 import { type InventoryListBySubaccountIdAndSupplierMaterialsUsed } from "@/types/prisma";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-
 export const columns: ColumnDef<InventoryListBySubaccountIdAndSupplierMaterialsUsed>[] =
   [
     {
@@ -128,6 +125,21 @@ export const columns: ColumnDef<InventoryListBySubaccountIdAndSupplierMaterialsU
         return (
           <span className="min-w-[1000px] text-right font-medium">
             {`${formatPrice(String(data.cost))}`}
+          </span>
+        );
+      },
+    },
+    {
+      id: "total",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Total" />
+      ),
+      cell: ({ row }) => {
+        const data = row.original;
+        const total = data.quantity * data.cost;
+        return (
+          <span className="min-w-[1000px] text-right font-medium">
+            {`${formatPrice(String(total))}`}
           </span>
         );
       },

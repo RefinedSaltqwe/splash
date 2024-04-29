@@ -1,4 +1,4 @@
-import EditorProvider from "@/components/providers/editor/EditorProvider";
+import EditorProvider from "@/components/providers/EditorProvider";
 import { getDomainContent } from "@/server/queries";
 import { notFound } from "next/navigation";
 import React from "react";

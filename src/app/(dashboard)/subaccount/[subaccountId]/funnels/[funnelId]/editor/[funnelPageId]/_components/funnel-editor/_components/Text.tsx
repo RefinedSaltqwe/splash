@@ -2,20 +2,26 @@
 import {
   type EditorElement,
   useEditor,
-} from "@/components/providers/editor/EditorProvider";
+} from "@/components/providers/EditorProvider";
 import { Badge } from "@/components/ui/badge";
+import { useDivSpacer } from "@/stores/funnelDivSpacer";
 import clsx from "clsx";
 import { Trash } from "lucide-react";
 import React from "react";
 
 type Props = {
   element: EditorElement;
+  index: number;
+  level: number;
 };
 
 const TextComponent = (props: Props) => {
   const { dispatch, state } = useEditor();
+  const onOpen = useDivSpacer((state) => state.onOpen);
+  const onClose = useDivSpacer((state) => state.onClose);
 
   const handleDeleteElement = () => {
+    onClose();
     dispatch({
       type: "DELETE_ELEMENT",
       payload: { elementDetails: props.element },
@@ -25,6 +31,11 @@ const TextComponent = (props: Props) => {
 
   const handleOnClickBody = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (props.index === 0 && props.level === 2) {
+      onOpen();
+    } else {
+      onClose();
+    }
     dispatch({
       type: "CHANGE_CLICKED_ELEMENT",
       payload: {
@@ -38,7 +49,7 @@ const TextComponent = (props: Props) => {
     <div
       style={styles}
       className={clsx(
-        "relative m-[5px] w-full p-[2px] text-[16px] transition-all",
+        "relative m-0 w-full p-[2px] text-[16px] transition-all",
         {
           "!border-blue-500":
             state.editor.selectedElement.id === props.element.id,
@@ -78,12 +89,11 @@ const TextComponent = (props: Props) => {
       </span>
       {state.editor.selectedElement.id === props.element.id &&
         !state.editor.liveMode && (
-          <div className="absolute -right-[1px] -top-[25px] rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold !text-white">
-            <Trash
-              className="cursor-pointer"
-              size={16}
-              onClick={handleDeleteElement}
-            />
+          <div
+            className="absolute -right-[1px] -top-[25px] cursor-pointer rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold !text-white"
+            onClick={handleDeleteElement}
+          >
+            <Trash size={16} />
           </div>
         )}
     </div>

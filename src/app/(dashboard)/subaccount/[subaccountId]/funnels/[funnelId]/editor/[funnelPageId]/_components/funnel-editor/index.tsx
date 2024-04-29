@@ -1,11 +1,12 @@
 "use client";
-import { useEditor } from "@/components/providers/editor/EditorProvider";
+import { useEditor } from "@/components/providers/EditorProvider";
 import { Button } from "@/components/ui/button";
 import { type FunnelPage } from "@prisma/client";
 import clsx from "clsx";
 import { EyeOff } from "lucide-react";
 import { useEffect } from "react";
 import Recursive from "./_components/Recursive";
+import { useDivSpacer } from "@/stores/funnelDivSpacer";
 
 type Props = {
   funnelPageId: string;
@@ -15,6 +16,7 @@ type Props = {
 
 const FunnelEditor = ({ funnelPageId, liveMode, funnelPageDetails }: Props) => {
   const { dispatch, state } = useEditor();
+  const onClose = useDivSpacer((state) => state.onClose);
 
   useEffect(() => {
     if (liveMode) {
@@ -42,6 +44,7 @@ const FunnelEditor = ({ funnelPageId, liveMode, funnelPageDetails }: Props) => {
   }, [funnelPageId]);
 
   const handleClick = () => {
+    onClose();
     dispatch({
       type: "CHANGE_CLICKED_ELEMENT",
       payload: {},
@@ -55,7 +58,7 @@ const FunnelEditor = ({ funnelPageId, liveMode, funnelPageDetails }: Props) => {
   return (
     <div
       className={clsx(
-        "use-automation-zoom-in splash-scroll splash-scroll-x mr-[385px] h-full bg-background transition-all",
+        "use-automation-zoom-in splash-scroll splash-scroll-x splash-scroll-no-width mr-[385px] h-full bg-background transition-all",
         {
           "!mr-0 !p-0":
             state.editor.previewMode === true || state.editor.liveMode === true,
@@ -77,8 +80,13 @@ const FunnelEditor = ({ funnelPageId, liveMode, funnelPageDetails }: Props) => {
         </Button>
       )}
       {Array.isArray(state.editor.elements) &&
-        state.editor.elements.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
+        state.editor.elements.map((childElement, index) => (
+          <Recursive
+            key={childElement.id}
+            element={childElement}
+            index={index}
+            level={1}
+          />
         ))}
     </div>
   );

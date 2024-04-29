@@ -1,6 +1,7 @@
 import { type InventoryListBySubaccountIdAndSupplierMaterialsUsed } from "@/types/prisma";
 import { type PricesList, type TicketWithTags } from "@/types/stripe";
 import {
+  type SubAccount,
   type Agency,
   type Contact,
   type Plan,
@@ -11,6 +12,7 @@ import { create } from "zustand";
 export type Data = {
   user?: User;
   agency?: Agency;
+  subaccount?: SubAccount;
   ticket?: TicketWithTags[0];
   contact?: Contact;
   plans?: {
@@ -29,6 +31,7 @@ type CurrentUserStore = {
   subaccountId?: string | null | undefined;
   userData?: User | undefined;
   agencyData?: Agency | undefined;
+  subaccountData?: SubAccount | null | undefined;
   ticketData?: TicketWithTags[0] | undefined;
   inventoryItemData: InventoryListBySubaccountIdAndSupplierMaterialsUsed[] | [];
   contactData?: Contact | undefined;
@@ -40,6 +43,7 @@ type CurrentUserStore = {
     | undefined;
   setUserData: (user: User | undefined) => void;
   setAgencyData: (agency: Agency | undefined) => void;
+  setSubaccountData: (subaccount: SubAccount | null | undefined) => void;
   setTicketData: (ticket: TicketWithTags[0] | undefined) => void;
   setInventoryItemData: (
     item: InventoryListBySubaccountIdAndSupplierMaterialsUsed,
@@ -88,6 +92,10 @@ export const useCurrentUserStore = create<CurrentUserStore>((set) => ({
   setAgencyData: (agency: Agency | undefined) =>
     set(() => ({
       agencyData: agency,
+    })),
+  setSubaccountData: (subaccount: SubAccount | null | undefined) =>
+    set(() => ({
+      subaccountData: subaccount,
     })),
   setTicketData: (ticket: TicketWithTags[0] | undefined) =>
     set(() => ({

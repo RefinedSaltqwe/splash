@@ -2,7 +2,7 @@
 import { type Dispatch, createContext, useContext, useReducer } from "react";
 import { type FunnelPage } from "@prisma/client";
 import { type EditorBtns } from "@/constants/defaultsValues";
-import { type EditorAction } from "./EditorActions";
+import { type EditorAction } from "@/types/editorActions";
 
 export type DeviceTypes = "Desktop" | "Mobile" | "Tablet";
 
@@ -13,7 +13,18 @@ export type EditorElement = {
   type: EditorBtns;
   content:
     | EditorElement[] // ? Recursive Components
-    | { href?: string; innerText?: string; src?: string }; // ? Static components
+    | {
+        href?: string;
+        innerText?: string;
+        src?: string;
+        title?: string;
+        description?: string;
+        hero?: {
+          backgroundHref: string;
+          title: string;
+          description: string;
+        };
+      }; // ? Static components
 };
 
 export type Editor = {

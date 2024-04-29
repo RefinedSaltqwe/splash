@@ -43,6 +43,7 @@ import { toast } from "sonner";
 import { type z } from "zod";
 
 interface CreateFunnelPageFormProps {
+  subdomain: string | null;
   modal?: boolean;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
   defaultData?: FunnelPage;
@@ -64,6 +65,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
   setClickedPage,
   pagesState,
   modal = false,
+  subdomain,
 }) => {
   const [isDuplicating, setIsDuplicating] = useState<boolean>(false);
   const [isOpenDeleteFunnel, setIsOpenDeleteFunnel] = useState<boolean>(false);
@@ -205,23 +207,38 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                 </FormItem>
               )}
             />
+
             <FormField
               disabled={order === 0}
               control={form.control}
               name="pathName"
               render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>Path Name</FormLabel>
+                <FormItem className="w-full">
+                  <FormLabel
+                    htmlFor="pathName"
+                    className="block text-sm font-medium leading-6 text-foreground"
+                  >
+                    Path name
+                  </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Path for the page"
-                      {...field}
-                      value={field.value?.toLowerCase()}
+                    <div
                       className={cn(
-                        "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
-                        "splash-base-input splash-inputs",
+                        "flex w-full rounded-md py-0.5 shadow-sm ring-offset-card",
+                        "splash-inputs-within splash-base-input",
                       )}
-                    />
+                    >
+                      <span className="flex select-none items-center pl-3 font-normal text-gray-500 sm:text-sm">
+                        {`${subdomain}.splashinnovations.ca/`}
+                      </span>
+                      <Input
+                        type="text"
+                        id="pathName"
+                        {...field}
+                        value={field.value?.toLowerCase()}
+                        className="block flex-1 border-0 bg-transparent py-1.5 pl-0 pr-2.5 font-normal text-foreground placeholder:text-gray-400 focus:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 sm:text-sm sm:leading-6 dark:placeholder:text-gray-600"
+                        placeholder="pathname"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

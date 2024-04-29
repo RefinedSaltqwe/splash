@@ -3,7 +3,7 @@
 import {
   useEditor,
   type EditorElement,
-} from "@/components/providers/editor/EditorProvider";
+} from "@/components/providers/EditorProvider";
 import { Badge } from "@/components/ui/badge";
 import { type EditorBtns } from "@/constants/defaultsValues";
 import { getFunnel } from "@/server/actions/fetch";
@@ -18,14 +18,19 @@ import { type z } from "zod";
 import ContactForm from "./forms/ContactForm";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useDivSpacer } from "@/stores/funnelDivSpacer";
 
 type Props = {
   element: EditorElement;
+  index: number;
+  level: number;
 };
 
 const ContactFormComponent = (props: Props) => {
   const { dispatch, state, subaccountId, funnelId, pageDetails } = useEditor();
   const router = useRouter();
+  const onOpen = useDivSpacer((state) => state.onOpen);
+  const onClose = useDivSpacer((state) => state.onClose);
   const { data: funnelPages } = useQuery({
     queryKey: ["funnel", funnelId],
     queryFn: () => getFunnel(funnelId),
@@ -38,6 +43,11 @@ const ContactFormComponent = (props: Props) => {
 
   const handleOnClickBody = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (props.index === 0 && props.level === 2) {
+      onOpen();
+    } else {
+      onClose();
+    }
     dispatch({
       type: "CHANGE_CLICKED_ELEMENT",
       payload: {
@@ -63,6 +73,7 @@ const ContactFormComponent = (props: Props) => {
   };
 
   const handleDeleteElement = () => {
+    onClose();
     dispatch({
       type: "DELETE_ELEMENT",
       payload: { elementDetails: props.element },
@@ -98,7 +109,7 @@ const ContactFormComponent = (props: Props) => {
       onDragStart={(e) => handleDragStart(e, "contactForm")}
       onClick={handleOnClickBody}
       className={clsx(
-        "relative m-[5px] flex w-full items-center justify-center p-[2px] text-[16px] transition-all",
+        "relative m-0 flex w-full items-center justify-center p-[2px] text-[16px] transition-all",
         {
           "!border-blue-500":
             state.editor.selectedElement.id === props.element.id,
@@ -122,12 +133,11 @@ const ContactFormComponent = (props: Props) => {
       />
       {state.editor.selectedElement.id === props.element.id &&
         !state.editor.liveMode && (
-          <div className="absolute -right-[1px] -top-[25px] rounded-none rounded-t-lg bg-primary  px-2.5 py-1 text-xs font-bold !text-white">
-            <Trash
-              className="cursor-pointer"
-              size={16}
-              onClick={handleDeleteElement}
-            />
+          <div
+            className="absolute -right-[1px] -top-[25px] cursor-pointer rounded-none rounded-t-lg bg-primary  px-2.5 py-1 text-xs font-bold !text-white"
+            onClick={handleDeleteElement}
+          >
+            <Trash size={16} />
           </div>
         )}
     </div>

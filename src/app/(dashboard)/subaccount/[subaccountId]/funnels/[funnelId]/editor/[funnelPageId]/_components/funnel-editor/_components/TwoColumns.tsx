@@ -5,21 +5,26 @@ import React from "react";
 import {
   useEditor,
   type EditorElement,
-} from "@/components/providers/editor/EditorProvider";
+} from "@/components/providers/EditorProvider";
 import { Badge } from "@/components/ui/badge";
 import { defaultStyles, type EditorBtns } from "@/constants/defaultsValues";
 import clsx from "clsx";
 import { v4 as uuidv4 } from "uuid";
 import Recursive from "./Recursive";
 import { Trash } from "lucide-react";
+import { useDivSpacer } from "@/stores/funnelDivSpacer";
 
 type Props = {
   element: EditorElement;
+  index: number;
+  level: number;
 };
 
 const TwoColumns = (props: Props) => {
   const { id, content, type } = props.element;
   const { dispatch, state } = useEditor();
+  const onOpen = useDivSpacer((state) => state.onOpen);
+  const onClose = useDivSpacer((state) => state.onClose);
 
   const handleOnDrop = (e: React.DragEvent, type: string) => {
     e.stopPropagation();
@@ -86,6 +91,11 @@ const TwoColumns = (props: Props) => {
 
   const handleOnClickBody = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (props.index === 0 && props.level === 2) {
+      onOpen();
+    } else {
+      onClose();
+    }
     dispatch({
       type: "CHANGE_CLICKED_ELEMENT",
       payload: {
@@ -95,6 +105,7 @@ const TwoColumns = (props: Props) => {
   };
 
   const handleDeleteElement = () => {
+    onClose();
     dispatch({
       type: "DELETE_ELEMENT",
       payload: {
@@ -132,14 +143,22 @@ const TwoColumns = (props: Props) => {
           </Badge>
         )}
       {Array.isArray(content) &&
-        content.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
+        content.map((childElement, idx) => (
+          <Recursive
+            key={childElement.id}
+            element={childElement}
+            index={idx}
+            level={props.level + 1}
+          />
         ))}
       {state.editor.selectedElement.id === props.element.id &&
         !state.editor.liveMode &&
         state.editor.selectedElement.type !== "__body" && (
-          <div className="absolute -right-[1px] -top-[25px] z-[60] rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold ">
-            <Trash size={16} onClick={handleDeleteElement} />
+          <div
+            className="absolute -right-[1px] -top-[25px] z-[60] cursor-pointer rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold "
+            onClick={handleDeleteElement}
+          >
+            <Trash size={16} />
           </div>
         )}
     </div>

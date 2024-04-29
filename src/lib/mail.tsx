@@ -2,12 +2,13 @@ import { env } from "@/env";
 import { siteConfig } from "config/site";
 import { Resend } from "resend";
 
+const resend = new Resend(env.RESEND_API_KEY);
+
 export const sendTwoFactorEmail = async (
   name: string,
   email: string,
   token: string,
 ) => {
-  const resend = new Resend(env.RESEND_API_KEY);
   const companyEmail = env.EMAIL_FROM;
 
   const body = `<div class="container">
@@ -32,10 +33,11 @@ export const sendTwoFactorEmail = async (
     </div>`;
 
   await resend.emails.send({
-    from: companyEmail,
+    from: `Splash Innovations <${companyEmail}>`,
     to: email,
     subject: `${siteConfig.name}: Two Factor Authentication Code`,
     html: body,
+    // react: <>
   });
 };
 
@@ -44,7 +46,6 @@ export const sendVerificationEmail = async (
   email: string,
   token: string,
 ) => {
-  const resend = new Resend(env.RESEND_API_KEY);
   const companyEmail = env.EMAIL_FROM;
   const confirmLink = `${env.NEXTAUTH_URL}/admin/auth/new-verification?token=${token}`;
   const body = `<p>Dear ${name},</p>
@@ -81,7 +82,6 @@ export const sendEmailInvitationByResend = async (
   name: string,
   email: string,
 ) => {
-  const resend = new Resend(env.RESEND_API_KEY);
   const companyEmail = env.EMAIL_FROM;
 
   const content = `<!DOCTYPE html>

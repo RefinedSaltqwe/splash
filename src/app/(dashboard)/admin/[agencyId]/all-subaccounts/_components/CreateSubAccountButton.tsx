@@ -43,7 +43,7 @@ const CreateSubaccountButton = ({ className, id, user }: Props) => {
           subaccountModal.onCreate();
         }}
       >
-        Create Sub Account
+        Create subaccount
       </Button>
       <SubAccountDrawer>
         <SubAccountRegistrationForm
