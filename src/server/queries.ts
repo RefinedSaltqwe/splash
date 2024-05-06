@@ -73,6 +73,29 @@ export const getSubaccountDetails = async (subaccountId: string) => {
   return response;
 };
 
+export const getFunnelPages = async (funnelId: string) => {
+  let response;
+  try {
+    response = await db.funnelPage.findMany({
+      where: {
+        funnelId,
+      },
+      include: {
+        Funnel: true,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientInitializationError ||
+      error instanceof Prisma.PrismaClientKnownRequestError
+    ) {
+      throw new Error("System error. There is an error fetching customers.");
+    }
+    throw error;
+  }
+  return response;
+};
+
 export const createTeamUser = async (agencyId: string, user: User) => {
   if (user.role === "AGENCY_OWNER") return null;
 

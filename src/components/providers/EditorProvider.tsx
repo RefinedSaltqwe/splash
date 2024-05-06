@@ -19,10 +19,18 @@ export type EditorElement = {
         src?: string;
         title?: string;
         description?: string;
-        hero?: {
+        hero1?: {
           backgroundHref: string;
           title: string;
           description: string;
+          opacity: string;
+          position: string;
+          primaryButton: {
+            visible: boolean;
+            name: string;
+            styles: React.CSSProperties;
+            href: string;
+          };
         };
       }; // ? Static components
 };

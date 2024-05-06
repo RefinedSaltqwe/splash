@@ -6,7 +6,7 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import ClientData from "./_components/ClientData";
-import { getSubaccountDetails } from "@/server/queries";
+import { getFunnelPages, getSubaccountDetails } from "@/server/queries";
 import { type Funnel } from "@prisma/client";
 import { db } from "@/server/db";
 
@@ -42,6 +42,10 @@ const FunnelPage = async ({ params }: FunnelPageProps) => {
   await queryClient.prefetchQuery({
     queryKey: ["subaccount", params.subaccountId],
     queryFn: () => getSubaccountDetails(params.subaccountId),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["funnelPages", params.funnelId],
+    queryFn: () => getFunnelPages(params.funnelId),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

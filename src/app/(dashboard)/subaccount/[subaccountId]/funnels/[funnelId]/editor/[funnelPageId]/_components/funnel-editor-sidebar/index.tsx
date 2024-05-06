@@ -16,11 +16,15 @@ import MediaBucketTab from "./tabs/MediaBucketTab";
 import ComponentsTab from "./tabs/components-tab";
 import ScrollableElement from "@/components/shared/ScrollableElement";
 
-type Props = {
+type FunnelEditorSidebarProps = {
   subaccountId: string;
+  funnelId: string;
 };
 
-const FunnelEditorSidebar = ({ subaccountId }: Props) => {
+const FunnelEditorSidebar = ({
+  subaccountId,
+  funnelId,
+}: FunnelEditorSidebarProps) => {
   const { state } = useEditor();
 
   return (
@@ -57,7 +61,7 @@ const FunnelEditorSidebar = ({ subaccountId }: Props) => {
                   like.
                 </SheetDescription>
               </SheetHeader>
-              <SettingsTab />
+              <SettingsTab funnelId={funnelId} />
             </TabsContent>
             <TabsContent value="Media">
               <MediaBucketTab

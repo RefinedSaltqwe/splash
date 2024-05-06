@@ -40,7 +40,11 @@ import {
 } from "lucide-react";
 import Hero1CustomInput from "./_components/Hero1CustomInput";
 
-const SettingsTab = () => {
+type SettingsTabProps = {
+  funnelId: string;
+};
+
+const SettingsTab = ({ funnelId }: SettingsTabProps) => {
   const { state, dispatch } = useEditor();
 
   const handleOnChanges = (e: any) => {
@@ -118,7 +122,7 @@ const SettingsTab = () => {
             )}
           {state.editor.selectedElement.type === "hero1" &&
             !Array.isArray(state.editor.selectedElement.content) && (
-              <Hero1CustomInput />
+              <Hero1CustomInput funnelId={funnelId} />
             )}
         </AccordionContent>
       </AccordionItem>

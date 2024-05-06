@@ -19,6 +19,8 @@ const ClientData: React.FC<ClientDataProps> = ({ subaccountId, funnelId }) => {
   const { data: funnelPages } = useQuery({
     queryKey: ["funnel", funnelId],
     queryFn: () => getFunnel(funnelId),
+    staleTime: undefined,
+    refetchInterval: undefined,
   });
 
   if (!funnelPages) {

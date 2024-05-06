@@ -52,7 +52,10 @@ const ClientData: React.FC<ClientDataProps> = ({
           </div>
 
           <div className="z-[50] flex flex-col">
-            <FunnelEditorSidebar subaccountId={subaccountId} />
+            <FunnelEditorSidebar
+              subaccountId={subaccountId}
+              funnelId={funnelId}
+            />
           </div>
         </div>
       </EditorProvider>
