@@ -7,12 +7,18 @@ import { createSafeAction } from "@/lib/create-safe-actions";
 import { db } from "@/server/db";
 import { UpdateEmployee } from "./schema";
 import { type InputType, type ReturnType } from "./types";
-import { clerkClient } from "@clerk/nextjs";
+import { clerkClient, currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { id, ...user } = data;
   let promiseAll;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const updateEmployee = await db.user.update({
       where: {
         id,

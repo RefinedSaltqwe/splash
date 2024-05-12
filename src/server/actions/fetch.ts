@@ -13,10 +13,7 @@ import {
   type SubAccountWithContacts,
   type TimesheetWithInputTimes,
 } from "@/types/prisma";
-import {
-  type LaneDetail,
-  type UserWithPermissionsAndSubAccounts,
-} from "@/types/stripe";
+import { type LaneDetail } from "@/types/stripe";
 import { currentUser } from "@clerk/nextjs";
 import {
   Prisma,
@@ -33,10 +30,23 @@ import {
   type VerificationToken,
 } from "@prisma/client";
 import { cache } from "react";
-import { db } from "../../db";
+import { db } from "../db";
+
+export const _getUserPermissionsType = async (userId: string) => {
+  const response = await db.user.findUnique({
+    where: { id: userId },
+    select: { Permissions: { include: { SubAccount: true } } },
+  });
+
+  return response;
+};
 
 export const getUserPermissions = cache(
-  async (userId: string): Promise<UserWithPermissionsAndSubAccounts | null> => {
+  async (
+    userId: string,
+  ): Promise<Prisma.PromiseReturnType<
+    typeof _getUserPermissionsType
+  > | null> => {
     let response;
     try {
       response = await db.user.findUnique({
@@ -943,3 +953,101 @@ export const getSubAccountWithContacts = cache(async (subaccountId: string) => {
     throw error;
   }
 });
+
+export const getSubaccountDetails = async (subaccountId: string) => {
+  let response;
+  try {
+    response = await db.subAccount.findUnique({
+      where: {
+        id: subaccountId,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientInitializationError ||
+      error instanceof Prisma.PrismaClientKnownRequestError
+    ) {
+      throw new Error("System error. There is an error fetching customers.");
+    }
+    throw error;
+  }
+  return response;
+};
+
+export const getFunnelPages = async (funnelId: string) => {
+  let response;
+  try {
+    response = await db.funnelPage.findMany({
+      where: {
+        funnelId,
+      },
+      include: {
+        Funnel: true,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientInitializationError ||
+      error instanceof Prisma.PrismaClientKnownRequestError
+    ) {
+      throw new Error("System error. There is an error fetching customers.");
+    }
+    throw error;
+  }
+  return response;
+};
+
+export const getAgencyIdByLoggedInUser = async () => {
+  try {
+    const user = await currentUser();
+    if (user) {
+      const agency = await db.user.findUnique({
+        where: {
+          email: user.emailAddresses[0]!.emailAddress,
+        },
+      });
+      return agency ? agency.agencyId : null;
+    }
+    return null;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getNotificationAndUser = async (agencyId: string) => {
+  try {
+    const response = await db.notification.findMany({
+      where: { agencyId },
+      include: { User: true },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const _getTicketsWithAllRelations = async (laneId: string) => {
+  const response = await db.ticket.findMany({
+    where: { laneId: laneId },
+    include: {
+      Assigned: true,
+      Customer: true,
+      Lane: true,
+      Tags: true,
+    },
+  });
+  return response;
+};
+
+export const getDomainContent = async (subDomainName: string) => {
+  const response = await db.funnel.findUnique({
+    where: {
+      subDomainName,
+    },
+    include: { FunnelPages: true },
+  });
+  return response;
+};

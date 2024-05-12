@@ -253,7 +253,7 @@ const CreateFunnelPageForm: React.FC<CreateFunnelPageFormProps> = ({
                 {creatingFunnelPage ? (
                   <Loader classNames="h-4 w-4 border-2 border-white/80 animate-[spin_.5s_linear_infinite] brightness-100 saturate-200 !border-r-transparent" />
                 ) : (
-                  "Save Page"
+                  "Save page"
                 )}
               </Button>
 

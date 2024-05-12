@@ -10,12 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getSubaccountDetails } from "@/server/queries";
 import { useQuery } from "@tanstack/react-query";
 import FunnelForm from "../../_components/FunnelForm";
 import FunnelProductsTable from "./FunnelProductsTable";
 import Link from "next/link";
 import { ClipboardIcon } from "lucide-react";
+import { getSubaccountDetails } from "@/server/actions/fetch";
 
 interface FunnelSettingsProps {
   subaccountId: string;

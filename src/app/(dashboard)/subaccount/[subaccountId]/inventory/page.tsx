@@ -1,8 +1,8 @@
 import {
   getInventoryListBySubaccountId,
+  getSubaccountDetails,
   getSuppliers,
 } from "@/server/actions/fetch";
-import { getSubaccountDetails } from "@/server/queries";
 import {
   HydrationBoundary,
   QueryClient,

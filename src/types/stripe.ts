@@ -8,21 +8,18 @@ import {
   type Ticket,
   type User,
 } from "@prisma/client";
-import {
-  type _getTicketsWithAllRelations,
-  type getUserPermissions,
-} from "@/server/queries";
 import { z } from "zod";
 
-import type Stripe from "stripe";
-import { db } from "@/server/db";
 import {
-  type getMedia,
+  type _getTicketsWithAllRelations,
   type getAuthUserDetails,
+  type getFunnels,
+  type getMedia,
   type getPipelineDetails,
   type getTicketsWithTags,
-  type getFunnels,
 } from "@/server/actions/fetch";
+import { db } from "@/server/db";
+import type Stripe from "stripe";
 
 export type NotificationWithUser =
   | ({
@@ -38,10 +35,6 @@ export type NotificationWithUser =
       };
     } & Notification)[]
   | undefined;
-
-export type UserWithPermissionsAndSubAccounts = Prisma.PromiseReturnType<
-  typeof getUserPermissions
->;
 
 export const FunnelPageSchema = z.object({
   name: z.string().min(1),

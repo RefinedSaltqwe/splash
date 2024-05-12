@@ -11,11 +11,18 @@ import {
 import { getPipelineDetails } from "../fetch";
 import { UpsertLane } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { name, order, pipelineId, subAccountId, laneId } = data;
   let promiseAll;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const response = await upsertLaneQuery(name, laneId, pipelineId, order);
 
     if (response) {

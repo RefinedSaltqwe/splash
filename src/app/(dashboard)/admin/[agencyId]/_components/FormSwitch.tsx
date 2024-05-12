@@ -3,8 +3,10 @@ import Loader from "@/components/shared/Loader";
 import { Switch } from "@/components/ui/switch";
 import { useAction } from "@/hooks/useAction";
 import { updateUserPermission } from "@/server/actions/update-permissions";
-import { type GetAuthUserDetails } from "@/types/prisma";
-import { type UserWithPermissionsAndSubAccounts } from "@/types/stripe";
+import {
+  type UserWithPermissionsAndSubAccounts,
+  type GetAuthUserDetails,
+} from "@/types/prisma";
 import { type User, type Role, type SubAccount } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { memo, useEffect, useRef, useState } from "react";

@@ -8,16 +8,22 @@ import { db } from "@/server/db";
 import { hash } from "bcrypt";
 import { CreateEmployee } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { confirmPassword, password, ...rest } = data;
   const hashedPassword = await hash(password ? password : confirmPassword, 10);
   let promiseAll;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
     const createEmployee = db.user.create({
       data: {
         name: `${rest.firstName} ${rest.lastName}`,
-        password: hashedPassword,
+        password: session.passwordEnabled,
         ...rest,
         role: "SUBACCOUNT_USER",
         status: "Pending",

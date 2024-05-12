@@ -7,16 +7,15 @@ import { UpdateService } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { id, name } = data;
   let updatedService;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     updatedService = await db.serviceType.update({
       where: {
         id,

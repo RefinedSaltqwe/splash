@@ -6,11 +6,19 @@ import { initUser, upsertAgency } from "@/server/queries";
 import { randomUUID } from "crypto";
 import { CreateAdmin } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   let promiseAll;
   try {
     let custId;
+
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     if (!data?.id) {
       const bodyData = {
         email: data.companyEmail,
@@ -70,6 +78,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       agencyLogo: data.agencyLogo,
       city: data.city,
       companyPhone: data.companyPhone,
+      pst: 6.0,
+      gst: 5.0,
       country: "Canada",
       name: data.name,
       state: data.state,

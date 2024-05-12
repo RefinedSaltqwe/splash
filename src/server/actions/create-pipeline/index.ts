@@ -7,11 +7,18 @@ import { createSafeAction } from "@/lib/create-safe-actions";
 import { saveActivityLogsNotification, upsertPipeline } from "@/server/queries";
 import { CreatePipeline } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { name, pipelineId, subAccountId } = data;
   let promiseAll;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const response = await upsertPipeline({
       name,
       id: pipelineId,

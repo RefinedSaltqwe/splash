@@ -10,16 +10,15 @@ import { DeletePipeline } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { pipelineId, subaccountId } = data;
   let deletePipeline;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const response = await executeDeletePipeline(pipelineId);
     await saveActivityLogsNotification({
       agencyId: undefined,

@@ -7,16 +7,15 @@ import { DeleteInventoryItems } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { ids, agencyId, subaccountId } = data;
   let deleteServices;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     deleteServices = await db.inventory.deleteMany({
       where: {
         id: {

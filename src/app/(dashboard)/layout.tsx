@@ -1,6 +1,6 @@
-import { getAgencyIdByLoggedInUser } from "@/server/queries";
 import React from "react";
 import LayoutClient from "./_components/LayoutClient";
+import { getAgencyIdByLoggedInUser } from "@/server/actions/fetch";
 
 type AdminDashboardLayoutProps = {
   children: React.ReactNode;

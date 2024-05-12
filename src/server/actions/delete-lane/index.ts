@@ -10,16 +10,15 @@ import {
 } from "@/server/queries";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { pipelineId, subaccountId, laneId } = data;
   let deleteLanePromise;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const response = await deleteLaneQuery(laneId);
 
     if (!response) {

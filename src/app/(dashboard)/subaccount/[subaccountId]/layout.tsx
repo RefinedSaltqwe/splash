@@ -3,12 +3,12 @@ import DashboardWrapper from "@/components/shared/DashboardWrapper";
 import Header from "@/components/shared/Header";
 import Sidebar from "@/components/shared/Sidebar";
 import Unauthorized from "@/components/shared/Unauthorized";
-import { getAuthUserDetails } from "@/server/actions/fetch";
 import {
   getAgencyIdByLoggedInUser,
+  getAuthUserDetails,
   getNotificationAndUser,
   getSubaccountDetails,
-} from "@/server/queries";
+} from "@/server/actions/fetch";
 import { type GetAuthUserDetails } from "@/types/prisma";
 import { type NotificationWithUser } from "@/types/stripe";
 import { currentUser } from "@clerk/nextjs";

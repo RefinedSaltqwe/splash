@@ -8,14 +8,6 @@ import { CreateInvoice } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
-
   const {
     customerId,
     status,
@@ -34,6 +26,12 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   let promiseAll;
 
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const getLastInvoiceId = await db.invoice.findFirst({
       where: {
         agencyId,

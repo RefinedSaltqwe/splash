@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
-import { getFunnelPages } from "@/server/queries";
+import { getFunnelPages } from "@/server/actions/fetch";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 

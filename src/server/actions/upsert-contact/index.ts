@@ -9,16 +9,15 @@ import { UpsertContact } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { subaccountId, ...values } = data;
   let response;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     response = await upsertContactQuery({
       ...values,
       subAccountId: subaccountId!,

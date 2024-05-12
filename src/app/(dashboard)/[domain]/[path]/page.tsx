@@ -1,9 +1,8 @@
 import EditorProvider from "@/components/providers/EditorProvider";
-import { getDomainContent } from "@/server/queries";
 import { notFound } from "next/navigation";
 import React from "react";
 import FunnelEditor from "../../subaccount/[subaccountId]/funnels/[funnelId]/editor/[funnelPageId]/_components/funnel-editor";
-import { getFunnelPageDetails } from "@/server/actions/fetch";
+import { getDomainContent, getFunnelPageDetails } from "@/server/actions/fetch";
 
 const Page = async ({
   params,

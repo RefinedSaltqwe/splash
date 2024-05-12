@@ -1,12 +1,16 @@
 import Card from "@/app/(dashboard)/_components/containers/Card";
-import { getFunnel, getFunnels } from "@/server/actions/fetch";
+import {
+  getFunnel,
+  getFunnelPages,
+  getFunnels,
+  getSubaccountDetails,
+} from "@/server/actions/fetch";
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
 import ClientData from "./_components/ClientData";
-import { getFunnelPages, getSubaccountDetails } from "@/server/queries";
 import { type Funnel } from "@prisma/client";
 import { db } from "@/server/db";
 

@@ -8,12 +8,19 @@ import { db } from "@/server/db";
 import { Prisma } from "@prisma/client";
 import { GetEmail } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { email } = data;
 
   let emailExist;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     emailExist = await db.authorizedEmail.findUnique({
       where: {
         email,

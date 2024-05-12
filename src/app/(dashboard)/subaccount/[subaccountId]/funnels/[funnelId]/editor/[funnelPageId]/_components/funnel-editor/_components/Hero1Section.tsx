@@ -221,10 +221,12 @@ const Hero1Section: React.FC<Hero1SectionProps> = (props) => {
               <div
                 className={cn(
                   "text-center",
-                  props.element.content.hero1?.position.includes("left") &&
-                    "text-start",
-                  props.element.content.hero1?.position.includes("right") &&
-                    "text-end",
+                  props.element.content.hero1?.position.includes("left")
+                    ? "text-start"
+                    : "",
+                  props.element.content.hero1?.position.includes("right")
+                    ? "text-end"
+                    : "",
                 )}
               >
                 <h1

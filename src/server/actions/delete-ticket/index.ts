@@ -10,16 +10,15 @@ import { DeleteTicket } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { pipelineId, subaccountId, ticketId } = data;
   let deleteLanePromise;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const response = await deleteTicketQuery(ticketId);
 
     if (!response) {

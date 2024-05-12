@@ -23,10 +23,7 @@ import { cn } from "@/lib/utils";
 import { getAuthUserDetails, getUserPermissions } from "@/server/actions/fetch";
 import { updateUser } from "@/server/actions/update-user";
 import { UpdateUser } from "@/server/actions/update-user/schema";
-import {
-  type AuthUserWithAgencySigebarOptionsSubAccounts,
-  type UserWithPermissionsAndSubAccounts,
-} from "@/types/stripe";
+import { type AuthUserWithAgencySigebarOptionsSubAccounts } from "@/types/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type SubAccount, type User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -35,6 +32,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
 import Permission from "./Permission";
+import { type UserWithPermissionsAndSubAccounts } from "@/types/prisma";
 
 type UserDetailsProps = {
   id: string | null;

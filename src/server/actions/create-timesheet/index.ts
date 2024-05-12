@@ -7,19 +7,17 @@ import { CreateTimesheet } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
-
   const { dateFr, dateTo, agencyId } = data;
 
   let promiseAll;
 
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const getUsers = await db.user.findMany({
       where: {
         agencyId,

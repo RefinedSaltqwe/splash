@@ -1,8 +1,10 @@
 "use client";
 import { FormDescription, FormLabel } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { type GetAuthUserDetails } from "@/types/prisma";
-import { type UserWithPermissionsAndSubAccounts } from "@/types/stripe";
+import {
+  type UserWithPermissionsAndSubAccounts,
+  type GetAuthUserDetails,
+} from "@/types/prisma";
 import { type SubAccount, type User } from "@prisma/client";
 import React from "react";
 import FormSwitch from "../FormSwitch";

@@ -8,16 +8,15 @@ import { type InputType, type ReturnType } from "./types";
 import { randomUUID } from "crypto";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { subAccountId } = data;
   let reponse;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     reponse = await upsertTag(subAccountId, { ...data, id: randomUUID() });
 
     await saveActivityLogsNotification({

@@ -10,16 +10,15 @@ import { CreateCustomer } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session?.id) {
-    return {
-      error: "Unauthorized",
-    };
-  }
   const { name, companyName, email, address, phoneNumber, agencyId } = data;
   let newCustomer;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     newCustomer = await db.customer.create({
       data: {
         name,

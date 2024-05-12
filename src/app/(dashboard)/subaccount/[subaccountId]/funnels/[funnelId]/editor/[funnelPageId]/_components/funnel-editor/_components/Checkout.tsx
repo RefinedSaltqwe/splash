@@ -13,8 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { type EditorBtns } from "@/constants/defaultsValues";
 import { env } from "@/env";
 import { getStripe } from "@/lib/stripe/stripe-client";
-import { getFunnel } from "@/server/actions/fetch";
-import { getSubaccountDetails } from "@/server/queries";
+import { getFunnel, getSubaccountDetails } from "@/server/actions/fetch";
 import { useDivSpacer } from "@/stores/funnelDivSpacer";
 import {
   EmbeddedCheckout,

@@ -28,7 +28,6 @@ import {
 import { updateEmployee } from "@/server/actions/update-employee";
 import { UpdateEmployee } from "@/server/actions/update-employee/schema";
 import { useCurrentUserStore } from "@/stores/useCurrentUser";
-import { type UserWithPermissionsAndSubAccounts } from "@/types/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -38,6 +37,7 @@ import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { type z } from "zod";
 import Permission from "../../../_components/form/Permission";
+import { type UserWithPermissionsAndSubAccounts } from "@/types/prisma";
 
 type InputFormProps = {
   uid: string;

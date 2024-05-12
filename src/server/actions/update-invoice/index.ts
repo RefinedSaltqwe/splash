@@ -7,19 +7,17 @@ import { UpdateInvoice } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const session = await currentUser();
-
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
-  }
-
   const { id, services, payments, ...rest } = data;
 
   let promiseAll;
 
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const [invoicePromise, servicesPromise] = await db.$transaction([
       db.invoice.update({
         where: {

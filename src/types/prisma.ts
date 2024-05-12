@@ -1,3 +1,4 @@
+import { type _getUserPermissionsType } from "@/server/actions/fetch";
 import {
   type Inventory,
   type MaterialsUsed,
@@ -27,6 +28,7 @@ import {
   type User,
   type LaborTracking,
   type Payment,
+  type Prisma,
 } from "@prisma/client";
 // ? Custom Types
 export type InvoiceWithServiceAndPaymentAndAgency = Invoice & {
@@ -175,3 +177,9 @@ export type InventoryListBySubaccountIdAndSupplierMaterialsUsed = Inventory & {
 export type LaborTrackingWithUsers = LaborTracking & {
   User: User;
 };
+
+//======================UserWithPermissionsAndSubAccounts
+
+export type UserWithPermissionsAndSubAccounts = Prisma.PromiseReturnType<
+  typeof _getUserPermissionsType
+>;

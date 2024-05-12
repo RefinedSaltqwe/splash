@@ -5,7 +5,7 @@ export const CreateFunnel = z.object({
   description: z.string(),
   subDomainName: z.string().optional(),
   favicon: z.string().optional(),
-  subAccountId: z.string(),
+  subAccountId: z.string().optional(),
   defaultId: z.string().optional(),
   defaultLiveProducts: z.string().optional().nullable(),
 });

@@ -1,5 +1,8 @@
-import { getFunnel, getFunnelPageDetails } from "@/server/actions/fetch";
-import { getSubaccountDetails } from "@/server/queries";
+import {
+  getFunnel,
+  getFunnelPageDetails,
+  getSubaccountDetails,
+} from "@/server/actions/fetch";
 import {
   HydrationBoundary,
   QueryClient,

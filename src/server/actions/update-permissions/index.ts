@@ -15,15 +15,15 @@ import { UpdateUserPermission } from "./schema";
 import { type InputType, type ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const authUser = await currentUser();
-
-  if (!authUser) {
-    throw new Error("Unauthorized");
-  }
-
   const { subAccountId, val, permissionsId, type, userData, agencyId, page } =
     data;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     if (!userData?.email) {
       throw new Error("User Data does not exist.");
     }

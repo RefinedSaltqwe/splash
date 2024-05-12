@@ -13,7 +13,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   const authUser = await currentUser();
 
   if (!authUser) {
-    throw new Error("Unauthorized");
+    throw new Error("Unauthorized: You must be logged in.");
   }
 
   const { id, ...rest } = data;
@@ -23,7 +23,6 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       where: { email: rest.email },
       data: { ...data },
     });
-    console.log("========= ", authUser.id);
 
     await clerkClient.users.updateUserMetadata(response.id, {
       privateMetadata: {

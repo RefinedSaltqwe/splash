@@ -8,12 +8,19 @@ import { db } from "@/server/db";
 import { getUserByEmail, getVerificationTokenByToken } from "../fetch";
 import { ConfirmEmail } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { token } = data;
 
   let user;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const existingToken = await getVerificationTokenByToken(token);
     if (!existingToken) {
       throw new Error("Token does not exist!");

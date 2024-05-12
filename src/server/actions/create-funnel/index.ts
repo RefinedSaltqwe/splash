@@ -8,13 +8,20 @@ import { saveActivityLogsNotification, upsertFunnel } from "@/server/queries";
 import { randomUUID } from "crypto";
 import { CreateFunnel } from "./schema";
 import { type InputType, type ReturnType } from "./types";
+import { currentUser } from "@clerk/nextjs";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { subAccountId, defaultLiveProducts, defaultId, ...values } = data;
   let promiseAll;
   try {
+    const session = await currentUser();
+
+    if (!session) {
+      throw new Error("Unauthorized: You must be logged in.");
+    }
+
     const response = await upsertFunnel(
-      subAccountId,
+      subAccountId!,
       { ...values, liveProducts: defaultLiveProducts ?? "[]" },
       defaultId ?? randomUUID(),
     );

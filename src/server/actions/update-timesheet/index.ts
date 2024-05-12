@@ -19,7 +19,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
   if (!session) {
     return {
-      error: "Unauthorized",
+      error: "Unauthorized: you must be logged in.",
     };
   }
 
