@@ -1,5 +1,4 @@
 "use client";
-import Card from "@/app/(dashboard)/_components/containers/Card";
 import { type TimesheetWithInputTimes } from "@/types/prisma";
 import React, { Suspense } from "react";
 import { columns } from "./Columns";
@@ -18,13 +17,11 @@ const ClientData: React.FC<ClientDataProps> = ({ timesheetsData }) => {
         </div>
       }
     >
-      <Card padding={false}>
-        <DataTable
-          columns={columns}
-          data={timesheetsData ?? []}
-          timesheetWithInputTimes={timesheetsData ?? []}
-        />
-      </Card>
+      <DataTable
+        columns={columns}
+        data={timesheetsData ?? []}
+        timesheetWithInputTimes={timesheetsData ?? []}
+      />
     </Suspense>
   );
 };

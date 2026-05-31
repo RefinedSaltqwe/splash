@@ -58,7 +58,7 @@ export const columns: ColumnDef<TimesheetWithInputTimes>[] = [
       return (
         <Link
           href={`/admin/${data?.agencyId}/team/time-sheet/${data?.groupId}`}
-          className="flex min-w-[1000px] flex-row items-center justify-start "
+          className="flex min-w-[1000px] flex-row items-center justify-start"
         >
           <span className="text-right font-medium hover:cursor-pointer hover:underline">
             {`${dateFr} - ${dateTo} `}

@@ -187,8 +187,10 @@ const TicketForm = ({
 
   const onSubmit = async (values: z.infer<typeof UpsertTicket>) => {
     if (!laneId) return;
+    const val = values.value.toString();
     void executeUpsertTicket({
       ...values,
+      value: val,
       assignedUserId: assignedTo === "" ? null : assignedTo,
       customerId: contact === "" ? null : contact,
       tags,
@@ -298,12 +300,13 @@ const TicketForm = ({
                   htmlFor="value"
                   className="block text-sm font-medium leading-6 text-foreground"
                 >
-                  Ticket value
+                  Ticket value {` (0.00)`}
                 </FormLabel>
                 <FormControl>
                   <Input
-                    type="text"
+                    type="number"
                     id="value"
+                    step="0.01"
                     autoComplete="value"
                     {...field}
                     onFocus={(e) => e.target.select()}
@@ -311,7 +314,7 @@ const TicketForm = ({
                       "font-normal placeholder:text-gray-400 dark:placeholder:text-gray-600",
                       "splash-base-input splash-inputs",
                     )}
-                    placeholder="Value"
+                    placeholder="0.00"
                   />
                 </FormControl>
                 <FormMessage />

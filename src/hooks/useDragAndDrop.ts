@@ -59,6 +59,9 @@ const useDragAndDrop = (
           destinationLane.Tickets.splice(destination.index, 0, {
             id: currentTicket?.id ?? "",
             name: currentTicket?.name ?? "",
+            priority: currentTicket?.priority ?? false,
+            status: currentTicket?.status ?? "",
+            deadline: currentTicket?.deadline ?? new Date(),
             createdAt: currentTicket?.createdAt ?? new Date(),
             updatedAt: currentTicket?.updatedAt ?? new Date(),
             order: currentTicket?.order ?? 0,
